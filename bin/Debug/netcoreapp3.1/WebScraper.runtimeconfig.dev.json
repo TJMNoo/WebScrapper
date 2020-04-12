@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\Jurica\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\Jurica\\.nuget\\packages"
+    ]
+  }
+}
