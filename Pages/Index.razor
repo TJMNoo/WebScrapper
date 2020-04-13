@@ -1,4 +1,5 @@
-﻿@page "/"
+﻿@using System.Text.RegularExpressions;
+@page "/"
 @using HtmlAgilityPack
 @using WebScraper.Data
 
@@ -6,51 +7,55 @@
         <h1 class="text-center" style="margin-bottom: 40px;">Web Scraper</h1>
 
         <form>
-            <div class="input-group">
+            <div class="input-group pb-4">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="url-addon">URL</span>
                 </div>
 
-                <input type="text" class="form-control" id="url_link" />
+                <input @bind="PageUrl" type="text" class="form-control" id="url_link" />
                 <span class="input-group-btn ml-2">
-                    <button class="btn btn-outline-primary" type="button">Go!</button>
+                    <button @onclick="@LoadHtml" class="btn btn-outline-primary" type="button">Go!</button>
                 </span>
             </div>
-
+            @if (Valjan == false) {
+                <div class="col-6 alert alert-danger">
+                    URL is not valid.
+                </div>
+            }
             <div class="form-check form-check-inline mt-2">
-                <label for="show_html" class="form-check-label mr-2">Show HTML </label>
-                <input type="checkbox" class="form-check-input pull-right" id="show_html" checked="checked" style="width: 15px; height: 15px;" />
-
+                <label for="show_html" class="form-check-label mr-2">Show HTML</label>
+                <input type="checkbox" class="form-check-input pull-right" id="show_html" @bind="ShowHtml" style="width: 15px; height: 15px;" />
                 <label for="follow_through" class="form-check-label mr-2">Follow through</label>
                 <input type="checkbox" class="form-check-input pull-right" id="follow_through" checked="checked" style="width: 15px; height: 15px;" />
+                
             </div>
         </form>
-
-        <h3 class="text-center mt-4">Preview - trenutno hardcodirano na http://microsoft.com</h3>
+        @if (ShowHtml) {
+        <h3 class="text-center mt-4">Preview</h3>
         <div class="form-group">
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="10">@outerHtml</textarea>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="10">@_outerHtml</textarea>
         </div>
-
+        }
         <div class="btn-group">
-            <button @onclick="@(() => selectByTag("img"))" class="btn btn-primary mr-2">img</button>
-            <button @onclick="@(() => selectByTag("a"))" class="btn btn-primary mr-2">a</button>
-            <button @onclick="@(() => selectByTag("p"))" class="btn btn-primary mr-2">p</button>
-            <button @onclick="@(() => selectByTag("h1"))" class="btn btn-primary mr-2">h1</button>
-            <button @onclick="@(() => selectByTag("form"))" class="btn btn-primary mr-2">form</button>
-            <button @onclick="@(() => selectByTag("input"))" class="btn btn-primary mr-2">input</button>
-            <button @onclick="@(() => selectByTag("ul"))" class="btn btn-primary mr-2">ul</button>
-            <button @onclick="@(() => selectByTag("ol"))" class="btn btn-primary mr-2">ol</button>
-            <button @onclick="@(() => selectByTag("head"))" class="btn btn-primary mr-2">head</button>
-            <button @onclick="@(() => selectByTag("body"))" class="btn btn-primary mr-2">body</button>
-            <button @onclick="@(() => selectByTag("title"))" class="btn btn-primary mr-2">title</button>
+            <button @onclick="@(() => SelectByTag("img"))" class="btn btn-primary mr-2">img</button>
+            <button @onclick="@(() => SelectByTag("a"))" class="btn btn-primary mr-2">a</button>
+            <button @onclick="@(() => SelectByTag("p"))" class="btn btn-primary mr-2">p</button>
+            <button @onclick="@(() => SelectByTag("h1"))" class="btn btn-primary mr-2">h1</button>
+            <button @onclick="@(() => SelectByTag("form"))" class="btn btn-primary mr-2">form</button>
+            <button @onclick="@(() => SelectByTag("input"))" class="btn btn-primary mr-2">input</button>
+            <button @onclick="@(() => SelectByTag("ul"))" class="btn btn-primary mr-2">ul</button>
+            <button @onclick="@(() => SelectByTag("ol"))" class="btn btn-primary mr-2">ol</button>
+            <button @onclick="@(() => SelectByTag("head"))" class="btn btn-primary mr-2">head</button>
+            <button @onclick="@(() => SelectByTag("body"))" class="btn btn-primary mr-2">body</button>
+            <button @onclick="@(() => SelectByTag("title"))" class="btn btn-primary mr-2">title</button>
         </div>
         
         <h4 style="margin-top: 50px;">Gets all attribute:value pairs for a given tag</h4>
         <form class="form-inline">
             <div class="form-group">
                 <div class="input-group-prepend"><span class="input-group-text" id="tagPairId">Tag</span></div>
-                <input @bind="pairTag" type="text" class="form-control" id="tagPairId" placeholder="a" />
-                <button @onclick="@(() => selectByTagAtrValuePairs(pairTag))" class="btn btn-outline-success" type="button">Get</button>
+                <input @bind="PairTag" type="text" class="form-control" id="tagPairId" placeholder="a" />
+                <button @onclick="@(() => SelectByTagAtrValuePairs(PairTag))" class="btn btn-outline-success" type="button">Get</button>
             </div>
         </form>
         
@@ -58,23 +63,23 @@
         <form class="form-inline">
             <div class="form-group mr-3">
                 <div class="input-group-prepend"><span class="input-group-text" id="tagTextId">Tag</span></div>
-                <input @bind="textTag" type="text" class="form-control" id="tagTextId" placeholder="a" />
+                <input @bind="TextTag" type="text" class="form-control" id="tagTextId" placeholder="a" />
             </div>
             <div class="form-group mr-3">
                 <div class="input-group-prepend"><span class="input-group-text" id="attributeTextId">Attr. name</span></div>
-                <input @bind="textAttr" type="text" class="form-control" id="attributeTextId" placeholder="href" />
+                <input @bind="TextAttr" type="text" class="form-control" id="attributeTextId" placeholder="href" />
             </div>
             <div class="form-group">
                 <div class="input-group-prepend"><span class="input-group-text" id="classTextId">Contains</span></div>
-                <input @bind="textContains" type="text" class="form-control" id="classTextId" placeholder="www."/>
+                <input @bind="TextContains" type="text" class="form-control" id="classTextId" placeholder="www."/>
             </div>
-            <button @onclick="@(() => selectByTagAtrValueContains(textTag, textAttr, textContains))" type="button" class="btn btn-outline-success">Get</button>
+            <button @onclick="@(() => SelectByTagAtrValueContains(TextTag, TextAttr, TextContains))" type="button" class="btn btn-outline-success">Get</button>
         </form>
 
         <h3 class="text-center mt-4">Result</h3>
         <div class="form-group" style="margin-bottom:70px;">
             <textarea class="form-control" id="exampleFormControlTextarea1" rows="10">
-                @foreach (var tag in tags)
+                @foreach (var tag in _tags)
                 {
                     @tag
                     <br />
@@ -85,39 +90,57 @@
     </div>
 
 @code{
-    private string pairTag { get; set; } = "a";
-    private string textTag { get; set; } = "a";
-    private string textAttr { get; set; } = "href";
-    private string textContains { get; set; } = "www.";
+    private string PairTag { get; set; } = "a";
+    private string TextTag { get; set; } = "a";
+    private string TextAttr { get; set; } = "href";
+    private string TextContains { get; set; } = "www.";
+    private string PageUrl { get; set; }
+    private bool Valjan { get; set; } = true;
+    private bool ShowHtml { get; set; } = true;
 
-    private HtmlWeb web = new HtmlWeb();
-    private HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+    private HtmlWeb _web = new HtmlWeb();
+    private HtmlDocument _doc = new HtmlDocument();
 
-    private string outerHtml = "";
-    private List<string> tags = new List<string>();
+    private string _outerHtml = "";
+    private List<string> _tags = new List<string>();
 
-    protected override void OnInitialized()
+    protected void LoadHtml()
     {
-        doc = web.Load("https://www.microsoft.com/");
-        outerHtml = doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
+        Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        if (checkIfValid.IsMatch(PageUrl))
+        {
+            Valjan = true;
+            Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            if (!checkIfHttps.IsMatch(PageUrl))
+            {
+                PageUrl = PageUrl.Insert( 0, "https://" );
+            }
+            _doc = _web.Load(PageUrl);
+            _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
+        }
+        else
+        {
+            Valjan = false;
+        }
     }
 
-    protected void selectByTag(string tag)
+    protected void SelectByTag(string tag)
     {
-        SelectorService Selector = new SelectorService(doc);
-        tags = Selector.FilterTag(tag);
+        SelectorService selector = new SelectorService(_doc);
+        _tags = selector.FilterTag(tag);
     }
 
-    protected void selectByTagAtrValuePairs(string tag)
+    protected void SelectByTagAtrValuePairs(string tag)
     {
-        SelectorService Selector = new SelectorService(doc);
-        tags = Selector.FilterTagAtrValuePairs(tag);
+        SelectorService selector = new SelectorService(_doc);
+        _tags = selector.FilterTagAtrValuePairs(tag);
     }
 
-    protected void selectByTagAtrValueContains(string tag, string attribute, string value)
+    protected void SelectByTagAtrValueContains(string tag, string attribute, string value)
     {
-        SelectorService Selector = new SelectorService(doc);
-        tags = Selector.FilterTagAtrValueContains(tag, attribute, value);
+        SelectorService selector = new SelectorService(_doc);
+        _tags = selector.FilterTagAtrValueContains(tag, attribute, value);
     }
 
 }
