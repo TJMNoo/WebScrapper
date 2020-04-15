@@ -1,100 +1,98 @@
-﻿@using System.Text.RegularExpressions;
-@page "/"
+﻿@page "/"
+@using System
+@using System.ComponentModel
+@using System.Text.RegularExpressions;
 @using HtmlAgilityPack
 @using WebScraper.Data
 
-    <div class="container" style="width: 70%;">
-        <h1 class="text-center" style="margin-bottom: 40px;">Web Scraper</h1>
+<div class="container" style="width: 70%;">
+    <h1 class="text-center" style="margin-bottom: 40px;">Web Scraper</h1>
 
-        <form>
-            <div class="input-group pb-4">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="url-addon">URL</span>
-                </div>
+    <form onsubmit="return false;">
+        <div class="input-group pb-4">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="url-addon">URL</span>
+            </div>
 
-                <input @bind="PageUrl" type="text" class="form-control" id="url_link" />
-                <span class="input-group-btn ml-2">
-                    <button @onclick="@LoadHtml" class="btn btn-outline-primary" type="button">Go!</button>
-                </span>
+            <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" type="text" class="form-control" id="url_link" />
+            <span class="input-group-btn ml-2">
+                <button @onclick="@LoadHtml" class="btn btn-outline-primary" type="button">Go!</button>
+            </span>
+        </div>
+        @if (Valjan == false)
+        {
+            <div class="col-6 alert alert-danger">
+                URL is not valid.
             </div>
-            @if (Valjan == false) {
-                <div class="col-6 alert alert-danger">
-                    URL is not valid.
-                </div>
-            }
-            <div class="form-check form-check-inline mt-2">
-                <label for="show_html" class="form-check-label mr-2">Show HTML</label>
-                <input type="checkbox" class="form-check-input pull-right" id="show_html" @bind="ShowHtml" style="width: 15px; height: 15px;" />
-                <label for="follow_through" class="form-check-label mr-2">Follow through</label>
-                <input type="checkbox" class="form-check-input pull-right" id="follow_through" checked="checked" style="width: 15px; height: 15px;" />
-                
-            </div>
-        </form>
-        @if (ShowHtml) {
+        }
+        <div class="form-check form-check-inline mt-2">
+            <label for="show_html" class="form-check-label mr-2">Show HTML</label>
+            <input type="checkbox" class="form-check-input pull-right" id="show_html" @bind="ShowHtml" style="width: 15px; height: 15px;" />
+            <label for="follow_through" class="form-check-label mr-2">Follow through</label>
+            <input type="checkbox" class="form-check-input pull-right" id="follow_through" checked="checked" style="width: 15px; height: 15px;" />
+
+        </div>
+    </form>
+    @if (ShowHtml)
+    {
         <h3 class="text-center mt-4">Preview</h3>
         <div class="form-group">
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="10">@_outerHtml</textarea>
+            <textarea @bind="_outerHtml" class="form-control" id="exampleFormControlTextarea1" rows="10" readonly style="background-color: white;"></textarea>
         </div>
-        }
-        <div class="btn-group">
-            <button @onclick="@(() => SelectByTag("img"))" class="btn btn-primary mr-2">img</button>
-            <button @onclick="@(() => SelectByTag("a"))" class="btn btn-primary mr-2">a</button>
-            <button @onclick="@(() => SelectByTag("p"))" class="btn btn-primary mr-2">p</button>
-            <button @onclick="@(() => SelectByTag("h1"))" class="btn btn-primary mr-2">h1</button>
-            <button @onclick="@(() => SelectByTag("form"))" class="btn btn-primary mr-2">form</button>
-            <button @onclick="@(() => SelectByTag("input"))" class="btn btn-primary mr-2">input</button>
-            <button @onclick="@(() => SelectByTag("ul"))" class="btn btn-primary mr-2">ul</button>
-            <button @onclick="@(() => SelectByTag("ol"))" class="btn btn-primary mr-2">ol</button>
-            <button @onclick="@(() => SelectByTag("head"))" class="btn btn-primary mr-2">head</button>
-            <button @onclick="@(() => SelectByTag("body"))" class="btn btn-primary mr-2">body</button>
-            <button @onclick="@(() => SelectByTag("title"))" class="btn btn-primary mr-2">title</button>
-        </div>
-        
-        <h4 style="margin-top: 50px;">Gets all attribute:value pairs for a given tag</h4>
-        <form class="form-inline">
-            <div class="form-group">
-                <div class="input-group-prepend"><span class="input-group-text" id="tagPairId">Tag</span></div>
-                <input @bind="PairTag" type="text" class="form-control" id="tagPairId" placeholder="a" />
-                <button @onclick="@(() => SelectByTagAtrValuePairs(PairTag))" class="btn btn-outline-success" type="button">Get</button>
-            </div>
-        </form>
-        
-        <h4 style="margin-top: 50px">Gets text for given parameters</h4>
-        <form class="form-inline">
-            <div class="form-group mr-3">
-                <div class="input-group-prepend"><span class="input-group-text" id="tagTextId">Tag</span></div>
-                <input @bind="TextTag" type="text" class="form-control" id="tagTextId" placeholder="a" />
-            </div>
-            <div class="form-group mr-3">
-                <div class="input-group-prepend"><span class="input-group-text" id="attributeTextId">Attr. name</span></div>
-                <input @bind="TextAttr" type="text" class="form-control" id="attributeTextId" placeholder="href" />
-            </div>
-            <div class="form-group">
-                <div class="input-group-prepend"><span class="input-group-text" id="classTextId">Contains</span></div>
-                <input @bind="TextContains" type="text" class="form-control" id="classTextId" placeholder="www."/>
-            </div>
-            <button @onclick="@(() => SelectByTagAtrValueContains(TextTag, TextAttr, TextContains))" type="button" class="btn btn-outline-success">Get</button>
-        </form>
-
-        <h3 class="text-center mt-4">Result</h3>
-        <div class="form-group" style="margin-bottom:70px;">
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="10">
-                @foreach (var tag in _tags)
-                {
-                    @tag
-                    <br />
-                    <br/>
-                }
-            </textarea>
-        </div>
+    }
+    <div class="btn-group">
+        <button @onclick="@(() => SelectByTag("img"))" class="btn btn-primary mr-2">img</button>
+        <button @onclick="@(() => SelectByTag("a"))" class="btn btn-primary mr-2">a</button>
+        <button @onclick="@(() => SelectByTag("p"))" class="btn btn-primary mr-2">p</button>
+        <button @onclick="@(() => SelectByTag("h1"))" class="btn btn-primary mr-2">h1</button>
+        <button @onclick="@(() => SelectByTag("form"))" class="btn btn-primary mr-2">form</button>
+        <button @onclick="@(() => SelectByTag("input"))" class="btn btn-primary mr-2">input</button>
+        <button @onclick="@(() => SelectByTag("ul"))" class="btn btn-primary mr-2">ul</button>
+        <button @onclick="@(() => SelectByTag("ol"))" class="btn btn-primary mr-2">ol</button>
+        <button @onclick="@(() => SelectByTag("head"))" class="btn btn-primary mr-2">head</button>
+        <button @onclick="@(() => SelectByTag("body"))" class="btn btn-primary mr-2">body</button>
+        <button @onclick="@(() => SelectByTag("title"))" class="btn btn-primary mr-2">title</button>
     </div>
 
+    <h4 style="margin-top: 50px;">Gets all attribute:value pairs for a given tag</h4>
+    <form class="form-inline" onsubmit="return false;">
+        <div class="form-group">
+            <div class="input-group-prepend"><span class="input-group-text" id="tagPairId">Tag</span></div>
+            <input @bind="PairTag" @onkeyup="KeyPressValuePairInput" type="text" class="form-control" id="tagPairId" placeholder="a" />
+            <button @onclick="@(() => SelectByTagAtrValuePairs(PairTag))" class="btn btn-outline-success" type="button">Get</button>
+        </div>
+    </form>
+
+    <h4 style="margin-top: 50px">Gets text for given parameters</h4>
+    <form class="form-inline" onsubmit="return false;">
+        <div class="form-group mr-3">
+            <div class="input-group-prepend"><span class="input-group-text" id="tagTextId">Tag</span></div>
+            <input @bind="TextTag" @onkeyup="KeyPressValueContainsInput" type="text" class="form-control" id="tagTextId" placeholder="a" />
+        </div>
+        <div class="form-group mr-3">
+            <div class="input-group-prepend"><span class="input-group-text" id="attributeTextId">Attr. name</span></div>
+            <input @bind="TextAttr" @onkeyup="KeyPressValueContainsInput" type="text" class="form-control" id="attributeTextId" placeholder="href" />
+        </div>
+        <div class="form-group">
+            <div class="input-group-prepend"><span class="input-group-text" id="classTextId">Contains</span></div>
+            <input @bind="TextContains" @onkeyup="KeyPressValueContainsInput" type="text" class="form-control" id="classTextId" placeholder="www." />
+        </div>
+        <button @onclick="@(() => SelectByTagAtrValueContains(TextTag, TextAttr, TextContains))" type="button" class="btn btn-outline-success">Get</button>
+    </form>
+
+    <h3 class="text-center mt-4">Result</h3>
+    <div class="form-group" style="margin-bottom:70px;">
+        <textarea @bind="ResultTags" class="form-control" id="exampleFormControlTextarea1" rows="10" readonly style="background-color: white;"></textarea>
+    </div>
+</div>
+
 @code{
-    private string PairTag { get; set; } = "a";
-    private string TextTag { get; set; } = "a";
-    private string TextAttr { get; set; } = "href";
-    private string TextContains { get; set; } = "www.";
+    private string PairTag { get; set; }
+    private string TextTag { get; set; }
+    private string TextAttr { get; set; }
+    private string TextContains { get; set; }
     private string PageUrl { get; set; }
+    private string ResultTags { get; set; } = "";
     private bool Valjan { get; set; } = true;
     private bool ShowHtml { get; set; } = true;
 
@@ -106,6 +104,8 @@
 
     protected void LoadHtml()
     {
+        if (String.IsNullOrEmpty(PageUrl)) PageUrl="";
+
         Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
         if (checkIfValid.IsMatch(PageUrl))
@@ -114,7 +114,7 @@
             Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             if (!checkIfHttps.IsMatch(PageUrl))
             {
-                PageUrl = PageUrl.Insert( 0, "https://" );
+                PageUrl = PageUrl.Insert(0, "https://");
             }
             _doc = _web.Load(PageUrl);
             _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
@@ -129,18 +129,42 @@
     {
         SelectorService selector = new SelectorService(_doc);
         _tags = selector.FilterTag(tag);
+        ResultTags = "";
+        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+        ResultTags = ResultTags.Remove (ResultTags.Length - 2);
     }
 
     protected void SelectByTagAtrValuePairs(string tag)
     {
         SelectorService selector = new SelectorService(_doc);
         _tags = selector.FilterTagAtrValuePairs(tag);
+        ResultTags = "";
+        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
     }
 
     protected void SelectByTagAtrValueContains(string tag, string attribute, string value)
     {
         SelectorService selector = new SelectorService(_doc);
         _tags = selector.FilterTagAtrValueContains(tag, attribute, value);
+        ResultTags = "";
+        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+    }
+
+    void KeyPressLoadHtmlInput(KeyboardEventArgs e)
+    {
+        if(e.Key == "Enter") LoadHtml();
+    }
+
+    void KeyPressValuePairInput(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") SelectByTagAtrValuePairs(PairTag);
+    }
+
+    void KeyPressValueContainsInput(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") SelectByTagAtrValueContains(TextTag, TextAttr, TextContains);
     }
 
 }

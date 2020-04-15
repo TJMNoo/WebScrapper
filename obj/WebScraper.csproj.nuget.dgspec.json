@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Jurica\\source\\repos\\WebScraper\\WebScraper\\WebScraper.csproj": {}
+    "C:\\Users\\Jurica\\Desktop\\WebScrapper\\WebScraper.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Jurica\\source\\repos\\WebScraper\\WebScraper\\WebScraper.csproj": {
+    "C:\\Users\\Jurica\\Desktop\\WebScrapper\\WebScraper.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Jurica\\source\\repos\\WebScraper\\WebScraper\\WebScraper.csproj",
+        "projectUniqueName": "C:\\Users\\Jurica\\Desktop\\WebScrapper\\WebScraper.csproj",
         "projectName": "WebScraper",
-        "projectPath": "C:\\Users\\Jurica\\source\\repos\\WebScraper\\WebScraper\\WebScraper.csproj",
+        "projectPath": "C:\\Users\\Jurica\\Desktop\\WebScrapper\\WebScraper.csproj",
         "packagesPath": "C:\\Users\\Jurica\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Jurica\\source\\repos\\WebScraper\\WebScraper\\obj\\",
+        "outputPath": "C:\\Users\\Jurica\\Desktop\\WebScrapper\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Jurica\\AppData\\Roaming\\NuGet\\NuGet.Config",
