@@ -3734,19 +3734,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Leon Vila\\.nuget\\packages\\": {}
+    "C:\\Users\\Marko\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Leon Vila\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj",
+      "projectUniqueName": "C:\\Users\\Marko\\Desktop\\WebScrapper\\WebScraper.csproj",
       "projectName": "WebScraper",
-      "projectPath": "C:\\Users\\Leon Vila\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj",
-      "packagesPath": "C:\\Users\\Leon Vila\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Leon Vila\\Documents\\GitHub\\WebScrapper\\obj\\",
+      "projectPath": "C:\\Users\\Marko\\Desktop\\WebScrapper\\WebScraper.csproj",
+      "packagesPath": "C:\\Users\\Marko\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Marko\\Desktop\\WebScrapper\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Leon Vila\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Marko\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -3797,7 +3797,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.102\\RuntimeIdentifierGraph.json"
       }
     }
   }

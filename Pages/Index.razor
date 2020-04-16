@@ -4,7 +4,7 @@
 @using System.Text.RegularExpressions;
 @using HtmlAgilityPack
 @using WebScraper.Data
-
+@inject IJSRuntime JSRuntime
 @inject IToastService toastService
 
 <div class="container" style="width: 70%;">
@@ -86,6 +86,12 @@
     <div class="form-group" style="margin-bottom:70px;">
         <textarea @bind="ResultTags" class="form-control" id="exampleFormControlTextarea1" rows="10" readonly style="background-color: white;"></textarea>
     </div>
+    <div class="btn-group">
+        <button @onclick="@(()=> DownloadFile("myDownload.txt"))" class="btn btn-primary mr-2">TXT</button>
+        <button @onclick="@(()=> DownloadFile("myDownload.csv"))" class="btn btn-primary mr-2">CSV</button>
+        <button @onclick="@(()=> DownloadFile("myDownload.json"))" class="btn btn-primary mr-2">JSON</button>
+        <button @onclick="@(()=> DownloadFile("myDownload.xlsx"))" class="btn btn-primary mr-2">XLSX</button>
+    </div>    
 </div>
 
 @code{
@@ -104,6 +110,14 @@
     private string _outerHtml = "";
     private List<string> _tags = new List<string>();
 
+    public async void DownloadFile(string fileName)
+    {
+        await JSRuntime.InvokeAsync<object>(
+            "FileSaveAs",
+            fileName, ResultTags
+            );
+    }
+    
     protected void LoadHtml()
     {
         if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
@@ -134,8 +148,12 @@
         SelectorService selector = new SelectorService(_doc);
         _tags = selector.FilterTag(tag);
         ResultTags = "";
-        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
-        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+        try
+        {
+            foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+            ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+        }
+        catch{}
     }
 
     protected void SelectByTagAtrValuePairs(string tag)
@@ -143,8 +161,12 @@
         SelectorService selector = new SelectorService(_doc);
         _tags = selector.FilterTagAtrValuePairs(tag);
         ResultTags = "";
-        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
-        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+        try
+        {
+            foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+            ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+        }
+        catch{}    
     }
 
     protected void SelectByTagAtrValueContains(string tag, string attribute, string value)
@@ -152,8 +174,12 @@
         SelectorService selector = new SelectorService(_doc);
         _tags = selector.FilterTagAtrValueContains(tag, attribute, value);
         ResultTags = "";
-        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
-        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+        try
+        {
+            foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+            ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+        }
+        catch{}
     }
 
     void KeyPressLoadHtmlInput(KeyboardEventArgs e)
