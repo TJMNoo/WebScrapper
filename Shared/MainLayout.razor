@@ -1,9 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @using Blazored.Toast.Configuration
 
-<!--<div class="sidebar">
-    <NavMenu />
-</div>-->
 <BlazoredToasts Position="ToastPosition.BottomRight"
                 Timeout="10"
                 SuccessClass="success-toast-override"
@@ -11,11 +8,7 @@
                 ErrorIconClass="oi oi-warning" />
 
 <div class="main">
-    <div class="top-row px-4">
-        @*<a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>*@
-        <NavMenu />
-    </div>
-
+    <NavMenu />
     <div class="content px-4">
         @Body
     </div>
