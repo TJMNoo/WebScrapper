@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Jurica\\Desktop\\WebScrapper\\WebScraper.csproj": {}
+    "C:\\Users\\Leon Vila\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Jurica\\Desktop\\WebScrapper\\WebScraper.csproj": {
+    "C:\\Users\\Leon Vila\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Jurica\\Desktop\\WebScrapper\\WebScraper.csproj",
+        "projectUniqueName": "C:\\Users\\Leon Vila\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj",
         "projectName": "WebScraper",
-        "projectPath": "C:\\Users\\Jurica\\Desktop\\WebScrapper\\WebScraper.csproj",
-        "packagesPath": "C:\\Users\\Jurica\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Jurica\\Desktop\\WebScrapper\\obj\\",
+        "projectPath": "C:\\Users\\Leon Vila\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj",
+        "packagesPath": "C:\\Users\\Leon Vila\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Leon Vila\\Documents\\GitHub\\WebScrapper\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Jurica\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Leon Vila\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -38,6 +38,10 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "Blazored.Toast": {
+              "target": "Package",
+              "version": "[2.0.9, )"
+            },
             "HtmlAgilityPack": {
               "target": "Package",
               "version": "[1.11.23, )"

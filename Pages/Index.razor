@@ -5,6 +5,8 @@
 @using HtmlAgilityPack
 @using WebScraper.Data
 
+@inject IToastService toastService
+
 <div class="container" style="width: 70%;">
     <h1 class="text-center" style="margin-bottom: 40px;">Web Scraper</h1>
 
@@ -104,7 +106,7 @@
 
     protected void LoadHtml()
     {
-        if (String.IsNullOrEmpty(PageUrl)) PageUrl="";
+        if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
 
         Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -118,10 +120,12 @@
             }
             _doc = _web.Load(PageUrl);
             _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
+            toastService.ShowSuccess("URL is nicely formatted!");
         }
         else
         {
             Valjan = false;
+            toastService.ShowError("URL is not valid!");
         }
     }
 
@@ -131,7 +135,7 @@
         _tags = selector.FilterTag(tag);
         ResultTags = "";
         foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
-        ResultTags = ResultTags.Remove (ResultTags.Length - 2);
+        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
     }
 
     protected void SelectByTagAtrValuePairs(string tag)
@@ -154,7 +158,7 @@
 
     void KeyPressLoadHtmlInput(KeyboardEventArgs e)
     {
-        if(e.Key == "Enter") LoadHtml();
+        if (e.Key == "Enter") LoadHtml();
     }
 
     void KeyPressValuePairInput(KeyboardEventArgs e)
