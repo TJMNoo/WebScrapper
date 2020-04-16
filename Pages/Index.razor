@@ -5,6 +5,7 @@
 @using HtmlAgilityPack
 @using WebScraper.Data
 
+@inject IJSRuntime JSRuntime
 @inject IToastService toastService
 
 
@@ -87,6 +88,12 @@
     <div class="form-group" style="margin-bottom:70px;">
         <textarea @bind="ResultTags" class="form-control" id="exampleFormControlTextarea1" rows="10" readonly style="background-color: white;"></textarea>
     </div>
+    <div class="btn-group">
+        <button @onclick="@(()=> DownloadFile("myDownload.txt"))" class="btn btn-primary mr-2">TXT</button>
+        <button @onclick="@(()=> DownloadFile("myDownload.csv"))" class="btn btn-primary mr-2">CSV</button>
+        <button @onclick="@(()=> DownloadFile("myDownload.json"))" class="btn btn-primary mr-2">JSON</button>
+        <button @onclick="@(()=> DownloadFile("myDownload.xlsx"))" class="btn btn-primary mr-2">XLSX</button>
+    </div>   
 </div>
 
 @code{
@@ -159,6 +166,14 @@
         foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
         if (ResultTags.Length == 0) return;
         ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+    }
+
+    public async void DownloadFile(string fileName)
+    {
+        await JSRuntime.InvokeAsync<object>(
+            "FileSaveAs",
+            fileName, ResultTags
+            );
     }
 
     void KeyPressLoadHtmlInput(KeyboardEventArgs e)
