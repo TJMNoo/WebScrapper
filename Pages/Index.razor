@@ -136,6 +136,8 @@
         _tags = selector.FilterTag(tag);
         ResultTags = "";
         foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+        if (ResultTags.Length == 0) return;
+
         ResultTags = ResultTags.Remove(ResultTags.Length - 2);
     }
 
@@ -145,6 +147,7 @@
         _tags = selector.FilterTagAtrValuePairs(tag);
         ResultTags = "";
         foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+        if (ResultTags.Length == 0) return;
         ResultTags = ResultTags.Remove(ResultTags.Length - 2);
     }
 
@@ -154,6 +157,7 @@
         _tags = selector.FilterTagAtrValueContains(tag, attribute, value);
         ResultTags = "";
         foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+        if (ResultTags.Length == 0) return;
         ResultTags = ResultTags.Remove(ResultTags.Length - 2);
     }
 
