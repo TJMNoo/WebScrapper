@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Leon Vila\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj": {}
+    "C:\\Users\\Jurica\\Desktop\\WebScrapper\\WebScraper.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Leon Vila\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj": {
+    "C:\\Users\\Jurica\\Desktop\\WebScrapper\\WebScraper.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Leon Vila\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj",
+        "projectUniqueName": "C:\\Users\\Jurica\\Desktop\\WebScrapper\\WebScraper.csproj",
         "projectName": "WebScraper",
-        "projectPath": "C:\\Users\\Leon Vila\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj",
-        "packagesPath": "C:\\Users\\Leon Vila\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Leon Vila\\Documents\\GitHub\\WebScrapper\\obj\\",
+        "projectPath": "C:\\Users\\Jurica\\Desktop\\WebScrapper\\WebScraper.csproj",
+        "packagesPath": "C:\\Users\\Jurica\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Jurica\\Desktop\\WebScrapper\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Leon Vila\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Jurica\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -38,6 +38,10 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "Blazored.SessionStorage": {
+              "target": "Package",
+              "version": "[1.0.11, )"
+            },
             "Blazored.Toast": {
               "target": "Package",
               "version": "[2.0.9, )"
@@ -45,6 +49,10 @@
             "HtmlAgilityPack": {
               "target": "Package",
               "version": "[1.11.23, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[3.1.1, )"
             }
           },
           "imports": [

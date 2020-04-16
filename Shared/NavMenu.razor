@@ -1,4 +1,7 @@
-﻿<nav class="navbar navbar-expand-lg navbar-light bg-light">
+﻿@using WebScraper.Data.Authentication
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">WebScrapper</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -16,6 +19,32 @@
                     <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
                 </NavLink>
             </li>
+            <AuthorizeView>
+                <Authorized>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="profile" Match="NavLinkMatch.All">
+                            <span class="oi oi-person"></span> Profile
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink @onclick="@Logout" class="nav-link" href="login" Match="NavLinkMatch.All">
+                            <span class="oi oi-account-logout"></span> Logout
+                        </NavLink>
+                    </li>
+                </Authorized>
+                <NotAuthorized>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="login" Match="NavLinkMatch.All">
+                            <span class="oi oi-account-login"></span> Login
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="register" Match="NavLinkMatch.All">
+                            <span class="oi oi-people"></span> Register
+                        </NavLink>
+                    </li>
+                </NotAuthorized>
+            </AuthorizeView>
         </ul>
         <form class="form-inline my-2 my-lg-0">
             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -23,3 +52,12 @@
         </form>
     </div>
 </nav>
+
+@code{
+
+    public void Logout()
+    {
+        ((CustomAuthenticationStateProvider) AuthenticationStateProvider).MarkUserAsLoggedOut();
+    }
+
+}
