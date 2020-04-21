@@ -81,5 +81,23 @@ namespace WebScraper.Data
 
             return values;
         }
+
+        public List<string> FilterTagAtr(string tag, string atr)
+        {
+            if (String.IsNullOrEmpty(tag) || String.IsNullOrEmpty(atr)) return new List<string>();
+
+            List<string> values = new List<string>();
+            var nodes = _doc.DocumentNode.SelectNodes("//" + tag);
+            if (nodes == null) return new List<string>();
+
+            var nodesArray = nodes.ToArray();
+            foreach (var node in nodesArray)
+            {
+                var targetedAttribute = node.Attributes[atr];
+                if (targetedAttribute != null) values.Add(targetedAttribute.Value);
+            }
+
+            return values;
+        }
     }
 }
