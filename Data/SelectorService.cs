@@ -10,7 +10,7 @@ namespace WebScraper.Data
     public class SelectorService
     {
         private HtmlAgilityPack.HtmlDocument _doc;
-        
+
         public SelectorService(HtmlAgilityPack.HtmlDocument doc)
         {
             _doc = doc;
@@ -22,9 +22,9 @@ namespace WebScraper.Data
 
             List<string> tags = new List<string>();
             var nodes = _doc.DocumentNode.Descendants(tag).ToArray();
-            
+
             if (nodes == null) return new List<string>();
-            
+
             var nodeArray = nodes.ToArray();
             foreach (var node in nodeArray) tags.Add(node.OuterHtml);
             return tags;
@@ -33,12 +33,12 @@ namespace WebScraper.Data
         public List<string> FilterTagAtrValuePairs(string tag)
         {
             if (String.IsNullOrEmpty(tag)) return new List<string>();
-           
+
             List<string> attrValuePairs = new List<string>();
             var nodes = _doc.DocumentNode.SelectNodes("//" + tag);
             if (nodes == null) return new List<string>();
-            
-            var nodeArray =  nodes.ToArray();
+
+            var nodeArray = nodes.ToArray();
             foreach (var node in nodeArray)
             {
                 var attributes = node.Attributes;
@@ -48,34 +48,37 @@ namespace WebScraper.Data
                     if (i + 1 != attributes.Count) pairs += attributes[i].Name + ":" + attributes[i].Value + " , ";
                     else pairs += attributes[i].Name + ":" + attributes[i].Value;
                 }
+
                 attrValuePairs.Add(pairs);
             }
+
             return attrValuePairs;
         }
 
         public List<string> FilterTagAtrValueContains(string tag, string atr, string value)
         {
-            if(String.IsNullOrEmpty(tag)) return new List<string>();
-            if(String.IsNullOrEmpty(atr)) atr = "";
-            if(String.IsNullOrEmpty(value)) value = "";
+            if (String.IsNullOrEmpty(tag)) return new List<string>();
+            if (String.IsNullOrEmpty(atr)) atr = "";
+            if (String.IsNullOrEmpty(value)) value = "";
 
             List<string> values = new List<string>();
             var nodes = _doc.DocumentNode.SelectNodes("//" + tag);
-            if(nodes == null) return new List<string>();
+            if (nodes == null) return new List<string>();
 
             var nodesArray = nodes.ToArray();
-            foreach(var node in nodesArray)
+            foreach (var node in nodesArray)
             {
                 if (atr == "")
                 {
                     foreach (var attribute in node.Attributes)
-                        if(attribute.Value.Contains(value)) values.Add(attribute.Value);
-                    
+                        if (attribute.Value.Contains(value))
+                            values.Add(attribute.Value);
                 }
                 else
                 {
                     var targetedAttribute = node.Attributes[atr];
-                    if (targetedAttribute != null && targetedAttribute.Value.Contains(value)) values.Add(targetedAttribute.Value);
+                    if (targetedAttribute != null && targetedAttribute.Value.Contains(value))
+                        values.Add(targetedAttribute.Value);
                 }
             }
 
