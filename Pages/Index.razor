@@ -19,7 +19,18 @@
 
                 <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" type="text" class="form-control" id="url_link" />
                 <span class="input-group-btn ml-2">
-                    <button @onclick="@LoadHtml" class="btn btn-outline-primary" type="button">Go!</button>
+                    @if (LoadingButton)
+                    {
+                        <button class="btn btn-primary" type="button" disabled>
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Loading...
+                        </button>
+
+                    }
+                    else
+                    {
+                        <button @onclick="@LoadHtml" class="btn btn-outline-primary" type="button">Get url!</button>
+                    }
                 </span>
             </div>
             @if (Valjan == false)
@@ -117,6 +128,7 @@
     private string ResultTags { get; set; } = "";
     private bool Valjan { get; set; } = true;
     private bool ShowHtml { get; set; } = true;
+    private bool LoadingButton { get; set; } = false;
 
     private bool _followThrough { get; set; } = true;
     private int _maxWidth { get; set; } = 20;
@@ -128,15 +140,16 @@
     private string _outerHtml = "";
     private List<string> _tags = new List<string>();
 
-    protected async void LoadHtml()
+    protected void LoadHtml()
     {
+        Valjan = true;
+        LoadingButton = true;
         if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
 
         Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
         if (checkIfValid.IsMatch(PageUrl))
         {
-            Valjan = true;
             Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             if (!checkIfHttps.IsMatch(PageUrl))
             {
@@ -155,16 +168,21 @@
                 Feedback = "Done.";
 
                 _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
+                LoadingButton = false;
                 toastService.ShowSuccess("URL is nicely formatted!");
             }
             catch(Exception e)
             {
+                LoadingButton = false;
+                toastService.ShowSuccess("Error!");
+
                 _outerHtml = e.Message;
             }
         }
         else
         {
             Valjan = false;
+            LoadingButton = false;
             toastService.ShowError("URL is not valid!");
         }
     }
