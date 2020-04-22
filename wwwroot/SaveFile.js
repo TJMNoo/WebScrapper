@@ -6,3 +6,7 @@ function FileSaveAs(filename, fileContent) {
     link.click();
     document.body.removeChild(link);
 }
+
+function consoleLog(message) {
+    console.log(message);
+}

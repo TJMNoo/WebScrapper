@@ -302,7 +302,6 @@ C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\RazorDec
 C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Authentication\Profile.razor.g.cs
 C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Authentication\Register.razor.g.cs
 C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Error.razor.g.cs
-C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\FetchData.razor.g.cs
 C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Index.razor.g.cs
 C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Shared\MainLayout.razor.g.cs
 C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Shared\NavMenu.razor.g.cs
@@ -316,7 +315,6 @@ C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pa
 C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\Authentication\Profile.razor.g.cs
 C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\Authentication\Register.razor.g.cs
 C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\Error.razor.g.cs
-C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\FetchData.razor.g.cs
 C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\Index.razor.g.cs
 C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Shared\MainLayout.razor.g.cs
 C:\Users\Leon Vila\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Shared\NavMenu.razor.g.cs

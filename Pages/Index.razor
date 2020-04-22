@@ -31,12 +31,14 @@
                     }
                 </span>
             </div>
-            @if (Valjan == false)
+            @*
+                Trenutno nam ne treba jer imamo toast notifikacije
+                @if (Valjan == false)
             {
                 <div class="col-6 alert alert-danger">
                     URL is not valid.
                 </div>
-            }
+            }*@
             <div class="form-check form-check-inline mt-2">
                 <label for="show_html" class="form-check-label mr-2">Show HTML</label>
                 <input type="checkbox" class="form-check-input pull-right" id="show_html" @bind="ShowHtml" style="width: 15px; height: 15px;" />
@@ -124,7 +126,7 @@
     private string TextContains { get; set; }
     private string PageUrl { get; set; }
     private string ResultTags { get; set; } = "";
-    private bool Valjan { get; set; } = true;
+    //private bool Valjan { get; set; } = true;
     private bool ShowHtml { get; set; } = true;
     private bool LoadingButton { get; set; } = false;
 
@@ -138,14 +140,17 @@
     private string _outerHtml = "";
     private List<string> _tags = new List<string>();
 
-    protected void LoadHtml()
+    protected async Task LoadHtml()
     {
-        Valjan = true;
+        //Valjan = true;
         LoadingButton = true;
-        if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
+        await Task.Delay(TimeSpan.FromSeconds(0.1));
 
+
+        if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
         Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         if (checkIfValid.IsMatch(PageUrl))
         {
             Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -164,7 +169,6 @@
                     _traverse.Bfs(_maxWidth);
                 }
                 Feedback = "Done.";
-
                 _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
                 LoadingButton = false;
                 toastService.ShowSuccess("URL is nicely formatted!");
@@ -179,7 +183,7 @@
         }
         else
         {
-            Valjan = false;
+            //Valjan = false;
             LoadingButton = false;
             toastService.ShowError("URL is not valid!");
         }
@@ -226,7 +230,8 @@
 
     void KeyPressLoadHtmlInput(KeyboardEventArgs e)
     {
-        if (e.Key == "Enter") LoadHtml();
+
+        if (e.Key == "Enter") LoadingButton = true;
     }
 
     void KeyPressValuePairInput(KeyboardEventArgs e)
@@ -238,5 +243,4 @@
     {
         if (e.Key == "Enter") SelectByTagAtrValueContains(TextTag, TextAttr, TextContains);
     }
-
 }
