@@ -11,28 +11,20 @@ namespace WebScraper.Data
     public class TraverseService
     {
         private string BaseDomain { get; set; }
-        private Dictionary<string, bool> _visited = new Dictionary<string,bool>();
+        private Dictionary<string, bool> _visited = new Dictionary<string, bool>();
         private HtmlWeb _web = new HtmlWeb();
         private HtmlDocument _doc = new HtmlDocument();
         public List<string> AllUrls { get; set; } = new List<string>();
 
-        //parameter url expects http prefix
         public void SetUrl(string url)
         {
-            BaseDomain = "";
-            int slashCounter = 0;
-            foreach (char c in url)
-            {
-                if (c == '/') slashCounter++;
-                if (slashCounter == 3) break;
-                BaseDomain += c;
-            }
+            BaseDomain = url;
         }
 
         //if <a> href link has prefix 'http://' then it leads to an outside website, otherwise it's relative e.g. '/products/'
         private string FormatHref(string href)
         {
-            if (string.IsNullOrEmpty(href) || href[0]=='#') return "invalid";
+            if (string.IsNullOrEmpty(href) || href[0] == '#') return "invalid";
 
             Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             if (checkIfHttps.IsMatch(href)) return "invalid";
@@ -54,18 +46,23 @@ namespace WebScraper.Data
             while (urls.Count != 0)
             {
                 string url = urls.Dequeue();
-                
+
                 System.Diagnostics.Debug.Print(url);
                 AllUrls.Add(url);
 
-                if (width++ == maxWidth) break;
+                if (width++ == maxWidth - 1) break;
 
-                try {_doc = _web.Load(url); }
-                catch { continue;}
+                try
+                {
+                    _doc = _web.Load(url);
+                }
+                catch
+                {
+                    continue;
+                }
 
-                /*React to the webpage here
-                    Console.WriteLine(url);
-                */
+                //Console.WriteLine(url);
+
 
                 var neighborUrls = _doc.DocumentNode.SelectNodes("//a");
                 if (neighborUrls == null) continue;
@@ -76,7 +73,7 @@ namespace WebScraper.Data
 
                     string href = neighbor.Attributes["href"].Value;
                     string neighborUrl = FormatHref(href);
-                    
+
                     if (neighborUrl != "invalid" && !_visited.ContainsKey(neighborUrl))
                     {
                         _visited[neighborUrl] = true;
