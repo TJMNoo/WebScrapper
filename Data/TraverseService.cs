@@ -10,8 +10,9 @@ namespace WebScraper.Data
 {
     public class TraverseService
     {
+        public Action StateHasChangedDelegate { get; set; }
         private string BaseDomain { get; set; }
-        private Dictionary<string, bool> _visited = new Dictionary<string,bool>();
+        private string WebsiteName { get; set; }
         private HtmlWeb _web = new HtmlWeb();
         private HtmlDocument _doc = new HtmlDocument();
         public List<string> AllUrls { get; set; } = new List<string>();
@@ -27,62 +28,86 @@ namespace WebScraper.Data
                 if (slashCounter == 3) break;
                 BaseDomain += c;
             }
+
+            slashCounter = 0;
+            foreach (char c in BaseDomain)
+            {
+                if (c == '.') break;
+                if (slashCounter == 2) WebsiteName += c;
+                if (c == '/') slashCounter++;
+
+            }
+
+            _web.PreRequest = delegate (HttpWebRequest webRequest)
+            {
+                webRequest.Timeout = 1000;
+                return true;
+            };
         }
 
-        //if <a> href link has prefix 'http://' then it leads to an outside website, otherwise it's relative e.g. '/products/'
         private string FormatHref(string href)
         {
-            if (string.IsNullOrEmpty(href) || href[0]=='#') return "invalid";
+            if (string.IsNullOrEmpty(href) || href[0]=='#' || href.Contains(" ")) return "invalid";
 
             Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            if (checkIfHttps.IsMatch(href)) return "invalid";
+            if (checkIfHttps.IsMatch(href) && href.Contains(WebsiteName)) return href;
+            else if (checkIfHttps.IsMatch(href)) return "invalid"; //outside website
+
+            if (href[0] == '.' && href[1] == '/') return BaseDomain + href.Substring(1);
+            if (href[0] != '/') return BaseDomain + "/" + href; //relative href
             else return BaseDomain + href;
         }
 
-        public void Bfs(int maxWidth)
+        public async Task BfsAsync(int maxWidth)
         {
-            _visited.Clear();
-
-            string root = BaseDomain;
-            _visited[root] = true;
-
-            Queue<string> urls = new Queue<string>();
-            urls.Enqueue(root);
-
+            Dictionary<string, bool> visited = new Dictionary<string, bool>();
+            Queue<HtmlDocument> sites = new Queue<HtmlDocument>();
             AllUrls = new List<string>();
             int width = 0;
-            while (urls.Count != 0)
+
+            var root = _web.Load(BaseDomain);
+            visited["/"] = true;
+            sites.Enqueue(root);
+            AllUrls.Add(BaseDomain);
+
+            while (sites.Count != 0)
             {
-                string url = urls.Dequeue();
-                
-                System.Diagnostics.Debug.Print(url);
-                AllUrls.Add(url);
-
-                if (width++ == maxWidth) break;
-
-                try {_doc = _web.Load(url); }
-                catch { continue;}
-
-                /*React to the webpage here
-                    Console.WriteLine(url);
-                */
-
-                var neighborUrls = _doc.DocumentNode.SelectNodes("//a");
+                var url = sites.Dequeue();
+                if (url == null) continue;
+                //System.Diagnostics.Debug.Print("Root loaded: " + _web.ResponseUri.AbsoluteUri);
+                var neighborUrls = url.DocumentNode.SelectNodes("//a[@href]");
                 if (neighborUrls == null) continue;
-
+                
+                List<Task> tasks = new List<Task>();
                 foreach (var neighbor in neighborUrls)
                 {
-                    if (neighbor.Attributes["href"] == null) continue;
+                    if (width++ >= maxWidth) break;
 
-                    string href = neighbor.Attributes["href"].Value;
-                    string neighborUrl = FormatHref(href);
-                    
-                    if (neighborUrl != "invalid" && !_visited.ContainsKey(neighborUrl))
+                    string href = neighbor.GetAttributeValue("href", string.Empty);
+                    if (href == string.Empty || visited.ContainsKey(href)) continue;
+                    visited[href] = true;
+
+                    tasks.Add(Task.Run(() =>
                     {
-                        _visited[neighborUrl] = true;
-                        urls.Enqueue(neighborUrl);
-                    }
+                        string neighborUrl = FormatHref(href);
+
+                        System.Diagnostics.Debug.Print(neighborUrl);
+                        if (neighborUrl != "invalid")
+                        {
+                            //System.Diagnostics.Debug.Print("Loading: " + neighborUrl);
+                            HtmlDocument doc = new HtmlDocument();
+                            try { doc = _web.Load(neighborUrl); }
+                            catch {return;}
+                            //System.Diagnostics.Debug.Print("Loaded: " + neighborUrl);
+                            AllUrls.Add(neighborUrl);
+                            
+                            StateHasChangedDelegate?.Invoke();
+                            sites.Enqueue(doc);
+                        }
+                    }));
                 }
+                await Task.WhenAll(tasks);
+                width = AllUrls.Count;
             }
         }
 

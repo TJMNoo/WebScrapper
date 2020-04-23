@@ -33,6 +33,7 @@ namespace WebScraper
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+            services.AddSingleton<TraverseService>();
             services.AddBlazoredToast();
             services.AddBlazoredSessionStorage();
 
