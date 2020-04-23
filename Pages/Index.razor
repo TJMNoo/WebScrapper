@@ -1,10 +1,14 @@
 ﻿@page "/"
+@using System
+@using System.ComponentModel
 @using System.Text.RegularExpressions;
 @using HtmlAgilityPack
 @using WebScraper.Data
 
 @inject IJSRuntime JSRuntime
 @inject IToastService toastService
+@inject TraverseService Traverse
+@inject WeatherForecastService ForecastService
 
     <div class="container" style="width: 70%;">
         <h1 class="text-center" style="margin-bottom: 40px;">Web Scraper</h1>
@@ -108,24 +112,27 @@
             <button @onclick="@(() => SelectByTagAtrValueContains(TextTag, TextAttr, TextContains))" type="button" class="btn btn-outline-success">Get</button>
         </form>
 
-        <h3 class="text-center mt-4">Result</h3>
-        <div class="form-group" style="margin-bottom:70px;">
-            <textarea @bind="ResultTags" class="form-control" id="exampleFormControlTextarea1" rows="10" readonly style="background-color: white;"></textarea>
-        </div>
-        <h5 class="form-check-label mr-2">Download result as: </h5>    
-        <div class="btn-group">
-            <button @onclick="@(() => DownloadFile("myDownload.txt"))" class="btn btn-primary mr-2">TXT</button>
-            <button @onclick="@(() => DownloadFile("myDownload.csv"))" class="btn btn-primary mr-2">CSV</button>
-            <button @onclick="@(() => DownloadFile("myDownload.json"))" class="btn btn-primary mr-2">JSON</button>
-            <button @onclick="@(() => DownloadFile("myDownload.xlsx"))" class="btn btn-primary mr-2">XLSX</button>
-        </div>
-        <ul>
-            @foreach (var link in _traverse.AllUrls)
-            {
-                <li ><a href="@link">@link</a></li>
-            }
-        </ul>
+    <h3 class="text-center mt-4">Result</h3>
+    <div class="form-group" style="margin-bottom:70px;">
+        <textarea @bind="ResultTags" class="form-control" id="exampleFormControlTextarea1" rows="10" readonly style="background-color: white;"></textarea>
     </div>
+    <div class="btn-group">
+        <button @onclick="@(()=> DownloadFile("myDownload.txt"))" class="btn btn-primary mr-2">TXT</button>
+        <button @onclick="@(()=> DownloadFile("myDownload.csv"))" class="btn btn-primary mr-2">CSV</button>
+        <button @onclick="@(()=> DownloadFile("myDownload.json"))" class="btn btn-primary mr-2">JSON</button>
+        <button @onclick="@(()=> DownloadFile("myDownload.xlsx"))" class="btn btn-primary mr-2">XLSX</button>
+    </div>
+    @if (_followThrough)
+    {
+    <ul class="list-group">
+        @for (int i = 0; i < Traverse.AllUrls.Count; i++) //don't do foreach
+        {
+            int n = Traverse.AllUrls.Count;
+            <li class="list-group-item"><a href="@Traverse.AllUrls[n-i-1]">@Traverse.AllUrls[n-i-1]</a></li>
+        }
+    </ul>
+    }
+</div>
 
 @code{
     private string Feedback { get; set; }
@@ -144,7 +151,6 @@
 
     private HtmlWeb _web = new HtmlWeb();
     private HtmlDocument _doc = new HtmlDocument();
-    private TraverseService _traverse = new TraverseService();
 
     private string _outerHtml = "";
     private List<string> _tags = new List<string>();
@@ -174,15 +180,20 @@
                 if (_followThrough && _maxWidth > 0)
                 {
                     Feedback = "Wait..";
-                    _traverse.SetUrl(PageUrl);
-                    _traverse.Bfs(_maxWidth);
+
+                    Traverse.StateHasChangedDelegate = () => InvokeAsync(StateHasChanged);
+                    Traverse.SetUrl(PageUrl);
+                    var watch = System.Diagnostics.Stopwatch.StartNew();
+                    await Traverse.BfsAsync(_maxWidth);
+                    watch.Stop();
+                    System.Diagnostics.Debug.Print("BFS Async, width " + _maxWidth + " pages = " + (float)watch.ElapsedMilliseconds / 1000 + " seconds\n");
                 }
                 Feedback = "Done.";
                 _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
                 LoadingButton = false;
                 toastService.ShowSuccess("URL is nicely formatted!");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 LoadingButton = false;
                 toastService.ShowSuccess("Error!");
@@ -245,10 +256,14 @@
             );
     }
 
-    void KeyPressLoadHtmlInput(KeyboardEventArgs e)
+    async Task KeyPressLoadHtmlInput(KeyboardEventArgs e)
     {
 
-        if (e.Key == "Enter") LoadingButton = true;
+        if (e.Key == "Enter")
+        {
+            LoadingButton = true;
+            await LoadHtml();
+        }
     }
 
     void KeyPressValuePairInput(KeyboardEventArgs e)

@@ -35,6 +35,7 @@ namespace WebScraper
             //services.AddSingleton<WeatherForecastService>();
             services.AddBlazoredToast();
             services.AddBlazoredSessionStorage();
+            services.AddSingleton<TraverseService>();
 
             services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
         }
