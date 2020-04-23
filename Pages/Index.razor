@@ -52,6 +52,7 @@
                 <input @bind="_maxWidth" @onkeyup="KeyPressLoadHtmlInput" type="text" class="form-control w-25 d-inline" id="width" />
                 <p class="d-inline">@Feedback</p>
             }
+            <button @onclick="@(()=> DownloadHtmlFile("myHtmlDownload.txt"))" class="btn btn-primary mr-2" style="float:right;">HTML download</button>
         </form>
         @if (ShowHtml)
         {
@@ -65,13 +66,20 @@
             <button @onclick="@(() => SelectByTag("a"))" class="btn btn-primary mr-2">a</button>
             <button @onclick="@(() => SelectByTag("p"))" class="btn btn-primary mr-2">p</button>
             <button @onclick="@(() => SelectByTag("h1"))" class="btn btn-primary mr-2">h1</button>
+            <button @onclick="@(() => SelectByTag("h2"))" class="btn btn-primary mr-2">h2</button>
+            <button @onclick="@(() => SelectByTag("h3"))" class="btn btn-primary mr-2">h3</button>
+            <button @onclick="@(() => SelectByTag("h4"))" class="btn btn-primary mr-2">h4</button>
+            <button @onclick="@(() => SelectByTag("h5"))" class="btn btn-primary mr-2">h5</button>
+            <button @onclick="@(() => SelectByTag("h6"))" class="btn btn-primary mr-2">h6</button>
             <button @onclick="@(() => SelectByTag("form"))" class="btn btn-primary mr-2">form</button>
             <button @onclick="@(() => SelectByTag("input"))" class="btn btn-primary mr-2">input</button>
             <button @onclick="@(() => SelectByTag("ul"))" class="btn btn-primary mr-2">ul</button>
             <button @onclick="@(() => SelectByTag("ol"))" class="btn btn-primary mr-2">ol</button>
+            <button @onclick="@(() => SelectByTag("table"))" class="btn btn-primary mr-2">table</button>
             <button @onclick="@(() => SelectByTag("head"))" class="btn btn-primary mr-2">head</button>
             <button @onclick="@(() => SelectByTag("body"))" class="btn btn-primary mr-2">body</button>
             <button @onclick="@(() => SelectByTag("title"))" class="btn btn-primary mr-2">title</button>
+            <button @onclick="@(() => SelectByTag("style"))" class="btn btn-primary mr-2">style</button>
         </div>
 
         <h4 style="margin-top: 50px;">Gets all attribute:value pairs for a given tag</h4>
@@ -104,11 +112,12 @@
         <div class="form-group" style="margin-bottom:70px;">
             <textarea @bind="ResultTags" class="form-control" id="exampleFormControlTextarea1" rows="10" readonly style="background-color: white;"></textarea>
         </div>
+        <h5 class="form-check-label mr-2">Download result as: </h5>    
         <div class="btn-group">
-            <button @onclick="@(()=> DownloadFile("myDownload.txt"))" class="btn btn-primary mr-2">TXT</button>
-            <button @onclick="@(()=> DownloadFile("myDownload.csv"))" class="btn btn-primary mr-2">CSV</button>
-            <button @onclick="@(()=> DownloadFile("myDownload.json"))" class="btn btn-primary mr-2">JSON</button>
-            <button @onclick="@(()=> DownloadFile("myDownload.xlsx"))" class="btn btn-primary mr-2">XLSX</button>
+            <button @onclick="@(() => DownloadFile("myDownload.txt"))" class="btn btn-primary mr-2">TXT</button>
+            <button @onclick="@(() => DownloadFile("myDownload.csv"))" class="btn btn-primary mr-2">CSV</button>
+            <button @onclick="@(() => DownloadFile("myDownload.json"))" class="btn btn-primary mr-2">JSON</button>
+            <button @onclick="@(() => DownloadFile("myDownload.xlsx"))" class="btn btn-primary mr-2">XLSX</button>
         </div>
         <ul>
             @foreach (var link in _traverse.AllUrls)
@@ -225,6 +234,14 @@
         await JSRuntime.InvokeAsync<object>(
             "FileSaveAs",
             fileName, ResultTags
+            );
+    }
+    
+    public async void DownloadHtmlFile(string fileName)
+    {
+        await JSRuntime.InvokeAsync<object>(
+            "FileSaveAs",
+            fileName, _outerHtml
             );
     }
 
