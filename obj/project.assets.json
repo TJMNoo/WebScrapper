@@ -6601,19 +6601,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Marko\\.nuget\\packages\\": {}
+    "C:\\Users\\Jurica\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Marko\\Desktop\\WebScrapper\\WebScraper.csproj",
+      "projectUniqueName": "C:\\Users\\Jurica\\Desktop\\novi\\WebScrapper\\WebScraper.csproj",
       "projectName": "WebScraper",
-      "projectPath": "C:\\Users\\Marko\\Desktop\\WebScrapper\\WebScraper.csproj",
-      "packagesPath": "C:\\Users\\Marko\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Marko\\Desktop\\WebScrapper\\obj\\",
+      "projectPath": "C:\\Users\\Jurica\\Desktop\\novi\\WebScrapper\\WebScraper.csproj",
+      "packagesPath": "C:\\Users\\Jurica\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Jurica\\Desktop\\novi\\WebScrapper\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Marko\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Jurica\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -6672,7 +6672,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.102\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
       }
     }
   }
