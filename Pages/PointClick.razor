@@ -1,0 +1,198 @@
+﻿@page "/pointclick"
+@using System.ComponentModel
+@using System.Text.RegularExpressions;
+@using HtmlAgilityPack
+@using NuGet.Frameworks
+@using WebScraper.Data
+
+@inject IJSRuntime JSRuntime
+@inject IToastService ToastService
+@inject TraverseService Traverse
+
+<div class="container" style="width: 70%;">
+    <h1 class="text-center" style="margin-bottom: 40px;">Web Scraper</h1>
+
+    <form onsubmit="return false;">
+        <div class="input-group pb-4">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="url-addon">URL</span>
+            </div>
+
+            <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" type="text" class="form-control" id="url_link"/>
+            <span class="input-group-btn ml-2">
+                @if (LoadingButton)
+                {
+                    <button class="btn btn-primary" type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Loading...
+                    </button>
+                }
+                else
+                {
+                    <button @onclick="@LoadHtml" class="btn btn-outline-primary" type="button">Get url!</button>
+                }
+            </span>
+        </div>
+        <div class="form-check form-check-inline mt-2">
+            <label for="show_html" class="form-check-label mr-2">Show HTML</label>
+            <input type="checkbox" class="form-check-input pull-right" id="show_html" @bind="ShowHtml" style="width: 15px; height: 15px;"/>
+
+            <label for="follow_through" class="form-check-label mr-2">Follow through</label>
+            <input @bind="FollowThrough" type="checkbox" class="form-check-input pull-right" id="follow_through" style="width: 15px; height: 15px;"/>
+        </div>
+        @if (FollowThrough)
+        {
+            <label for="width" class="form-check-label mr-2">Width/Depth: </label>
+            <input @bind="MaxWidth" @onkeyup="KeyPressLoadHtmlInput" type="text" class="form-control w-25 d-inline" id="width"/>
+            <p class="d-inline">@Feedback</p>
+        }
+        <button @onclick="@(() => DownloadHtmlFile("myHtmlDownload.txt"))" class="btn btn-primary mr-2" style="float:right;">HTML download</button>
+    </form>
+    @if (ShowHtml)
+    {
+        <iframe src="@PageUrl" height="1000px" width="100%" style="border: none; margin-top: 100px;"></iframe>
+    }
+    @if (FollowThrough)
+    {
+
+    }
+</div>
+
+
+
+@code{
+    private string Feedback { get; set; }
+    private string PairTag { get; set; }
+    private string TextTag { get; set; }
+    private string TextAttr { get; set; }
+    private string TextContains { get; set; }
+    private string PageUrl { get; set; }
+    private string ResultTags { get; set; } = "";
+    private bool ShowHtml { get; set; } = true;
+    private bool LoadingButton { get; set; } = false;
+    private bool FollowThrough { get; set; } = true;
+    private int MaxWidth { get; set; } = 20;
+
+    private HtmlWeb _web = new HtmlWeb();
+    private HtmlDocument _doc = new HtmlDocument();
+
+    private string _outerHtml = "";
+    private List<string> _tags = new List<string>();
+
+    protected async Task LoadHtml()
+    {
+        LoadingButton = true;
+        await Task.Delay(TimeSpan.FromSeconds(0.1));
+
+
+        if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
+        Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        if (checkIfValid.IsMatch(PageUrl))
+        {
+            Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            if (!checkIfHttps.IsMatch(PageUrl))
+            {
+                PageUrl = PageUrl.Insert(0, "https://");
+            }
+            try
+            {
+                _doc = _web.Load(PageUrl);
+                ToastService.ShowSuccess("URL is nicely formatted!");
+                if (FollowThrough && MaxWidth > 0)
+                {
+                    Feedback = "Wait..";
+                    Traverse.StateHasChangedDelegate = () => InvokeAsync(StateHasChanged);
+                    Traverse.SetUrl(PageUrl);
+                    var watch = System.Diagnostics.Stopwatch.StartNew();
+                    await Traverse.BfsAsync(MaxWidth);
+                    watch.Stop();
+                    System.Diagnostics.Debug.Print("BFS Async, width " + MaxWidth + " pages = " + (float) watch.ElapsedMilliseconds / 1000 + " seconds\n");
+                }
+                Feedback = "Done.";
+                _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
+                LoadingButton = false;
+            }
+            catch (Exception e)
+            {
+                LoadingButton = false;
+                ToastService.ShowError("Error!");
+
+                _outerHtml = e.Message;
+            }
+        }
+        else
+        {
+            LoadingButton = false;
+            ToastService.ShowError("URL is not valid!");
+        }
+    }
+
+    protected void SelectByTag(string tag)
+    {
+        SelectorService selector = new SelectorService(_doc);
+        _tags = selector.FilterTag(tag);
+        ResultTags = "";
+        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+        if (ResultTags.Length == 0) return;
+
+        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+    }
+
+    protected void SelectByTagAtrValuePairs(string tag)
+    {
+        SelectorService selector = new SelectorService(_doc);
+        _tags = selector.FilterTagAtrValuePairs(tag);
+        ResultTags = "";
+        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+        if (ResultTags.Length == 0) return;
+        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+    }
+
+    protected void SelectByTagAtrValueContains(string tag, string attribute, string value)
+    {
+        SelectorService selector = new SelectorService(_doc);
+        _tags = selector.FilterTagAtrValueContains(tag, attribute, value);
+        ResultTags = "";
+        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+        if (ResultTags.Length == 0) return;
+        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+    }
+
+    public async void DownloadFile(string fileName)
+    {
+        await JSRuntime.InvokeAsync<object>(
+            "FileSaveAs",
+            fileName, ResultTags
+            );
+    }
+
+    public async void DownloadHtmlFile(string fileName)
+    {
+        await JSRuntime.InvokeAsync<object>(
+            "FileSaveAs",
+            fileName, _outerHtml
+            );
+    }
+
+    async Task KeyPressLoadHtmlInput(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            LoadingButton = true;
+            await LoadHtml();
+        }
+    }
+
+    void KeyPressValuePairInput(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") SelectByTagAtrValuePairs(PairTag);
+    }
+
+    void KeyPressValueContainsInput(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") SelectByTagAtrValueContains(TextTag, TextAttr, TextContains);
+    }
+
+}
