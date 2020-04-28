@@ -1,8 +1,8 @@
 ﻿@page "/"
 @using System.Text.RegularExpressions;
 @using HtmlAgilityPack
+@using OpenQA.Selenium.Chrome
 @using WebScraper.Data
-
 @inject IJSRuntime JSRuntime
 @inject IToastService ToastService
 @inject TraverseService Traverse
@@ -170,7 +170,9 @@
             }
             try
             {
-                _doc = _web.Load(PageUrl);
+                var driver = new ChromeDriver();
+                driver.Navigate().GoToUrl(PageUrl);
+                driver.ExecuteScript("return document.body");
                 ToastService.ShowSuccess("URL is nicely formatted!");
                 if (FollowThrough && MaxWidth > 0)
                 {
@@ -183,7 +185,8 @@
                     System.Diagnostics.Debug.Print("BFS Async, width " + MaxWidth + " pages = " + (float) watch.ElapsedMilliseconds / 1000 + " seconds\n");
                 }
                 Feedback = "Done.";
-                _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
+                _outerHtml = driver.PageSource;
+                //_outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
                 LoadingButton = false;
             }
             catch (Exception e)
@@ -266,5 +269,4 @@
     {
         if (e.Key == "Enter") SelectByTagAtrValueContains(TextTag, TextAttr, TextContains);
     }
-
 }
