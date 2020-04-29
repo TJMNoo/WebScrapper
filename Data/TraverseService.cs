@@ -40,7 +40,7 @@ namespace WebScraper.Data
 
             _web.PreRequest = delegate (HttpWebRequest webRequest)
             {
-                webRequest.Timeout = 1000;
+                webRequest.Timeout = 10000;
                 return true;
             };
         }
@@ -77,37 +77,46 @@ namespace WebScraper.Data
                 //System.Diagnostics.Debug.Print("Root loaded: " + _web.ResponseUri.AbsoluteUri);
                 var neighborUrls = url.DocumentNode.SelectNodes("//a[@href]");
                 if (neighborUrls == null) continue;
-                
-                List<Task> tasks = new List<Task>();
-                foreach (var neighbor in neighborUrls)
+
+                int visitedNeighborsCount = 0;
+                while (width < maxWidth && visitedNeighborsCount < neighborUrls.Count)
                 {
-                    if (width++ >= maxWidth) break;
-
-                    string href = neighbor.GetAttributeValue("href", string.Empty);
-                    if (href == string.Empty || visited.ContainsKey(href)) continue;
-                    visited[href] = true;
-
-                    tasks.Add(Task.Run(() =>
+                    List<Task> tasks = new List<Task>();
+                    for (int i = visitedNeighborsCount; i < neighborUrls.Count; i++, visitedNeighborsCount++)
                     {
-                        string neighborUrl = FormatHref(href);
+                        HtmlNode neighbor = neighborUrls[i];
+                        if (width++ >= maxWidth) break;
 
-                        System.Diagnostics.Debug.Print(neighborUrl);
-                        if (neighborUrl != "invalid")
+                        string href = neighbor.GetAttributeValue("href", string.Empty);
+                        if (href == string.Empty || visited.ContainsKey(href)) continue;
+                        visited[href] = true;
+
+                        tasks.Add(Task.Run(() =>
                         {
-                            //System.Diagnostics.Debug.Print("Loading: " + neighborUrl);
-                            HtmlDocument doc = new HtmlDocument();
-                            try { doc = _web.Load(neighborUrl); }
-                            catch {return;}
-                            //System.Diagnostics.Debug.Print("Loaded: " + neighborUrl);
-                            AllUrls.Add(neighborUrl);
-                            
-                            StateHasChangedDelegate?.Invoke();
-                            sites.Enqueue(doc);
-                        }
-                    }));
+                            string neighborUrl = FormatHref(href);
+
+                            System.Diagnostics.Debug.Print(neighborUrl);
+                            if (neighborUrl != "invalid")
+                            {
+                                //System.Diagnostics.Debug.Print("Loading: " + neighborUrl);
+                                HtmlDocument doc = new HtmlDocument();
+                                try { doc = _web.Load(neighborUrl); }
+                                catch { return; }
+
+                                if (_web.StatusCode != HttpStatusCode.OK) return;
+
+                                //System.Diagnostics.Debug.Print("Loaded: " + neighborUrl);
+                                AllUrls.Add(neighborUrl);
+
+                                StateHasChangedDelegate?.Invoke();
+                                sites.Enqueue(doc);
+                            }
+                        }));
+                    }
+
+                    await Task.WhenAll(tasks);
+                    width = AllUrls.Count;
                 }
-                await Task.WhenAll(tasks);
-                width = AllUrls.Count;
             }
         }
 
