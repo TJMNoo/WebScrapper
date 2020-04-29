@@ -1,0 +1,33 @@
+﻿@page "/select"
+
+@using HtmlAgilityPack
+
+@inject IJSRuntime JSRuntime
+
+<h1>Under Construction!</h1>
+
+<div class="row">
+    <div class="col-8 border border-dark" id="selector">
+        @((MarkupString)doc.DocumentNode.InnerHtml)
+    </div>
+    <div class="col-4 border border-dark" id="selector-results"></div>
+</div>
+
+@code {
+    private HtmlWeb web = new HtmlWeb();
+    private HtmlDocument doc = new HtmlDocument();
+
+    protected override async Task OnInitializedAsync()
+    {
+        doc = web.Load("https://en.wikipedia.org/wiki/Gaming");
+        await JSRuntime.InvokeVoidAsync("consoleLog", doc.DocumentNode.InnerHtml);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("startSelector");
+        }
+    }
+}

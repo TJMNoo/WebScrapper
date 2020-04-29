@@ -10,3 +10,13 @@ function FileSaveAs(filename, fileContent) {
 function consoleLog(message) {
     console.log(message);
 }
+
+function startSelector() {
+    document.getElementById('selector').addEventListener('click', () => {
+        let element = event.target;
+        document.getElementById('selector-results').append(element.innerHTML);
+        event.target.style = 'border: 2px solid red';
+        event.preventDefault();
+        console.log("target", element);
+    })
+}
