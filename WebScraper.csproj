@@ -9,6 +9,9 @@
     <PackageReference Include="Blazored.Toast" Version="2.0.9" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.23" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+    <PackageReference Include="Selenium.Support" Version="3.141.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="81.0.4044.6900" />
   </ItemGroup>
 
 </Project>
