@@ -1,7 +1,9 @@
 ﻿@page "/"
 @using System.Text.RegularExpressions;
 @using HtmlAgilityPack
+@using OpenQA.Selenium
 @using OpenQA.Selenium.Chrome
+@using OpenQA.Selenium.Support.UI
 @using WebScraper.Data
 @inject IJSRuntime JSRuntime
 @inject IToastService ToastService
@@ -145,7 +147,6 @@
     private bool FollowThrough { get; set; } = true;
     private int MaxWidth { get; set; } = 20;
 
-    private HtmlWeb _web = new HtmlWeb();
     private HtmlDocument _doc = new HtmlDocument();
 
     private string _outerHtml = "";
@@ -170,9 +171,17 @@
             }
             try
             {
-                var driver = new ChromeDriver();
+                //do not open chrome
+                ChromeOptions options = new ChromeOptions();
+                options.AddArgument("headless");
+                //no chrome driver console
+                ChromeDriverService driverService = ChromeDriverService.CreateDefaultService();
+                driverService.HideCommandPromptWindow = true;
+                ChromeDriver driver = new ChromeDriver(driverService, options);
                 driver.Navigate().GoToUrl(PageUrl);
-                driver.ExecuteScript("return document.body");
+                WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0,0,10));
+                wait.Until(driver =>((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                _doc.LoadHtml(driver.PageSource);
                 ToastService.ShowSuccess("URL is nicely formatted!");
                 if (FollowThrough && MaxWidth > 0)
                 {
@@ -186,7 +195,6 @@
                 }
                 Feedback = "Done.";
                 _outerHtml = driver.PageSource;
-                //_outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
                 LoadingButton = false;
             }
             catch (Exception e)
