@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OpenQA.Selenium.Chrome;
 using WebScraper.Data;
 using WebScraper.Data.Authentication;
 
@@ -36,6 +37,7 @@ namespace WebScraper
             services.AddBlazoredToast();
             services.AddBlazoredSessionStorage();
             services.AddSingleton<TraverseService>();
+            services.AddSingleton<ChromeService>();
 
             services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
         }

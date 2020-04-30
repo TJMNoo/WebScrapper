@@ -6693,11 +6693,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Jurica\\Desktop\\noviii\\WebScrapper\\WebScraper.csproj",
+      "projectUniqueName": "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\WebScraper.csproj",
       "projectName": "WebScraper",
-      "projectPath": "C:\\Users\\Jurica\\Desktop\\noviii\\WebScrapper\\WebScraper.csproj",
-      "packagesPath": "C:\\Users\\Jurica\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Jurica\\Desktop\\noviii\\WebScrapper\\obj\\",
+      "projectPath": "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\WebScraper.csproj",
+      "packagesPath": "C:\\Users\\nikki\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
