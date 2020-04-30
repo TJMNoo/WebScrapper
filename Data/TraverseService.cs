@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -15,6 +16,9 @@ namespace WebScraper.Data
         private string WebsiteName { get; set; }
         private HtmlWeb _web = new HtmlWeb();
         private HtmlDocument _doc = new HtmlDocument();
+
+        private Dictionary<Regex, bool> RobotsDisallowedUrls { get; set; } = new Dictionary<Regex, bool>();
+        private Dictionary<Regex, bool> RobotsAllowedUrls { get; set; } = new Dictionary<Regex, bool>();
         public List<string> AllUrls { get; set; } = new List<string>();
 
         //parameter url expects http prefix
@@ -43,11 +47,74 @@ namespace WebScraper.Data
                 webRequest.Timeout = 10000;
                 return true;
             };
+
+            LoadRobotsTxt();
+        }
+
+        private Regex ConvertRobotsCommandToRegex(string robotsCommand)
+        {
+            string regexStr = "";
+            for (int i = 0; i < robotsCommand.Length; i++)
+            {
+                if (robotsCommand[i] == '?' || robotsCommand[i] == '/' || robotsCommand[i] == '.') regexStr += "\\" + robotsCommand[i];
+                else if (robotsCommand[i] == '*') regexStr += "[a-zA-Z0-9]" + robotsCommand[i];
+                else regexStr += robotsCommand[i];
+            }
+            Regex reg = new Regex(@regexStr, RegexOptions.Compiled);
+            return reg;
+        }
+
+        private void LoadRobotsTxt()
+        {
+            RobotsDisallowedUrls.Clear();
+            RobotsAllowedUrls.Clear();
+
+            WebClient client = new WebClient();
+            client.Headers.Set("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0");
+            string str = client.DownloadString(BaseDomain + "/robots.txt");
+            if (string.IsNullOrEmpty(str)) return;
+
+            string[] commands = str.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+
+            bool foundUserAgent = false;
+            foreach (var command in commands)
+            {
+                // System.Diagnostics.Debug.Print(command);
+                string[] parts = command.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                if (parts[0].ToLower() == "user-agent:" && parts[1] == "*") foundUserAgent = true;
+                else if (foundUserAgent && parts[0] == "Disallow:")
+                {
+                    Regex reg = ConvertRobotsCommandToRegex(parts[1]);
+                    RobotsDisallowedUrls[reg] = true;
+                }
+                else if (foundUserAgent && parts[0] == "Allow:")
+                {
+                    Regex reg = ConvertRobotsCommandToRegex(parts[1]);
+                    RobotsAllowedUrls[reg] = true;
+                }
+                else if (foundUserAgent && parts[0].ToLower() == "user-agent:") break;
+            }
+        }
+
+        private bool DisallowedRobotsTxt(string href)
+        {
+            foreach (var entry in RobotsDisallowedUrls)
+                if (entry.Key.IsMatch(href)) return true;
+            return false;
+        }
+
+        private bool AllowedRobotsTxt(string href)
+        {
+            foreach(var entry in RobotsAllowedUrls)
+                if (entry.Key.IsMatch(href)) return true;
+            return false;
         }
 
         private string FormatHref(string href)
         {
             if (string.IsNullOrEmpty(href) || href[0]=='#' || href.Contains(" ")) return "invalid";
+            bool allowed = AllowedRobotsTxt(href);
+            if (!allowed && DisallowedRobotsTxt(href)) return "robots.txt disallowed";
 
             Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             if (checkIfHttps.IsMatch(href) && href.Contains(WebsiteName)) return href;
@@ -96,7 +163,7 @@ namespace WebScraper.Data
                             string neighborUrl = FormatHref(href);
 
                             System.Diagnostics.Debug.Print(neighborUrl);
-                            if (neighborUrl != "invalid")
+                            if (neighborUrl != "invalid" && neighborUrl != "robots.txt disallowed")
                             {
                                 //System.Diagnostics.Debug.Print("Loading: " + neighborUrl);
                                 HtmlDocument doc = new HtmlDocument();
