@@ -6606,11 +6606,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Timon\\RiderProjects\\WS\\WebScrapper\\WebScraper.csproj",
+      "projectUniqueName": "C:\\Users\\Timon\\RiderProjects\\WebScrapper\\WebScraper.csproj",
       "projectName": "WebScraper",
-      "projectPath": "C:\\Users\\Timon\\RiderProjects\\WS\\WebScrapper\\WebScraper.csproj",
+      "projectPath": "C:\\Users\\Timon\\RiderProjects\\WebScrapper\\WebScraper.csproj",
       "packagesPath": "C:\\Users\\Timon\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Timon\\RiderProjects\\WS\\WebScrapper\\obj\\",
+      "outputPath": "C:\\Users\\Timon\\RiderProjects\\WebScrapper\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Timon\\AppData\\Roaming\\NuGet\\NuGet.Config"
