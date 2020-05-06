@@ -20,7 +20,9 @@ namespace WebScraper.Data
             driver.Navigate().GoToUrl(pageUrl);
             WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0,0,5));
             wait.Until(driver =>((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-            return driver.PageSource;
+            string source = driver.PageSource;
+            driver.Quit();
+            return source;
         }
     }
 }

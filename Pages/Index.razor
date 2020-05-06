@@ -2,6 +2,8 @@
 @using System.Text.RegularExpressions;
 @using HtmlAgilityPack
 @using WebScraper.Data
+@using System.Security.Policy
+@using OpenQA.Selenium
 @inject IJSRuntime JSRuntime
 @inject IToastService ToastService
 @inject TraverseService Traverse
@@ -124,8 +126,9 @@
             @for (int i = 0; i < Traverse.AllUrls.Count; i++) //don't do foreach
             {
                 int n = Traverse.AllUrls.Count;
-                <li class="list-group-item">
-                    <a href="@Traverse.AllUrls[n - i - 1]">@Traverse.AllUrls[n - i - 1]</a>
+                string urlString = Traverse.AllUrls[n - i - 1];
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="@Traverse.AllUrls[n - i - 1]">@Traverse.AllUrls[n - i - 1]</a><span @onclick="@(() => SaveUrl(urlString + ".txt", urlString))" class="badge badge-primary badge-pill">download txt</span>
                 </li>
             }
         </ul>
@@ -233,6 +236,14 @@
         ResultTags = ResultTags.Remove(ResultTags.Length - 2);
     }
 
+    public async void SaveUrl(string fileName, string url)
+    {
+        PageSource = Chrome.Initialize(url);
+        await JSRuntime.InvokeAsync<object>(
+            "FileSaveAs",
+            fileName, PageSource
+            );
+    }
     public async void DownloadFile(string fileName)
     {
         await JSRuntime.InvokeAsync<object>(
