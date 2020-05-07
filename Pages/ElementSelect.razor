@@ -3,6 +3,7 @@
 @using HtmlAgilityPack
 
 @inject IJSRuntime JSRuntime
+@inject IToastService ToastService
 
 <div class="input-group pb-4">
     <div class="input-group-prepend">
@@ -52,14 +53,24 @@
 
     protected async Task LoadHtml()
     {
-        Loading = true;
-        await JSRuntime.InvokeVoidAsync("resetSelected");
-        await UpdateSelectedElements();
-        doc = web.Load(PageUrl);
-        FirstLoad = true;
-        StateHasChanged();
-        await JSRuntime.InvokeVoidAsync("startSelector", DotNetObjectReference.Create(this));
-        Loading = false;
+        try
+        {
+            Loading = true;
+            await JSRuntime.InvokeVoidAsync("resetSelected");
+            await UpdateSelectedElements();
+            doc = web.Load(PageUrl);
+            FirstLoad = true;
+            StateHasChanged();
+            await JSRuntime.InvokeVoidAsync("startSelector", DotNetObjectReference.Create(this));
+        }
+        catch (Exception err)
+        {
+            ToastService.ShowError(err.Message);
+        }
+        finally
+        {
+            Loading = false;
+        }
     }
 
     protected async Task RemoveSelectedElement(String element)
