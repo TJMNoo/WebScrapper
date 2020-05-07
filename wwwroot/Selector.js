@@ -2,14 +2,12 @@
 let selectedElements = []
 
 function startSelector(dotnetInstance) {
-    document.getElementById('selector').contentWindow.document.addEventListener('click', () => {
+    var frame = document.getElementById('selector')
+    var frameDoc = frame.contentDocument ? frame.contentDocument : frame.contentWindow.document
+    frameDoc.addEventListener('click', () => {
         event.preventDefault()
-
-        console.log('target', event)
-
         let element = event.target
         let index = selectedElements.findIndex(el => el == element)
-
         if (index != -1) {
             element.style = selected[index].style
             selected.splice(index, 1)
@@ -43,4 +41,3 @@ function resetSelected() {
 function consoleLog(message) {
     console.log(message)
 }
-

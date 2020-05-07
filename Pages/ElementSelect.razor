@@ -30,7 +30,7 @@
     <div class="col-8 border border-dark">
         @if (FirstLoad)
         {
-            <iframe allow-event srcdoc="@doc.DocumentNode.OuterHtml" id="selector" style="width: 100%; height: 90vh;"></iframe>
+            <iframe @onload="LoadSelector" srcdoc="@doc.DocumentNode.OuterHtml" id="selector" style="width: 100%; height: 90vh;"></iframe>
         }
     </div>
     <div class="col-4 border border-dark" @onclick="UpdateSelectedElements">
@@ -48,8 +48,8 @@
     private HtmlDocument doc = new HtmlDocument();
     private List<String> selectedElements = new List<String>();
     private string PageUrl { get; set; }
-    private bool FirstLoad { get; set; } = false;
     private bool Loading { get; set; } = false;
+    private bool FirstLoad { get; set; } = false;
 
     protected async Task LoadHtml()
     {
@@ -61,16 +61,20 @@
             doc = web.Load(PageUrl);
             FirstLoad = true;
             StateHasChanged();
-            await JSRuntime.InvokeVoidAsync("startSelector", DotNetObjectReference.Create(this));
         }
-        catch (Exception err)
+        catch (Exception error)
         {
-            ToastService.ShowError(err.Message);
+            ToastService.ShowError(error.Message);
         }
         finally
         {
             Loading = false;
         }
+    }
+
+    protected async Task LoadSelector()
+    {
+        await JSRuntime.InvokeVoidAsync("startSelector", DotNetObjectReference.Create(this));
     }
 
     protected async Task RemoveSelectedElement(String element)
