@@ -18,7 +18,7 @@ function startSelector(dotnetInstance) {
         else {
             selectedElements.push(element)
             selected.push(element.outerHTML)
-            element.style = 'border: 2px solid red !important; background-color: darkred !important'
+            element.style = 'border: 2px solid MediumTurquoise !important; background-color: PaleTurquoise !important'
         }
         dotnetInstance.invokeMethodAsync('UpdateSelectedElements')
     })
@@ -33,6 +33,11 @@ function removeSelected(element) {
 
 function getSelected() {
     return selected
+}
+
+function resetSelected() {
+    selected = []
+    selectedElements = []
 }
 
 function consoleLog(message) {

@@ -53,9 +53,11 @@
     protected async Task LoadHtml()
     {
         Loading = true;
-        doc = web.Load("https://github.com/");
+        await JSRuntime.InvokeVoidAsync("resetSelected");
+        await UpdateSelectedElements();
+        doc = web.Load(PageUrl);
         FirstLoad = true;
-        await Task.Delay(TimeSpan.FromSeconds(0.1));
+        StateHasChanged();
         await JSRuntime.InvokeVoidAsync("startSelector", DotNetObjectReference.Create(this));
         Loading = false;
     }
@@ -69,7 +71,6 @@
     [JSInvokable]
     public async Task UpdateSelectedElements()
     {
-        await JSRuntime.InvokeVoidAsync("consoleLog", "click");
         selectedElements = (await JSRuntime.InvokeAsync<String[]>("getSelected")).OfType<String>().ToList();
         StateHasChanged();
     }
