@@ -20,6 +20,7 @@ namespace WebScraper.Data
         private Dictionary<Regex, bool> RobotsDisallowedUrls { get; set; } = new Dictionary<Regex, bool>();
         private Dictionary<Regex, bool> RobotsAllowedUrls { get; set; } = new Dictionary<Regex, bool>();
         public List<string> AllUrls { get; set; } = new List<string>();
+        public List<string> BusinessLogicResults { get; set; } = new List<string>();
 
         //parameter url expects http prefix
         public void SetUrl(string url)
@@ -171,6 +172,15 @@ namespace WebScraper.Data
                                 catch { return; }
 
                                 if (_web.StatusCode != HttpStatusCode.OK) return;
+
+                                BusinessLogicService businessLogic = new BusinessLogicService(doc);
+                                Dictionary<string, string> rules = new Dictionary<string, string>();
+                                rules["h1"] = "all";
+                                rules["p"] = "all";
+                                rules["img"] = "all";
+                                rules["aHrefContains"] = "www.";
+                                var results = businessLogic.Apply(rules);
+                                BusinessLogicResults.AddRange(results);
 
                                 //System.Diagnostics.Debug.Print("Loaded: " + neighborUrl);
                                 AllUrls.Add(neighborUrl);
