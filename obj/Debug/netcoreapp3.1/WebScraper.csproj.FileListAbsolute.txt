@@ -1039,3 +1039,5 @@ C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\WebScraper.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\staticwebassets\WebScraper.StaticWebAssets.Manifest.cache
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\staticwebassets\WebScraper.StaticWebAssets.xml
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\WebScraper.genruntimeconfig.cache
+C:\Users\Leon Vila\Documents\GitHub\TrashScrapper\WebScrapper\bin\Debug\netcoreapp3.1\WebDriver.Support.dll
+C:\Users\Leon Vila\Documents\GitHub\TrashScrapper\WebScrapper\bin\Debug\netcoreapp3.1\WebDriver.dll

@@ -4,24 +4,51 @@
 
 @inject IJSRuntime JSRuntime
 
-<h1>Under Construction!</h1>
+<div class="input-group pb-4">
+    <div class="input-group-prepend">
+        <span class="input-group-text" id="url-addon">URL</span>
+    </div>
+
+    <input @bind="PageUrl" type="text" class="form-control" />
+    <span class="input-group-btn ml-2">
+        @if (Loading)
+        {
+            <button class="btn btn-primary" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Loading...
+            </button>
+        }
+        else
+        {
+            <button @onclick="@LoadHtml" class="btn btn-outline-primary" type="button">Get url!</button>
+        }
+    </span>
+</div>
 
 <div class="row">
-    <div class="col-8 border border-dark" id="selector">
-        @((MarkupString)doc.DocumentNode.InnerHtml)
+    <div @onclick="UpdateSelectedElements" class="col-8 border border-dark" id="selector">
+        @if (FirstLoad)
+        {
+            @((MarkupString)doc.DocumentNode.OuterHtml)
+        }
     </div>
-    <div class="col-4 border border-dark" id="selector-results"></div>
+    <div class="col-4 border border-dark">
+        <ul class="list-group" id="selector-results">
+            @foreach (var element in selectedElements)
+            {
+                <li class="list-group-item">@element<button @onclick="@(() => RemoveSelectedElement(element))" type="button" class="btn btn-danger float-right">X</button></li>
+            }
+        </ul>
+    </div>
 </div>
 
 @code {
     private HtmlWeb web = new HtmlWeb();
     private HtmlDocument doc = new HtmlDocument();
-
-    protected override async Task OnInitializedAsync()
-    {
-        doc = web.Load("https://en.wikipedia.org/wiki/Gaming");
-        await JSRuntime.InvokeVoidAsync("consoleLog", doc.DocumentNode.InnerHtml);
-    }
+    private List<String> selectedElements = new List<String>();
+    private string PageUrl { get; set; }
+    private bool FirstLoad { get; set; } = false;
+    private bool Loading { get; set; } = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -29,5 +56,25 @@
         {
             await JSRuntime.InvokeVoidAsync("startSelector");
         }
+    }
+
+    protected async Task LoadHtml()
+    {
+        await JSRuntime.InvokeVoidAsync("consoleLog");
+        Loading = true;
+        doc = web.Load(PageUrl);
+        FirstLoad = true;
+        Loading = false;
+    }
+
+    protected async Task RemoveSelectedElement(String element)
+    {
+        await JSRuntime.InvokeVoidAsync("removeSelected", element);
+        await UpdateSelectedElements();
+    }
+
+    protected async Task UpdateSelectedElements()
+    {
+        selectedElements = (await JSRuntime.InvokeAsync<String[]>("getSelected")).OfType<String>().ToList();
     }
 }
