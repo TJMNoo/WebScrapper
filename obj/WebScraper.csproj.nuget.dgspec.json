@@ -39,6 +39,10 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "ActionScheduler": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            },
             "Blazored.SessionStorage": {
               "target": "Package",
               "version": "[1.0.11, )"

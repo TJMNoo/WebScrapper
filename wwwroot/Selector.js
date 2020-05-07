@@ -1,14 +1,12 @@
-﻿function consoleLog(message) {
-    console.log(message)
-}
-
-let selected = []
+﻿let selected = []
 let selectedElements = []
 
-function startSelector() {
-    document.getElementById('selector').addEventListener('click', () => {
+function startSelector(dotnetInstance) {
+    document.getElementById('selector').contentWindow.document.addEventListener('click', () => {
         event.preventDefault()
-             
+
+        console.log('target', event)
+
         let element = event.target
         let index = selectedElements.findIndex(el => el == element)
 
@@ -20,8 +18,9 @@ function startSelector() {
         else {
             selectedElements.push(element)
             selected.push(element.outerHTML)
-            element.style = 'border: 2px solid red !important'
+            element.style = 'border: 2px solid red !important; background-color: darkred !important'
         }
+        dotnetInstance.invokeMethodAsync('UpdateSelectedElements')
     })
 }
 
@@ -35,3 +34,8 @@ function removeSelected(element) {
 function getSelected() {
     return selected
 }
+
+function consoleLog(message) {
+    console.log(message)
+}
+

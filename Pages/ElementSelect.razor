@@ -26,13 +26,13 @@
 </div>
 
 <div class="row">
-    <div @onclick="UpdateSelectedElements" class="col-8 border border-dark" id="selector">
+    <div class="col-8 border border-dark">
         @if (FirstLoad)
         {
-            @((MarkupString)doc.DocumentNode.OuterHtml)
+            <iframe allow-event srcdoc="@doc.DocumentNode.OuterHtml" id="selector" style="width: 100%; height: 90vh;"></iframe>
         }
     </div>
-    <div class="col-4 border border-dark">
+    <div class="col-4 border border-dark" @onclick="UpdateSelectedElements">
         <ul class="list-group" id="selector-results">
             @foreach (var element in selectedElements)
             {
@@ -50,20 +50,13 @@
     private bool FirstLoad { get; set; } = false;
     private bool Loading { get; set; } = false;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await JSRuntime.InvokeVoidAsync("startSelector");
-        }
-    }
-
     protected async Task LoadHtml()
     {
-        await JSRuntime.InvokeVoidAsync("consoleLog");
         Loading = true;
-        doc = web.Load(PageUrl);
+        doc = web.Load("https://github.com/");
         FirstLoad = true;
+        await Task.Delay(TimeSpan.FromSeconds(0.1));
+        await JSRuntime.InvokeVoidAsync("startSelector", DotNetObjectReference.Create(this));
         Loading = false;
     }
 
@@ -73,8 +66,11 @@
         await UpdateSelectedElements();
     }
 
-    protected async Task UpdateSelectedElements()
+    [JSInvokable]
+    public async Task UpdateSelectedElements()
     {
+        await JSRuntime.InvokeVoidAsync("consoleLog", "click");
         selectedElements = (await JSRuntime.InvokeAsync<String[]>("getSelected")).OfType<String>().ToList();
+        StateHasChanged();
     }
 }
