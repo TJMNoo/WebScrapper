@@ -899,3 +899,5 @@ C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\staticwebassets
 C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.dll
 C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.pdb
 C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.genruntimeconfig.cache
+C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Scrape.razor.g.cs
+C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\Scrape.razor.g.cs

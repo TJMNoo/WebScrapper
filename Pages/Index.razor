@@ -7,130 +7,68 @@
 @inject IToastService ToastService
 @inject TraverseService Traverse
 
-<div class="container" style="width: 70%;">
-    <h1 class="text-center" style="margin-bottom: 40px;">Web Scraper</h1>
-
-    <form onsubmit="return false;">
-        <div class="input-group pb-4">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="url-addon">URL</span>
+@if (!_loaded)
+{
+    <div class="container">
+        <h1 class="text-center" style="margin-top: 80px; font-size: 70px; font-weight: 700;">Website Traversal</h1>
+        <h3 class="text-center" style="margin-top: 20px; margin-bottom: 50px; color: gray;">Apply your own business logic</h3>
+        <form onsubmit="return false;">
+            <div class="form-group text-center">
+                <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" class="form-control form-control-lg text-center mx-auto" type="text" placeholder="Enter website URL" style="font-size: 40px;padding: 15px; height: auto; width: 80%;" />
+                <div class="form-check form-check-inline mt-4 mr-4">
+                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" style="width: 25px; height: 25px;">
+                    <label class="form-check-label" for="inlineCheckbox1" style="font-size: 25px;">Titles</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="inlineCheckbox2" style="width: 25px; height: 25px;">
+                    <label class="form-check-label" for="inlineCheckbox2" style="font-size: 25px;">Paragraphs</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="inlineCheckbox2" style="width: 25px; height: 25px;">
+                    <label class="form-check-label" for="inlineCheckbox2" style="font-size: 25px;">Images</label>
+                </div>
+                <br />
+                <button @onclick="@LoadHtml" class="btn btn-primary btn-lg" type="button" style="font-size: 32px; padding: 18px; height: auto; margin-top: 40px; border-radius: 5%;">Scrape</button>
             </div>
-
-            <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" type="text" class="form-control" id="url_link"/>
-            <span class="input-group-btn ml-2">
-                @if (LoadingButton)
-                {
-                    <button class="btn btn-primary" type="button" disabled>
-                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                        Loading...
-                    </button>
-                }
-                else
-                {
-                    <button @onclick="@LoadHtml" class="btn btn-outline-primary" type="button">Get url!</button>
-                }
-            </span>
-        </div>
-        <div class="form-check form-check-inline mt-2">
-            <label for="show_html" class="form-check-label mr-2">Show HTML</label>
-            <input type="checkbox" class="form-check-input pull-right" id="show_html" @bind="ShowHtml" style="width: 15px; height: 15px;"/>
-
-            <label for="follow_through" class="form-check-label mr-2">Follow through</label>
-            <input @bind="FollowThrough" type="checkbox" class="form-check-input pull-right" id="follow_through" style="width: 15px; height: 15px;"/>
-        </div>
-        @if (FollowThrough)
+        </form>
+        @if (_feedback.Length > 0)
         {
-            <label for="width" class="form-check-label mr-2">Width/Depth: </label>
-            <input @bind="MaxWidth" @onkeyup="KeyPressLoadHtmlInput" type="text" class="form-control w-25 d-inline" id="width"/>
-            <p class="d-inline">@Feedback</p>
+            <h3 style="margin-top: 20px; color: red; text-align: center;">@_feedback</h3>
         }
-        <button @onclick="@(() => DownloadHtmlFile("myHtmlDownload.txt"))" class="btn btn-primary mr-2" style="float:right;">HTML download</button>
-    </form>
-    @if (ShowHtml)
-    {
-        <h3 class="text-center mt-4">Preview</h3>
-        <div class="form-group">
-            <textarea @bind="_outerHtml" class="form-control" id="exampleFormControlTextarea1" rows="10" readonly style="background-color: white;"></textarea>
-        </div>
-    }
-    <div class="btn-group">
-        <button @onclick="@(() => SelectByTag("img"))" class="btn btn-primary mr-2">img</button>
-        <button @onclick="@(() => SelectByTag("a"))" class="btn btn-primary mr-2">a</button>
-        <button @onclick="@(() => SelectByTag("p"))" class="btn btn-primary mr-2">p</button>
-        <button @onclick="@(() => SelectByTag("h1"))" class="btn btn-primary mr-2">h1</button>
-        <button @onclick="@(() => SelectByTag("h2"))" class="btn btn-primary mr-2">h2</button>
-        <button @onclick="@(() => SelectByTag("h3"))" class="btn btn-primary mr-2">h3</button>
-        <button @onclick="@(() => SelectByTag("h4"))" class="btn btn-primary mr-2">h4</button>
-        <button @onclick="@(() => SelectByTag("h5"))" class="btn btn-primary mr-2">h5</button>
-        <button @onclick="@(() => SelectByTag("h6"))" class="btn btn-primary mr-2">h6</button>
-        <button @onclick="@(() => SelectByTag("form"))" class="btn btn-primary mr-2">form</button>
-        <button @onclick="@(() => SelectByTag("input"))" class="btn btn-primary mr-2">input</button>
-        <button @onclick="@(() => SelectByTag("ul"))" class="btn btn-primary mr-2">ul</button>
-        <button @onclick="@(() => SelectByTag("ol"))" class="btn btn-primary mr-2">ol</button>
-        <button @onclick="@(() => SelectByTag("table"))" class="btn btn-primary mr-2">table</button>
-        <button @onclick="@(() => SelectByTag("head"))" class="btn btn-primary mr-2">head</button>
-        <button @onclick="@(() => SelectByTag("body"))" class="btn btn-primary mr-2">body</button>
-        <button @onclick="@(() => SelectByTag("title"))" class="btn btn-primary mr-2">title</button>
-        <button @onclick="@(() => SelectByTag("style"))" class="btn btn-primary mr-2">style</button>
     </div>
+}
 
-    <h4 style="margin-top: 50px;">Gets all attribute:value pairs for a given tag</h4>
-    <form class="form-inline" onsubmit="return false;">
-        <div class="form-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="tagPairId">Tag</span>
-            </div>
-            <input @bind="PairTag" @onkeyup="KeyPressValuePairInput" type="text" class="form-control" id="tagPairId" placeholder="a"/>
-            <button @onclick="@(() => SelectByTagAtrValuePairs(PairTag))" class="btn btn-outline-success" type="button">Get</button>
-        </div>
-    </form>
-
-    <h4 style="margin-top: 50px">Gets text for given parameters</h4>
-    <form class="form-inline" onsubmit="return false;">
-        <div class="form-group mr-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="tagTextId">Tag</span>
-            </div>
-            <input @bind="TextTag" @onkeyup="KeyPressValueContainsInput" type="text" class="form-control" id="tagTextId" placeholder="a"/>
-        </div>
-        <div class="form-group mr-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="attributeTextId">Attr. name</span>
-            </div>
-            <input @bind="TextAttr" @onkeyup="KeyPressValueContainsInput" type="text" class="form-control" id="attributeTextId" placeholder="href"/>
-        </div>
-        <div class="form-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="classTextId">Contains</span>
-            </div>
-            <input @bind="TextContains" @onkeyup="KeyPressValueContainsInput" type="text" class="form-control" id="classTextId" placeholder="www."/>
-        </div>
-        <button @onclick="@(() => SelectByTagAtrValueContains(TextTag, TextAttr, TextContains))" type="button" class="btn btn-outline-success">Get</button>
-    </form>
-
-    <h3 class="text-center mt-4">Result</h3>
-    <div class="form-group" style="margin-bottom:70px;">
-        <textarea @bind="ResultTags" class="form-control" id="exampleFormControlTextarea1" rows="10" readonly style="background-color: white;"></textarea>
-    </div>
-    <div class="btn-group">
-        <button @onclick="@(() => DownloadFile("myDownload.txt"))" class="btn btn-primary mr-2">TXT</button>
-        <button @onclick="@(() => DownloadFile("myDownload.csv"))" class="btn btn-primary mr-2">CSV</button>
-        <button @onclick="@(() => DownloadFile("myDownload.json"))" class="btn btn-primary mr-2">JSON</button>
-        <button @onclick="@(() => DownloadFile("myDownload.xlsx"))" class="btn btn-primary mr-2">XLSX</button>
-    </div>
+@if (_loaded)
+{
     @if (FollowThrough)
     {
-        <ul class="list-group">
-            @for (int i = 0; i < Traverse.AllUrls.Count; i++) //don't do foreach
-            {
-                int n = Traverse.AllUrls.Count;
-                <li class="list-group-item">
-                    <a href="@Traverse.AllUrls[n - i - 1]">@Traverse.AllUrls[n - i - 1]</a>
-                </li>
-            }
-        </ul>
+        <div class="row">
+            <div class="col-6">
+                <h2>Pages</h2>
+                <ul class="list-group">
+                    @for (int i = 0; i < Traverse.AllUrls.Count; i++) //don't do foreach
+                    {
+                        int n = Traverse.AllUrls.Count;
+                        <li class="list-group-item">
+                            <a href="@Traverse.AllUrls[n - i - 1]" style="overflow: hidden;">@Traverse.AllUrls[n - i - 1]</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="col-6">
+                <h2>Business Logic</h2>
+                <ul class="list-group">
+                    <li class="list-group-item">first@email.com</li>
+                    <li class="list-group-item">Cap $24.5</li>
+                    <li class="list-group-item">second@email.com</li>
+                    <li class="list-group-item">Shirt $30</li>
+                    <li class="list-group-item">third@email.com</li>
+                </ul>
+            </div>
+        </div>
     }
-</div>
+}
+
 
 @code{
     private string Feedback { get; set; }
@@ -144,6 +82,8 @@
     private bool LoadingButton { get; set; } = false;
     private bool FollowThrough { get; set; } = true;
     private int MaxWidth { get; set; } = 20;
+    private string _feedback { get; set; } = "";
+    private bool _loaded { get; set; } = false;
 
     private HtmlWeb _web = new HtmlWeb();
     private HtmlDocument _doc = new HtmlDocument();
@@ -171,6 +111,7 @@
             try
             {
                 _doc = _web.Load(PageUrl);
+                _loaded = true;
                 ToastService.ShowSuccess("URL is nicely formatted!");
                 if (FollowThrough && MaxWidth > 0)
                 {
@@ -180,7 +121,7 @@
                     var watch = System.Diagnostics.Stopwatch.StartNew();
                     await Traverse.BfsAsync(MaxWidth);
                     watch.Stop();
-                    System.Diagnostics.Debug.Print("BFS Async, width " + MaxWidth + " pages = " + (float) watch.ElapsedMilliseconds / 1000 + " seconds\n");
+                    System.Diagnostics.Debug.Print("BFS Async, width " + MaxWidth + " pages = " + (float)watch.ElapsedMilliseconds / 1000 + " seconds\n");
                 }
                 Feedback = "Done.";
                 _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
