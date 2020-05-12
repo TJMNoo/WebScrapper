@@ -8,6 +8,7 @@ namespace WebScraper.Data
 {
     public class ChromeService
     {
+        //note: preferable to use selenium only for getting data, not for extracting since it is too heavy - use htmlagilitypack instead
         public string Initialize(string pageUrl)
         {
             //do not open chrome
@@ -21,6 +22,7 @@ namespace WebScraper.Data
             WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0,0,5));
             wait.Until(driver =>((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
             string source = driver.PageSource;
+            //must quit the driver when we are done to prevent resource hog
             driver.Quit();
             return source;
         }
