@@ -81,7 +81,6 @@ C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.csprojAss
 C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.RazorComponent.input.cache
 C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\App.razor.g.cs
 C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Error.razor.g.cs
-C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\FetchData.razor.g.cs
 C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Index.razor.g.cs
 C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Shared\MainLayout.razor.g.cs
 C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Shared\NavMenu.razor.g.cs
@@ -188,7 +187,6 @@ C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\Authenti
 C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\Authentication\Profile.razor.g.cs
 C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\Authentication\Register.razor.g.cs
 C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\Error.razor.g.cs
-C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\FetchData.razor.g.cs
 C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\Index.razor.g.cs
 C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Shared\MainLayout.razor.g.cs
 C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Shared\NavMenu.razor.g.cs
@@ -1042,3 +1040,8 @@ C:\Users\Leon Vila\Documents\GitHub\TrashScrapper\WebScrapper\obj\Debug\netcorea
 C:\Users\Leon Vila\Documents\GitHub\TrashScrapper\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Shared\MainLayout.razor.g.cs
 C:\Users\Leon Vila\Documents\GitHub\TrashScrapper\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Shared\NavMenu.razor.g.cs
 C:\Users\Leon Vila\Documents\GitHub\TrashScrapper\WebScrapper\obj\Debug\netcoreapp3.1\Razor\_Imports.razor.g.cs
+C:\Users\Jurica\Desktop\WebScrapper\bin\Debug\netcoreapp3.1\ActionScheduler.dll
+C:\Users\Jurica\Desktop\WebScrapper\bin\Debug\netcoreapp3.1\WebDriver.Support.dll
+C:\Users\Jurica\Desktop\WebScrapper\bin\Debug\netcoreapp3.1\WebDriver.dll
+C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\ElementSelect.razor.g.cs
+C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\ElementSelect.razor.g.cs

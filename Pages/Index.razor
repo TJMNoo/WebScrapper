@@ -4,6 +4,7 @@
 @using WebScraper.Data
 @using System.Security.Policy
 @using OpenQA.Selenium
+@using WebScraper.Data.FakePlugins
 @inject IJSRuntime JSRuntime
 @inject IToastService ToastService
 @inject TraverseService Traverse
@@ -48,78 +49,7 @@
         }
         <button @onclick="@(() => DownloadHtmlFile("myHtmlDownload.txt"))" class="btn btn-primary mr-2" style="float:right;">HTML download</button>
     </form>
-    @if (ShowHtml)
-    {
-        <h3 class="text-center mt-4">Preview</h3>
-        <div class="form-group">
-            <textarea @bind="_outerHtml" class="form-control" id="exampleFormControlTextarea1" rows="10" readonly style="background-color: white;"></textarea>
-        </div>
-    }
-    <div class="btn-group">
-        <button @onclick="@(() => SelectByTag("img"))" class="btn btn-primary mr-2">img</button>
-        <button @onclick="@(() => SelectByTag("a"))" class="btn btn-primary mr-2">a</button>
-        <button @onclick="@(() => SelectByTag("p"))" class="btn btn-primary mr-2">p</button>
-        <button @onclick="@(() => SelectByTag("h1"))" class="btn btn-primary mr-2">h1</button>
-        <button @onclick="@(() => SelectByTag("h2"))" class="btn btn-primary mr-2">h2</button>
-        <button @onclick="@(() => SelectByTag("h3"))" class="btn btn-primary mr-2">h3</button>
-        <button @onclick="@(() => SelectByTag("h4"))" class="btn btn-primary mr-2">h4</button>
-        <button @onclick="@(() => SelectByTag("h5"))" class="btn btn-primary mr-2">h5</button>
-        <button @onclick="@(() => SelectByTag("h6"))" class="btn btn-primary mr-2">h6</button>
-        <button @onclick="@(() => SelectByTag("form"))" class="btn btn-primary mr-2">form</button>
-        <button @onclick="@(() => SelectByTag("input"))" class="btn btn-primary mr-2">input</button>
-        <button @onclick="@(() => SelectByTag("ul"))" class="btn btn-primary mr-2">ul</button>
-        <button @onclick="@(() => SelectByTag("ol"))" class="btn btn-primary mr-2">ol</button>
-        <button @onclick="@(() => SelectByTag("table"))" class="btn btn-primary mr-2">table</button>
-        <button @onclick="@(() => SelectByTag("head"))" class="btn btn-primary mr-2">head</button>
-        <button @onclick="@(() => SelectByTag("body"))" class="btn btn-primary mr-2">body</button>
-        <button @onclick="@(() => SelectByTag("title"))" class="btn btn-primary mr-2">title</button>
-        <button @onclick="@(() => SelectByTag("style"))" class="btn btn-primary mr-2">style</button>
-    </div>
 
-    <h4 style="margin-top: 50px;">Gets all attribute:value pairs for a given tag</h4>
-    <form class="form-inline" onsubmit="return false;">
-        <div class="form-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="tagPairId">Tag</span>
-            </div>
-            <input @bind="PairTag" @onkeyup="KeyPressValuePairInput" type="text" class="form-control" id="tagPairId" placeholder="a"/>
-            <button @onclick="@(() => SelectByTagAtrValuePairs(PairTag))" class="btn btn-outline-success" type="button">Get</button>
-        </div>
-    </form>
-
-    <h4 style="margin-top: 50px">Gets text for given parameters</h4>
-    <form class="form-inline" onsubmit="return false;">
-        <div class="form-group mr-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="tagTextId">Tag</span>
-            </div>
-            <input @bind="TextTag" @onkeyup="KeyPressValueContainsInput" type="text" class="form-control" id="tagTextId" placeholder="a"/>
-        </div>
-        <div class="form-group mr-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="attributeTextId">Attr. name</span>
-            </div>
-            <input @bind="TextAttr" @onkeyup="KeyPressValueContainsInput" type="text" class="form-control" id="attributeTextId" placeholder="href"/>
-        </div>
-        <div class="form-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="classTextId">Contains</span>
-            </div>
-            <input @bind="TextContains" @onkeyup="KeyPressValueContainsInput" type="text" class="form-control" id="classTextId" placeholder="www."/>
-        </div>
-        <button @onclick="@(() => SelectByTagAtrValueContains(TextTag, TextAttr, TextContains))" type="button" class="btn btn-outline-success">Get</button>
-    </form>
-
-    <h3 class="text-center mt-4">Result</h3>
-    <div class="form-group" style="margin-bottom:70px;">
-        <textarea @bind="ResultTags" class="form-control" id="exampleFormControlTextarea1" rows="10" readonly style="background-color: white;"></textarea>
-    </div>
-    <div class="btn-group">
-        <button @onclick="@(() => DownloadFile("myDownload.txt"))" class="btn btn-primary mr-2">TXT</button>
-        <button @onclick="@(() => DownloadFile("myDownload.csv"))" class="btn btn-primary mr-2">CSV</button>
-        <button @onclick="@(() => DownloadFile("myDownload.json"))" class="btn btn-primary mr-2">JSON</button>
-        <button @onclick="@(() => DownloadFile("myDownload.xlsx"))" class="btn btn-primary mr-2">XLSX</button>
-    </div>
     @if (FollowThrough)
     {
         <div class="row mt-4">
@@ -157,10 +87,6 @@
 
 @code{
     private string Feedback { get; set; }
-    private string PairTag { get; set; }
-    private string TextTag { get; set; }
-    private string TextAttr { get; set; }
-    private string TextContains { get; set; }
     private string PageUrl { get; set; }
     private string ResultTags { get; set; } = "";
     private bool ShowHtml { get; set; } = true;
@@ -176,8 +102,14 @@
 
     protected async Task LoadHtml()
     {
+        
+        FakeSeoAnalyzer a = new FakeSeoAnalyzer();
+        FakeGoogleKeywordTracker b = new FakeGoogleKeywordTracker();
+        await a.Analyze("args");
+        await b.Track();
+
         LoadingButton = true;
-        await Task.Delay(TimeSpan.FromSeconds(0.1));
+        //await Task.Delay(TimeSpan.FromSeconds(0.1));
 
 
         if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
@@ -193,16 +125,16 @@
             }
             try
             {
-                PageSource = Chrome.Initialize(PageUrl);
-                _doc.LoadHtml(PageSource);
+                //PageSource = Chrome.Initialize(PageUrl);
+                //_doc.LoadHtml(PageSource);
                 ToastService.ShowSuccess("URL is nicely formatted!");
                 if (FollowThrough && MaxWidth > 0)
                 {
                     Feedback = "Wait..";
-                    Traverse.StateHasChangedDelegate = () => InvokeAsync(StateHasChanged);
-                    Traverse.SetUrl(PageUrl);
+                    //Traverse.StateHasChangedDelegate = () => InvokeAsync(StateHasChanged);
+                    //Traverse.SetUrl(PageUrl);
                     var watch = System.Diagnostics.Stopwatch.StartNew();
-                    await Traverse.BfsAsync(MaxWidth);
+                    //await Traverse.BfsAsync(MaxWidth);
                     watch.Stop();
                     System.Diagnostics.Debug.Print("BFS Async, width " + MaxWidth + " pages = " + (float) watch.ElapsedMilliseconds / 1000 + " seconds\n");
                 }
@@ -223,37 +155,6 @@
             LoadingButton = false;
             ToastService.ShowError("URL is not valid!");
         }
-    }
-
-    protected void SelectByTag(string tag)
-    {
-        SelectorService selector = new SelectorService(_doc);
-        _tags = selector.FilterTag(tag);
-        ResultTags = "";
-        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
-        if (ResultTags.Length == 0) return;
-
-        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
-    }
-
-    protected void SelectByTagAtrValuePairs(string tag)
-    {
-        SelectorService selector = new SelectorService(_doc);
-        _tags = selector.FilterTagAtrValuePairs(tag);
-        ResultTags = "";
-        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
-        if (ResultTags.Length == 0) return;
-        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
-    }
-
-    protected void SelectByTagAtrValueContains(string tag, string attribute, string value)
-    {
-        SelectorService selector = new SelectorService(_doc);
-        _tags = selector.FilterTagAtrValueContains(tag, attribute, value);
-        ResultTags = "";
-        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
-        if (ResultTags.Length == 0) return;
-        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
     }
 
     public async void SaveUrl(string fileName, string url)
@@ -287,15 +188,5 @@
             LoadingButton = true;
             await LoadHtml();
         }
-    }
-
-    void KeyPressValuePairInput(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter") SelectByTagAtrValuePairs(PairTag);
-    }
-
-    void KeyPressValueContainsInput(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter") SelectByTagAtrValueContains(TextTag, TextAttr, TextContains);
     }
 }

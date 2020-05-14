@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 
@@ -173,15 +176,6 @@ namespace WebScraper.Data
 
                                 if (_web.StatusCode != HttpStatusCode.OK) return;
 
-                                BusinessLogicService businessLogic = new BusinessLogicService(doc);
-                                Dictionary<string, string> rules = new Dictionary<string, string>();
-                                rules["h1"] = "all";
-                                rules["p"] = "all";
-                                rules["img"] = "all";
-                                rules["aHrefContains"] = "www.";
-                                var results = businessLogic.Apply(rules);
-                                BusinessLogicResults.AddRange(results);
-
                                 //System.Diagnostics.Debug.Print("Loaded: " + neighborUrl);
                                 AllUrls.Add(neighborUrl);
 
@@ -197,9 +191,109 @@ namespace WebScraper.Data
             }
         }
 
-        public void Dfs()
+
+        public async IAsyncEnumerable<string> ScrapeFromRoot(string root_, int maxPageLimit, double delay)
         {
-            return;
+            SetUrl(root_);
+            Dictionary<string, bool> visited = new Dictionary<string, bool>();
+            Queue<HtmlDocument> sites = new Queue<HtmlDocument>();
+            List<string> currentUrls = new List<string>();
+            int width = 0, pagesAdded=0;
+
+            HtmlDocument root = new HtmlDocument();
+            try { root = _web.Load(root_); }
+            catch { yield break;}
+            //visited["/"] = true;
+            sites.Enqueue(root);
+            currentUrls.Add(BaseDomain);
+
+            while (sites.Count != 0)
+            {
+                var url = sites.Dequeue();
+                if (url == null) continue;
+                //System.Diagnostics.Debug.Print("Root loaded: " + _web.ResponseUri.AbsoluteUri);
+                var neighborUrls = url.DocumentNode.SelectNodes("//a[@href]");
+                if (neighborUrls == null) continue;
+
+                int visitedNeighborsCount = 0;
+                while (width < maxPageLimit && visitedNeighborsCount < neighborUrls.Count)
+                {
+                    List<Task<HtmlDocument>> tasks = new List<Task<HtmlDocument>>();
+                    for (int i = visitedNeighborsCount; i < neighborUrls.Count; i++, visitedNeighborsCount++)
+                    {
+                        HtmlNode neighbor = neighborUrls[i];
+                        if (width++ >= maxPageLimit) break;
+
+                        string href = neighbor.GetAttributeValue("href", string.Empty);
+                        if (href == string.Empty || visited.ContainsKey(href)) continue;
+                        visited[href] = true;
+
+                        var ts = new CancellationTokenSource();
+                        CancellationToken ct = ts.Token;
+                        tasks.Add(Task.Run(() =>
+                        {
+                            string neighborUrl = FormatHref(href);
+
+                            //System.Diagnostics.Debug.Print(neighborUrl);
+                            HtmlDocument doc = new HtmlDocument();
+                            if (neighborUrl != "invalid" && neighborUrl != "robots.txt disallowed")
+                            {
+                                //System.Diagnostics.Debug.Print("Loading: " + neighborUrl);
+                                try { doc = _web.Load(neighborUrl); }
+                                catch { ts.Cancel(); }
+
+                                if (_web.StatusCode != HttpStatusCode.OK) ts.Cancel();
+
+                                //System.Diagnostics.Debug.Print("Loaded: " + neighborUrl);
+                                currentUrls.Add(neighborUrl);
+                                //StateHasChangedDelegate?.Invoke();
+                                sites.Enqueue(doc);
+                            }
+                            return doc;
+                        }, ct));
+                    }
+
+                    await Task.WhenAll(tasks);
+                    foreach (var curUrl in currentUrls) yield return curUrl;
+                    pagesAdded += currentUrls.Count;
+                    width = pagesAdded;
+                    currentUrls.Clear();
+                }
+            }
+        }
+
+        public async IAsyncEnumerable<List<string>> ScrapeGoogleResults(string keyword, string location = "us", int pages=2, int delay=10000)
+        {
+            List<Task<List<string>>> tasks = new List<Task<List<string>>>();
+            for (int i = 0; i < pages; i++)
+            {
+                //start=0 -> page1, start=1-10 -> page 2, start=11-20 -> page3...
+                string nextPage = "https://google.com/search?gl=" + location + "&q=" + keyword + "&start=" + i * 10;
+                var task = Task.Run(() =>
+                {
+                    HtmlDocument doc = new HtmlDocument();
+                    doc = _web.Load(nextPage);
+
+                    var resultsOnly = doc.GetElementbyId("rso").SelectNodes(".//div[@class='g']");
+                    if (resultsOnly == null) return new List<string>();
+                    string href = "", title = "";
+                    List<string> titles = new List<string>();
+                    foreach (var result in resultsOnly)
+                    {
+                        string divClass = result.GetAttributeValue("class", "");
+                        if (divClass != "g") continue;
+                        var a = result.SelectSingleNode(".//a");
+                        href = a.GetAttributeValue("href", "");
+                        title = a.InnerText;
+                        titles.Add(title);
+                    }
+
+                    return titles;
+                });
+                yield return await task;
+                Thread.Sleep(delay);
+            }
+            
         }
     }
 }
