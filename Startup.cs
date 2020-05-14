@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using OpenQA.Selenium.Chrome;
 using WebScraper.Data;
 using WebScraper.Data.Authentication;
+using WebScraper.Data.Engine;
 
 namespace WebScraper
 {
@@ -36,7 +37,7 @@ namespace WebScraper
             //services.AddSingleton<WeatherForecastService>();
             services.AddBlazoredToast();
             services.AddBlazoredSessionStorage();
-            services.AddSingleton<TraverseService>();
+            services.AddSingleton<ScraperEngine>();
             services.AddSingleton<ChromeService>();
 
             services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();

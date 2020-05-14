@@ -1045,3 +1045,5 @@ C:\Users\Jurica\Desktop\WebScrapper\bin\Debug\netcoreapp3.1\WebDriver.Support.dl
 C:\Users\Jurica\Desktop\WebScrapper\bin\Debug\netcoreapp3.1\WebDriver.dll
 C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\ElementSelect.razor.g.cs
 C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\ElementSelect.razor.g.cs
+C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\ShowEngine.razor.g.cs
+C:\Users\Jurica\Desktop\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\ShowEngine.razor.g.cs
