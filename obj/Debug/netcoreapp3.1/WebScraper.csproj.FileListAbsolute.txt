@@ -901,3 +901,7 @@ C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.pdb
 C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.genruntimeconfig.cache
 C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Scrape.razor.g.cs
 C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\Scrape.razor.g.cs
+C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Test.razor.g.cs
+C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\Test.razor.g.cs
+C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Shared\Footer.razor.g.cs
+C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Shared\Footer.razor.g.cs

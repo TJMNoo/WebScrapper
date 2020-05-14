@@ -1,0 +1,84 @@
+﻿@page "/page2"
+@using WebScraper.Data
+@inject TraverseService Traverse
+@inject HealthCheck Health
+
+<div class="row">
+<div class="card-deck" style="display: inline-block">
+        <div class="card">
+                        
+                    <!-- Card image -->
+                    <img  class="card-img-top" src="https://5.imimg.com/data5/LW/OT/GLADMIN-71632971/seo-analysis-and-marketing-service-500x500.png" alt="Card image cap">
+                        
+                    <!-- Card content -->
+                    <div class="card-body">
+                        
+                        <!-- Title -->
+                        <h4 class="card-title"><a>Health check</a></h4>
+                        <!-- Text -->
+                        <p class="card-text">Crawled pages - @Health.CrawledPages</p>
+                        <!-- Button -->
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-success">Healthy links - @Health.HealthyLinks</li>
+                            <li class="list-group-item list-group-item-danger">Broken links - @Health.BrokenLinks</li>
+                            <li class="list-group-item list-group-item-warning">Issue links - @Health.LinksWithIssues</li>
+                            <li class="list-group-item list-group-item-secondary">Redirect links - @Health.RedirectLinks</li>
+                            <li class="list-group-item list-group-item-dark">Blocked links - @Health.BlockedLinks</li>
+                        </ul>
+                    </div>
+        </div>
+        <div class="card">
+
+            <!-- Card image -->
+            <img class="card-img-top" src="https://5.imimg.com/data5/LW/OT/GLADMIN-71632971/seo-analysis-and-marketing-service-500x500.png" alt="Card image cap">
+
+            <!-- Card content -->
+            <div class="card-body">
+
+                <!-- Title -->
+                <h4 class="card-title"><a>Child routes</a></h4>
+                <!-- Text -->
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+                    content.</p>
+                <!-- Button -->
+                <a href="page2" class="btn btn-dark">Review child routes</a>
+
+            </div>
+
+        </div>
+
+    </div>
+        <div class="card">
+                        
+            <!-- Card image -->
+            <img  class="card-img-top" src="https://5.imimg.com/data5/LW/OT/GLADMIN-71632971/seo-analysis-and-marketing-service-500x500.png" alt="Card image cap">
+                        
+            <!-- Card content -->
+            <div class="card-body">
+                        
+                <!-- Title -->
+                <h4 class="card-title"><a>Critical errors</a></h4>
+                <!-- Text -->
+                <p class="card-text">Critical errors are the issues that have the highest impact on your overall SEO health.</p>
+                <!-- Button -->
+                <a href="#" class="btn btn-dark">Review critical errors</a>
+                        
+            </div>
+                        
+        </div>
+    </div>
+
+<div class="row">
+    <div class="col-6">
+        <h2>Pages</h2>
+        <ul class="list-group">
+            @for (int i = 0; i < Traverse.AllUrls.Count; i++) //don't do foreach
+            {
+                int n = Traverse.AllUrls.Count;
+                <li class="list-group-item">
+                    <a href="@Traverse.AllUrls[n - i - 1]" style="overflow: hidden;">@Traverse.AllUrls[n - i - 1]</a>
+                </li>
+            }
+        </ul>
+    </div>
+    </div>

@@ -8,18 +8,48 @@
 @if (!_loaded)
 {
     <div class="container">
-        <h1 class="text-center" style="margin-top: 80px; font-size: 70px; font-weight: 700;">Point & Click</h1>
-        <h3 class="text-center" style="margin-top: 20px; margin-bottom: 50px; color: gray;">Select what you wish to scrape</h3>
-        <form onsubmit="return false;">
-            <div class="form-group text-center">
-                <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" class="form-control form-control-lg text-center mx-auto" type="text" placeholder="Enter website URL" style="font-size: 40px;padding: 15px; height: auto; width: 80%;" />
-                <button @onclick="@LoadHtml" class="btn btn-primary btn-lg" type="button" style="font-size: 32px; padding: 18px; height: auto; margin-top: 40px; border-radius: 5%;">Analyze</button>
+        <div class="card-container">
+            <div class="card">
+                
+                <!-- Card image -->
+                <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg" alt="Card image cap">
+                
+                <!-- Card content -->
+                <div class="card-body">
+                
+                    <!-- Title -->
+                    <h4 class="card-title"><a>Card title</a></h4>
+                    <!-- Text -->
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+                        content.</p>
+                    <!-- Button -->
+                    <a href="#" class="btn btn-primary">Button</a>
+                
+                </div>
+                
             </div>
-        </form>
-        @if (_feedback.Length > 0)
-        {
-            <h3 style="margin-top: 20px; color: red; text-align: center;">@_feedback</h3>
-        }
+        </div>
+        <div class="card-container">
+                <div class="card">
+                
+                  <!-- Card image -->
+                  <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg" alt="Card image cap">
+                
+                  <!-- Card content -->
+                  <div class="card-body">
+                
+                    <!-- Title -->
+                    <h4 class="card-title"><a>Card title</a></h4>
+                    <!-- Text -->
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+                      content.</p>
+                    <!-- Button -->
+                    <a href="#" class="btn btn-primary">Button</a>
+                
+                  </div>
+                
+                </div>
+            </div>
     </div>
 }
 

@@ -36,7 +36,7 @@ namespace WebScraper
             services.AddBlazoredToast();
             services.AddBlazoredSessionStorage();
             services.AddSingleton<TraverseService>();
-
+            services.AddSingleton<HealthCheck>();
             services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
         }
 

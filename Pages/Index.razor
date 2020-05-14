@@ -6,206 +6,380 @@
 @inject IJSRuntime JSRuntime
 @inject IToastService ToastService
 @inject TraverseService Traverse
+@inject HealthCheck Health
 
-@if (!_loaded)
-{
-    <div class="container">
-        <h1 class="text-center" style="margin-top: 80px; font-size: 70px; font-weight: 700;">Website Traversal</h1>
-        <h3 class="text-center" style="margin-top: 20px; margin-bottom: 50px; color: gray;">Apply your own business logic</h3>
+
+
+    <div style="background: linear-gradient(to right, #ffffff, #66ffb2) !important; margin-top: 20px;" class="jumbotron">
+        <h1 class="text-center" style="margin-top: 80px; font-size: 70px; font-weight: 700;">SEO Analyzer</h1>
+        <h4 class="text-center" style="margin-top: 20px; margin-bottom: 50px; color: gray;">If you’re struggling to get more visitors to your site, the answer might just lie in this FREE report!</h4>
         <form onsubmit="return false;">
             <div class="form-group text-center">
-                <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" class="form-control form-control-lg text-center mx-auto" type="text" placeholder="Enter website URL" style="font-size: 40px;padding: 15px; height: auto; width: 80%;" />
-                <div class="form-check form-check-inline mt-4 mr-4">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" style="width: 25px; height: 25px;">
-                    <label class="form-check-label" for="inlineCheckbox1" style="font-size: 25px;">Titles</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox2" style="width: 25px; height: 25px;">
-                    <label class="form-check-label" for="inlineCheckbox2" style="font-size: 25px;">Paragraphs</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox2" style="width: 25px; height: 25px;">
-                    <label class="form-check-label" for="inlineCheckbox2" style="font-size: 25px;">Images</label>
-                </div>
-                <br />
-                <button @onclick="@LoadHtml" class="btn btn-primary btn-lg" type="button" style="font-size: 32px; padding: 18px; height: auto; margin-top: 40px; border-radius: 5%;">Scrape</button>
+                <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" class="form-control form-control-lg text-center mx-auto" type="text" placeholder="Enter website URL" style="font-size: 40px;padding: 15px; height: auto; width: 80%;"/>
+                <br/>
+                <button @onclick="@LoadHtml" class="btn btn-dark btn-lg" type="button" style="font-size: 32px; padding: 18px; height: auto; margin-top: 40px; border-radius: 5%;">Analyze!</button>
             </div>
         </form>
+        
         @if (_feedback.Length > 0)
         {
             <h3 style="margin-top: 20px; color: red; text-align: center;">@_feedback</h3>
         }
     </div>
-}
 
-@if (_loaded)
+@if (_loaded && !ChildRoutes && !CriticalErrors && !Warnings)
 {
-    @if (FollowThrough)
-    {
-        <div class="row">
-            <div class="col-6">
-                <h2>Pages</h2>
-                <ul class="list-group">
-                    @for (int i = 0; i < Traverse.AllUrls.Count; i++) //don't do foreach
-                    {
-                        int n = Traverse.AllUrls.Count;
-                        <li class="list-group-item">
-                            <a href="@Traverse.AllUrls[n - i - 1]" style="overflow: hidden;">@Traverse.AllUrls[n - i - 1]</a>
-                        </li>
-                    }
-                </ul>
-            </div>
-            <div class="col-6">
-                <h2>Business Logic</h2>
-                <ul class="list-group">
-                    <li class="list-group-item">first@email.com</li>
-                    <li class="list-group-item">Cap $24.5</li>
-                    <li class="list-group-item">second@email.com</li>
-                    <li class="list-group-item">Shirt $30</li>
-                    <li class="list-group-item">third@email.com</li>
-                </ul>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header" style="background: #66ffb2;">ON-PAGE SEO SCORE</div>
+                <div class="card-body">
+                    <p class="card-text">83 <b>GREAT</b></p>
+                </div>
             </div>
         </div>
-    }
-}
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header" style="background: #66ffb2;">ORGANIC MONTHLY TRAFIC</div>
+                <div class="card-body">
+                    <p class="card-text">1.234.123 <b>GREAT</b></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header" style="background: #66ffb2;">ORGANIC KEYWORDS</div>
+                <div class="card-body">
+                    <p class="card-text">238.983 <b>GREAT</b></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header" style="background: #66ffb2;">BACKLINKS</div>
+                <div class="card-body">
+                    <p class="card-text">2.619.908 <b>GREAT</b></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" style="background: #66ffb2;">CRAWLED PAGES</div>
+        <div class="card-body">
+            <blockquote class="blockquote mb-0">
+                <p>We found more than @Traverse.AllUrls.Count pages on your website. Google ranks sites higher when every page is optimized for SEO.</p>
+                <footer class="blockquote-footer">Upgrade your account to crawl your whole website.</footer>
+            </blockquote>
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header" style="background: #66ffb2;">HEALTH CHECK</div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item list-group-item-success">Healthy links - @Health.HealthyLinks</li>
+                        <li class="list-group-item list-group-item-danger">Broken links - @Health.BrokenLinks</li>
+                        <li class="list-group-item list-group-item-warning">Issue links - @Health.LinksWithIssues</li>
+                        <li class="list-group-item list-group-item-secondary">Redirect links - @Health.RedirectLinks</li>
+                        <li class="list-group-item list-group-item-dark">Blocked links - @Health.BlockedLinks</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header" style="background: #66ffb2;">CHILD ROUTES</div>
+                <div class="card-body">
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <button @onclick="@LoadChildRoutes" class="btn btn-dark">View</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header" style="background: #66ffb2;">CRITICAL ERRORS</div>
+                <div class="card-body">
+                    <p class="card-text">Critical errors are the issues that have the highest impact on your overall SEO health.</p>
+                    <button @onclick="@LoadCriticalErrors" class="btn btn-dark">View</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header" style="background: #66ffb2;">WARNINGS</div>
+                <div class="card-body">
+                    <p class="card-text">Warnings are less impactful errors to your overall SEO health. These are usually less technical and something most people can start fixing immediately.</p>
+                    <button @onclick="@LoadWarnings" class="btn btn-dark">View</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+    @if (CriticalErrors)
+    {
+        <button @onclick="@LoadCriticalErrors" class="btn btn-dark" style="margin-bottom: 10px;">Back to report</button>
+        <table class="table">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">SEO ISSUES ANALYZED</th>
+                <th scope="col">DIFFICULTY</th>
+                <th scope="col">SEO IMPACT</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>6 pages with duplicate title tags</td>
+                <td>MODERATE</td>
+                <td>HIGH</td>
+            </tr>
+            <tr>
+                <th scope="row">2</th>
+                <td>10 pages have a low word count</td>
+                <td>MODERATE</td>
+                <td>HIGH</td>
+            </tr>
+            <tr>
+                <th scope="row">3</th>
+                <td>7 pages with no title tags</td>
+                <td>MODERATE</td>
+                <td>HIGH</td>
+            </tr>
+            </tbody>
+        </table>
+    }
+
+    @if (Warnings)
+    {
+        <button @onclick="@LoadWarnings" class="btn btn-dark" style="margin-bottom: 10px;">Back to report</button>
+        <table class="table">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">SEO ISSUES ANALYZED</th>
+                <th scope="col">DIFFICULTY</th>
+                <th scope="col">SEO IMPACT</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>5 pages without an H1 heading</td>
+                <td>EASY</td>
+                <td>MEDIUM</td>
+            </tr>
+            <tr>
+                <th scope="row">2</th>
+                <td>15 pages with no meta description</td>
+                <td>MODERATE</td>
+                <td>MEDIUM</td>
+            </tr>
+            <tr>
+                <th scope="row">3</th>
+                <td>3 pages with URLs that are too long</td>
+                <td>EASY</td>
+                <td>MEDIUM</td>
+            </tr>
+            <tr>
+                <th scope="row">4</th>
+                <td>9 pages with a title tag that is too long</td>
+                <td>EASY</td>
+                <td>MEDIUM</td>
+            </tr>
+            <tr>
+                <th scope="row">3</th>
+                <td>20 pages with a title tag that is too short</td>
+                <td>EASY</td>
+                <td>MEDIUM</td>
+            </tr>
+            </tbody>
+        </table>
+    }
+
+@if (ChildRoutes)
+{
+    <button @onclick="@LoadChildRoutes" class="btn btn-dark" style="margin-bottom: 10px;">Back to report</button>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">CHILD ROUTES</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < Traverse.AllUrls.Count; i++)
+        {
+            int n = Traverse.AllUrls.Count;
+            <tr>
+                <th scope="row">@IncrementCount(i)</th>
+                <td><a href="@Traverse.AllUrls[n - i - 1]" style="overflow: hidden;">@Traverse.AllUrls[n - i - 1]</a></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
 
 @code{
-    private string Feedback { get; set; }
-    private string PairTag { get; set; }
-    private string TextTag { get; set; }
-    private string TextAttr { get; set; }
-    private string TextContains { get; set; }
-    private string PageUrl { get; set; }
-    private string ResultTags { get; set; } = "";
-    private bool ShowHtml { get; set; } = true;
+     private string Feedback { get; set; }
+     private string PairTag { get; set; }
+     private string TextTag { get; set; }
+     private string TextAttr { get; set; }
+     private string TextContains { get; set; }
+     private string PageUrl { get; set; }
+     private string ResultTags { get; set; } = "";
     private bool LoadingButton { get; set; } = false;
-    private bool FollowThrough { get; set; } = true;
-    private int MaxWidth { get; set; } = 20;
-    private string _feedback { get; set; } = "";
-    private bool _loaded { get; set; } = false;
+     private bool FollowThrough { get; set; } = true;
+     private int MaxWidth { get; set; } = 20;
+     private string _feedback { get; set; } = "";
+     private bool _loaded { get; set; } = false;
+    private bool ChildRoutes { get; set; } = false;
+    private bool CriticalErrors { get; set; } = false;
+    private bool Warnings { get; set; } = false;
 
-    private HtmlWeb _web = new HtmlWeb();
-    private HtmlDocument _doc = new HtmlDocument();
-
-    private string _outerHtml = "";
-    private List<string> _tags = new List<string>();
-
-    protected async Task LoadHtml()
+    public int IncrementCount(int Count)
     {
-        LoadingButton = true;
-        await Task.Delay(TimeSpan.FromSeconds(0.1));
-
-
-        if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
-        Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
-            RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-        if (checkIfValid.IsMatch(PageUrl))
-        {
-            Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            if (!checkIfHttps.IsMatch(PageUrl))
-            {
-                PageUrl = PageUrl.Insert(0, "https://");
-            }
-            try
-            {
-                _doc = _web.Load(PageUrl);
-                _loaded = true;
-                ToastService.ShowSuccess("URL is nicely formatted!");
-                if (FollowThrough && MaxWidth > 0)
-                {
-                    Feedback = "Wait..";
-                    Traverse.StateHasChangedDelegate = () => InvokeAsync(StateHasChanged);
-                    Traverse.SetUrl(PageUrl);
-                    var watch = System.Diagnostics.Stopwatch.StartNew();
-                    await Traverse.BfsAsync(MaxWidth);
-                    watch.Stop();
-                    System.Diagnostics.Debug.Print("BFS Async, width " + MaxWidth + " pages = " + (float)watch.ElapsedMilliseconds / 1000 + " seconds\n");
-                }
-                Feedback = "Done.";
-                _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
-                LoadingButton = false;
-            }
-            catch (Exception e)
-            {
-                LoadingButton = false;
-                ToastService.ShowError("Error!");
-
-                _outerHtml = e.Message;
-            }
-        }
-        else
-        {
-            LoadingButton = false;
-            ToastService.ShowError("URL is not valid!");
-        }
+        return Count + 1;
     }
 
-    protected void SelectByTag(string tag)
+    public void LoadWarnings()
     {
-        SelectorService selector = new SelectorService(_doc);
-        _tags = selector.FilterTag(tag);
-        ResultTags = "";
-        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
-        if (ResultTags.Length == 0) return;
-
-        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+        Warnings = !Warnings;
     }
-
-    protected void SelectByTagAtrValuePairs(string tag)
+    
+    public void LoadCriticalErrors()
     {
-        SelectorService selector = new SelectorService(_doc);
-        _tags = selector.FilterTagAtrValuePairs(tag);
-        ResultTags = "";
-        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
-        if (ResultTags.Length == 0) return;
-        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+        CriticalErrors = !CriticalErrors;
     }
+    
+     private HtmlWeb _web = new HtmlWeb();
+     private HtmlDocument _doc = new HtmlDocument();
+ 
+     private string _outerHtml = "";
+     private List<string> _tags = new List<string>();
 
-    protected void SelectByTagAtrValueContains(string tag, string attribute, string value)
+    public void LoadChildRoutes()
     {
-        SelectorService selector = new SelectorService(_doc);
-        _tags = selector.FilterTagAtrValueContains(tag, attribute, value);
-        ResultTags = "";
-        foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
-        if (ResultTags.Length == 0) return;
-        ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+        ChildRoutes = !ChildRoutes;
     }
-
-    public async void DownloadFile(string fileName)
-    {
-        await JSRuntime.InvokeAsync<object>(
-            "FileSaveAs",
-            fileName, ResultTags
-            );
-    }
-
-    public async void DownloadHtmlFile(string fileName)
-    {
-        await JSRuntime.InvokeAsync<object>(
-            "FileSaveAs",
-            fileName, _outerHtml
-            );
-    }
-
-    async Task KeyPressLoadHtmlInput(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter")
-        {
-            LoadingButton = true;
-            await LoadHtml();
-        }
-    }
-
-    void KeyPressValuePairInput(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter") SelectByTagAtrValuePairs(PairTag);
-    }
-
-    void KeyPressValueContainsInput(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter") SelectByTagAtrValueContains(TextTag, TextAttr, TextContains);
-    }
-
-}
+    
+     protected async Task LoadHtml()
+     {
+         LoadingButton = true;
+         await Task.Delay(TimeSpan.FromSeconds(0.1));
+ 
+ 
+         if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
+         Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
+             RegexOptions.Compiled | RegexOptions.IgnoreCase);
+ 
+         if (checkIfValid.IsMatch(PageUrl))
+         {
+             Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+             if (!checkIfHttps.IsMatch(PageUrl))
+             {
+                 PageUrl = PageUrl.Insert(0, "https://");
+             }
+             try
+             {
+                 _doc = _web.Load(PageUrl);
+                 _loaded = true;
+                 ToastService.ShowSuccess("URL is nicely formatted!");
+                 if (FollowThrough && MaxWidth > 0)
+                 {
+                     Feedback = "Wait..";
+                     Traverse.StateHasChangedDelegate = () => InvokeAsync(StateHasChanged);
+                     Traverse.SetUrl(PageUrl);
+                     var watch = System.Diagnostics.Stopwatch.StartNew();
+                     await Traverse.BfsAsync(MaxWidth);
+                     watch.Stop();
+                     System.Diagnostics.Debug.Print("BFS Async, width " + MaxWidth + " pages = " + (float)watch.ElapsedMilliseconds / 1000 + " seconds\n");
+                 }
+                 Feedback = "Done.";
+                 _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
+                 LoadingButton = false;
+             }
+             catch (Exception e)
+             {
+                 LoadingButton = false;
+                 ToastService.ShowError("Error!");
+ 
+                 _outerHtml = e.Message;
+             }
+         }
+         else
+         {
+             LoadingButton = false;
+             ToastService.ShowError("URL is not valid!");
+         }
+     }
+ 
+     protected void SelectByTag(string tag)
+     {
+         SelectorService selector = new SelectorService(_doc);
+         _tags = selector.FilterTag(tag);
+         ResultTags = "";
+         foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+         if (ResultTags.Length == 0) return;
+ 
+         ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+     }
+ 
+     protected void SelectByTagAtrValuePairs(string tag)
+     {
+         SelectorService selector = new SelectorService(_doc);
+         _tags = selector.FilterTagAtrValuePairs(tag);
+         ResultTags = "";
+         foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+         if (ResultTags.Length == 0) return;
+         ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+     }
+ 
+     protected void SelectByTagAtrValueContains(string tag, string attribute, string value)
+     {
+         SelectorService selector = new SelectorService(_doc);
+         _tags = selector.FilterTagAtrValueContains(tag, attribute, value);
+         ResultTags = "";
+         foreach (var tag2 in _tags) ResultTags += tag2 + "\n\n";
+         if (ResultTags.Length == 0) return;
+         ResultTags = ResultTags.Remove(ResultTags.Length - 2);
+     }
+ 
+     public async void DownloadFile(string fileName)
+     {
+         await JSRuntime.InvokeAsync<object>(
+             "FileSaveAs",
+             fileName, ResultTags
+             );
+     }
+ 
+     public async void DownloadHtmlFile(string fileName)
+     {
+         await JSRuntime.InvokeAsync<object>(
+             "FileSaveAs",
+             fileName, _outerHtml
+             );
+     }
+ 
+     async Task KeyPressLoadHtmlInput(KeyboardEventArgs e)
+     {
+         if (e.Key == "Enter")
+         {
+             LoadingButton = true;
+             await LoadHtml();
+         }
+     }
+ 
+     void KeyPressValuePairInput(KeyboardEventArgs e)
+     {
+         if (e.Key == "Enter") SelectByTagAtrValuePairs(PairTag);
+     }
+ 
+     void KeyPressValueContainsInput(KeyboardEventArgs e)
+     {
+         if (e.Key == "Enter") SelectByTagAtrValueContains(TextTag, TextAttr, TextContains);
+     }
+ 
+ }
