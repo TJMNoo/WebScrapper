@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using OpenQA.Selenium.Chrome;
 using WebScraper.Data;
 using WebScraper.Data.Authentication;
+using WebScraper.Data.Engine;
 
 namespace WebScraper
 {
@@ -39,6 +40,8 @@ namespace WebScraper
             services.AddSingleton<TraverseService>();
             services.AddSingleton<ChromeService>();
             services.AddSingleton<AnalyzerService>();
+			services.AddSingleton<HealthCheck>();
+            services.AddSingleton<ScraperEngine>();
 
             services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
         }

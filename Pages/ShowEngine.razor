@@ -1,0 +1,70 @@
+﻿@page "/showengine"
+@using System.Text.RegularExpressions;
+@using HtmlAgilityPack
+@using WebScraper.Data
+@using System.Security.Policy
+@using Microsoft.CodeAnalysis.CSharp
+@using OpenQA.Selenium
+@using WebScraper.Data.FakePlugins
+
+<div class="container" style="width: 70%;">
+    <h1 class="text-center" style="margin-bottom: 40px;">Show engine</h1>
+
+    <button @onclick="@LoadHtml" class="btn btn-outline-primary" type="button">CLICK ME & WAIT</button>
+    
+    <div class="row mt-4">
+        <div class="col-sm-4">
+            <h4>Analyzer results (docs/hrefs)</h4>
+            @for(int i=0; i<analyzerResult.Count; i++)
+            {
+                <ul>
+                    <li>@(i+1) href: @analyzerResult[i]</li>
+                </ul>
+            }
+        </div>
+        <div class="col-sm-4">
+            <h4>Keyword: rentals new york | Location: US | Pagelimit: 2</h4>
+            @for (int i = 0; i < kwfinderResult.Count; i++)
+            {
+                <ul>
+                    <li>@(i+1). html page length: @kwfinderResult[i]</li>
+                </ul>
+            }
+        </div>
+        <div class="col-sm-4">
+            <h4>Optimizer result (docs)</h4>
+            @for (int i = 0; i < optimizerResult.Count; i++)
+            {
+                <ul>
+                    <li>@(i + 1). html page length: @optimizerResult[i]</li>
+                </ul>
+            }
+        </div>
+    </div>
+</div>
+
+@code{
+    private List<string> analyzerResult = new List<string>();
+    private List<int> kwfinderResult = new List<int>();
+    private List<int> optimizerResult = new List<int>();
+
+
+    protected async Task LoadHtml()
+    {
+
+        FakeSeoAnalyzer analyzer = new FakeSeoAnalyzer();
+        FakeGoogleKeywordTracker kwfinder = new FakeGoogleKeywordTracker();
+        FakeOptimizer optimizer = new FakeOptimizer();
+        await analyzer.Analyze("args");
+        analyzerResult = analyzer.TempResults;
+        StateHasChanged();
+        
+        await kwfinder.Track("args");
+        kwfinderResult = kwfinder.TempResults;
+        StateHasChanged();
+
+        await optimizer.Optimize("args");
+        optimizerResult = optimizer.TempResults;
+        StateHasChanged();
+    }
+}

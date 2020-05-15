@@ -1,7 +1,21 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+#page-content {
+    flex: 1 0 auto;
+}
+
+#sticky-footer {
+    flex-shrink: unset;
+}
+
+body {
+    background: #66ffb2;
+    background: linear-gradient(to right, #ffffff, #66ffb2);
+}
+
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    height: 100%;
 }
 
 a, .btn-link {
@@ -12,6 +26,10 @@ a, .btn-link {
     color: #fff;
     background-color: #1b6ec2;
     border-color: #1861ac;
+}
+
+.card {
+    margin: 50px;
 }
 
 app {

@@ -1,0 +1,102 @@
+﻿@page "/pointclick"
+@using System.ComponentModel
+@using System.Text.RegularExpressions;
+@using HtmlAgilityPack
+@using NuGet.Frameworks
+@using WebScraper.Data
+
+@if (!_loaded)
+{
+    <div class="container">
+        <div class="card-container">
+            <div class="card">
+                
+                <!-- Card image -->
+                <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg" alt="Card image cap">
+                
+                <!-- Card content -->
+                <div class="card-body">
+                
+                    <!-- Title -->
+                    <h4 class="card-title"><a>Card title</a></h4>
+                    <!-- Text -->
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+                        content.</p>
+                    <!-- Button -->
+                    <a href="#" class="btn btn-primary">Button</a>
+                
+                </div>
+                
+            </div>
+        </div>
+        <div class="card-container">
+                <div class="card">
+                
+                  <!-- Card image -->
+                  <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg" alt="Card image cap">
+                
+                  <!-- Card content -->
+                  <div class="card-body">
+                
+                    <!-- Title -->
+                    <h4 class="card-title"><a>Card title</a></h4>
+                    <!-- Text -->
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+                      content.</p>
+                    <!-- Button -->
+                    <a href="#" class="btn btn-primary">Button</a>
+                
+                  </div>
+                
+                </div>
+            </div>
+    </div>
+}
+
+@if(_loaded)
+{
+    <div class="row w-100">
+        <div class="col-8" style="background-color: lightblue; height: 500px;"><h1>Html</h1></div>
+        <div class="col-4" style="background-color: lightgray; height: 500px;"><h1>Results</h1></div>
+    </div>
+}
+
+
+@code{
+    private string PageUrl { get; set; }
+    private HtmlWeb _web = new HtmlWeb();
+    private HtmlDocument _doc = new HtmlDocument();
+    private bool _loaded = false;
+    private string _feedback = "";
+
+    protected async Task LoadHtml()
+    {
+        if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
+        Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        if (checkIfValid.IsMatch(PageUrl))
+        {
+            Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            if (!checkIfHttps.IsMatch(PageUrl))
+            {
+                PageUrl = PageUrl.Insert(0, "https://");
+            }
+            try
+            {
+                _doc = _web.Load(PageUrl);
+                _loaded = true;
+            }
+            catch (Exception e)
+            {
+                _feedback = e.Message;
+            }
+        }
+        else _feedback = "Invalid url.";
+    }
+
+    async Task KeyPressLoadHtmlInput(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") await LoadHtml();
+    }
+}

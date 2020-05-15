@@ -1,0 +1,82 @@
+﻿@page "/seo"
+@using System.ComponentModel
+@using System.Text.RegularExpressions;
+@using HtmlAgilityPack
+@using NuGet.Frameworks
+@using WebScraper.Data
+
+<div class="container">
+    <h1 class="text-center" style="margin-top: 80px; font-size: 70px; font-weight: 700;">SEO Tool</h1>
+    <h3 class="text-center" style="margin-top: 20px; margin-bottom: 50px; color: gray;">Analyze websites for FREE</h3>
+    <form onsubmit="return false;">
+        <div class="form-group text-center">
+            <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" class="form-control form-control-lg text-center mx-auto" type="text" placeholder="Enter website URL" style="font-size: 40px;padding: 15px; height: auto; width: 80%;"/>
+            <button @onclick="@LoadHtml"  class="btn btn-primary btn-lg" type="button" style="font-size: 32px; padding: 18px; height: auto; margin-top: 40px; border-radius: 5%;">Analyze</button>
+        </div>
+    </form>
+    @if (_feedback.Length > 0)
+    {
+        <h3 style="margin-top: 20px; color: red; text-align: center;">@_feedback</h3>
+    }
+
+    @if (_loaded)
+    {
+        <div class="container" style="margin: 40px 0px 70px 0px;">
+            <ul class="list-group mx-auto w-75">
+                @for (int i = 0; i < _results.Count; i++)
+                {
+                    <li class="list-group-item" style="font-size: 25px;">
+                        @_results[i]
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>
+
+@code{
+    private string PageUrl { get; set; }
+    private HtmlWeb _web = new HtmlWeb();
+    private HtmlDocument _doc = new HtmlDocument();
+    private List<string> _results = new List<string>();
+    private bool _loaded = false;
+    private string _feedback = "";
+
+
+    protected async Task LoadHtml()
+    {
+        if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
+        Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        if (checkIfValid.IsMatch(PageUrl))
+        {
+            Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            if (!checkIfHttps.IsMatch(PageUrl))
+            {
+                PageUrl = PageUrl.Insert(0, "https://");
+            }
+            try
+            {
+                _doc = _web.Load(PageUrl);
+                _loaded = true;
+                _results.Add("Found missing meta tags.");
+                _results.Add("Found missing description.");
+                _results.Add("H1 title doesn't have any keywords.");
+                _results.Add("Images don't have alt tags.");
+                _results.Add("Text length is below the recommended limit.");
+
+            }
+            catch (Exception e)
+            {
+                _feedback = e.Message;
+            }
+        }
+        else _feedback = "Invalid url.";
+    }
+
+    async Task KeyPressLoadHtmlInput(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") await LoadHtml();
+    }
+}

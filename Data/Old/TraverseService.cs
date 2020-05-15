@@ -173,15 +173,6 @@ namespace WebScraper.Data
 
                                 if (_web.StatusCode != HttpStatusCode.OK) return;
 
-                                BusinessLogicService businessLogic = new BusinessLogicService(doc);
-                                Dictionary<string, string> rules = new Dictionary<string, string>();
-                                rules["h1"] = "all";
-                                rules["p"] = "all";
-                                rules["img"] = "all";
-                                rules["aHrefContains"] = "www.";
-                                var results = businessLogic.Apply(rules);
-                                BusinessLogicResults.AddRange(results);
-
                                 //System.Diagnostics.Debug.Print("Loaded: " + neighborUrl);
                                 AllUrls.Add(neighborUrl);
 

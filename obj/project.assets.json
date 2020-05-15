@@ -6715,11 +6715,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Jurica\\Desktop\\WebScrapper\\WebScraper.csproj",
+      "projectUniqueName": "C:\\Users\\Jurica\\Desktop\\master\\WebScrapper\\WebScraper.csproj",
       "projectName": "WebScraper",
-      "projectPath": "C:\\Users\\Jurica\\Desktop\\WebScrapper\\WebScraper.csproj",
+      "projectPath": "C:\\Users\\Jurica\\Desktop\\master\\WebScrapper\\WebScraper.csproj",
       "packagesPath": "C:\\Users\\Jurica\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Jurica\\Desktop\\WebScrapper\\obj\\",
+      "outputPath": "C:\\Users\\Jurica\\Desktop\\master\\WebScrapper\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Jurica\\AppData\\Roaming\\NuGet\\NuGet.Config",
