@@ -14,7 +14,7 @@ namespace WebScraper.Data.FakePlugins
         public async Task<string> Analyze(string fakeArgs)
         {
             System.Diagnostics.Debug.Print("Analyzer:\n");
-            var responses = Engine.GetHrefsFromRoot("https://crawler-test.com", 100, 0);
+            var responses = Engine.GetHrefsFromRoot("https://rentberry.com/apartments/s/new-york-ny", 100, 0);
             
             int i = 1;
             await foreach (var response in responses)

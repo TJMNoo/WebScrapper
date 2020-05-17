@@ -134,7 +134,7 @@ namespace WebScraper.Data.Engine
                 int visitedNeighborsCount = 0;
                 while (width < maxHrefLimit && visitedNeighborsCount < neighborUrls.Count)
                 {
-                    List<Task<ScraperEngineResponse>> tasks = new List<Task<ScraperEngineResponse>>();
+                    List<Task> tasks = new List<Task>();
                     for (int i = visitedNeighborsCount; i < neighborUrls.Count; i++, visitedNeighborsCount++)
                     {
                         HtmlNode neighbor = neighborUrls[i];
@@ -144,9 +144,8 @@ namespace WebScraper.Data.Engine
                         if (href == string.Empty || visited.ContainsKey(href)) continue;
                         visited[href] = true;
                         currentHrefs.Add(href);
+                        yield return new ScraperEngineResponse(200, null, href);
 
-                        var ts = new CancellationTokenSource();
-                        CancellationToken ct = ts.Token;
                         tasks.Add(Task.Run(() =>
                         {
                             string neighborUrl = Helper.FormatHref(href);
@@ -158,15 +157,11 @@ namespace WebScraper.Data.Engine
                                     doc = web.Load(neighborUrl);
                                     if (web.StatusCode != HttpStatusCode.OK) q.Enqueue(doc);
                                 }
-                                catch { return new ScraperEngineResponse(200, null, neighborUrl); }
-                                
+                                catch { return; }
+
                             }
-                            return new ScraperEngineResponse(200, null, neighborUrl);
-                        }, ct));
+                        }));
                     }
-
-                    foreach (var task in tasks) yield return await task;
-
                     pagesAdded += currentHrefs.Count;
                     width = pagesAdded;
                     currentHrefs.Clear();
