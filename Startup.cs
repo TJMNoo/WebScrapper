@@ -39,7 +39,6 @@ namespace WebScraper
             services.AddBlazoredSessionStorage();
             services.AddSingleton<TraverseService>();
             services.AddSingleton<ChromeService>();
-            services.AddSingleton<AnalyzerService>();
 			services.AddSingleton<HealthCheck>();
             services.AddSingleton<ScraperEngine>();
 
