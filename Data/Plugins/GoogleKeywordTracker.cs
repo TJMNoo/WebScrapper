@@ -6,7 +6,7 @@ using WebScraper.Data.Engine;
 
 namespace WebScraper.Data.FakePlugins
 {
-    public class FakeGoogleKeywordTracker
+    public class GoogleKeywordTracker
     {
         private ScraperEngine Engine { get; set; } = new ScraperEngine();
         public List<int> TempResults { get; set; } = new List<int>();

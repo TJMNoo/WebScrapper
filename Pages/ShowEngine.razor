@@ -52,10 +52,10 @@
     protected async Task LoadHtml()
     {
 
-        FakeSeoAnalyzer analyzer = new FakeSeoAnalyzer();
-        FakeGoogleKeywordTracker kwfinder = new FakeGoogleKeywordTracker();
-        FakeOptimizer optimizer = new FakeOptimizer();
-        await analyzer.Analyze("args");
+        SeoAnalyzer analyzer = new SeoAnalyzer();
+        GoogleKeywordTracker kwfinder = new GoogleKeywordTracker();
+        Optimizer optimizer = new Optimizer();
+        await analyzer.Analyze("https://rentberry.com/apartments/s/new-york-ny");
         analyzerResult = analyzer.TempResults;
         StateHasChanged();
         

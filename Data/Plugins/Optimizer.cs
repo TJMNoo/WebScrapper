@@ -6,7 +6,7 @@ using WebScraper.Data.Engine;
 
 namespace WebScraper.Data.FakePlugins
 {
-    public class FakeOptimizer
+    public class Optimizer
     {
         private ScraperEngine Engine { get; set; } = new ScraperEngine();
 

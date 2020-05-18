@@ -144,6 +144,7 @@ namespace WebScraper.Data.Engine
                         if (href == string.Empty || visited.ContainsKey(href)) continue;
                         visited[href] = true;
                         currentHrefs.Add(href);
+                        
                         yield return new ScraperEngineResponse(200, null, href);
 
                         tasks.Add(Task.Run(() =>

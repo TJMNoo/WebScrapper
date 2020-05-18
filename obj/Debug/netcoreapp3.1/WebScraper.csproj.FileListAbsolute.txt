@@ -890,7 +890,6 @@ C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclarat
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Authentication\Login.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Authentication\Profile.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Authentication\Register.razor.g.cs
-C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\ElementSelect.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Error.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Index.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Shared\MainLayout.razor.g.cs
@@ -1008,7 +1007,6 @@ C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\App.raz
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Authentication\Login.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Authentication\Profile.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Authentication\Register.razor.g.cs
-C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\ElementSelect.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Error.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Index.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Shared\MainLayout.razor.g.cs
@@ -1352,3 +1350,16 @@ C:\Users\Jurica\Desktop\asd\WebScrapper\obj\Debug\netcoreapp3.1\staticwebassets\
 C:\Users\Jurica\Desktop\asd\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.dll
 C:\Users\Jurica\Desktop\asd\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.pdb
 C:\Users\Jurica\Desktop\asd\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.genruntimeconfig.cache
+C:\Users\nikki\Documents\GitHub\webscraper\bin\Debug\netcoreapp3.1\ActionScheduler.dll
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Old\ElementSelect.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Old\PointClick.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Old\Scrape.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Old\SEO.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\ShowEngine.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Shared\Footer.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Old\ElementSelect.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Old\PointClick.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Old\Scrape.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Old\SEO.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\ShowEngine.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Shared\Footer.razor.g.cs
