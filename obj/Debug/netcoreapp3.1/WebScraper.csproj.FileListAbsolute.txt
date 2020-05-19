@@ -890,7 +890,6 @@ C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclarat
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Authentication\Login.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Authentication\Profile.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Authentication\Register.razor.g.cs
-C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\ElementSelect.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Error.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Index.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Shared\MainLayout.razor.g.cs
@@ -1008,7 +1007,6 @@ C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\App.raz
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Authentication\Login.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Authentication\Profile.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Authentication\Register.razor.g.cs
-C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\ElementSelect.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Error.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Index.razor.g.cs
 C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Shared\MainLayout.razor.g.cs

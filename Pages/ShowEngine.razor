@@ -6,7 +6,7 @@
 @using System.Security.Policy
 @using Microsoft.CodeAnalysis.CSharp
 @using OpenQA.Selenium
-@using WebScraper.Data.FakePlugins
+@using WebScraper.Data.Plugins
 @using WebScraper.Pages.Old
 @inject IJSRuntime JSRuntime
 
@@ -122,11 +122,13 @@
     protected async Task LoadHtml()
     {
         var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");;
-        FakeGoogleKeywordTracker kwfinder = new FakeGoogleKeywordTracker();
-        //FakeSeoAnalyzer analyzer = new FakeSeoAnalyzer()
-        //FakeOptimizer optimizer = new FakeOptimizer();
-        //await analyzer.Analyze("args");
-        //analyzerResult = analyzer.TempResults;
+        GoogleKeywordTracker kwfinder = new GoogleKeywordTracker();
+        StateHasChanged();
+        SeoAnalyzer analyzer = new SeoAnalyzer();
+        Optimizer optimizer = new Optimizer();
+        await analyzer.Analyze("https://rentberry.com/apartments/s/new-york-ny");
+        analyzerResult = analyzer.Results;
+        StateHasChanged();
         
         //TrackSomething(string keyword, string userAgent, string location)
         _kwfinderResult = await kwfinder.TrackSomething(kljucnarijec, remoteUserAgent, lokacija);

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebScraper.Data.Engine;
 
-namespace WebScraper.Data.FakePlugins
+namespace WebScraper.Data.Plugins
 {
-    public class FakeOptimizer
+    public class Optimizer
     {
         private ScraperEngine Engine { get; set; } = new ScraperEngine();
 

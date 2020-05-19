@@ -6721,6 +6721,9 @@
       "packagesPath": "C:\\Users\\Toni\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\Toni\\Documents\\GitHub\\WebScrapper\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
       "configFilePaths": [
         "C:\\Users\\Toni\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
