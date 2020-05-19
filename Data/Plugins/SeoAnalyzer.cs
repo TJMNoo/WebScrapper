@@ -7,51 +7,76 @@ using System.Threading.Tasks;
 using HtmlAgilityPack;
 using WebScraper.Data.Engine;
 
-namespace WebScraper.Data.FakePlugins
+namespace WebScraper.Data.Plugins
 {
     public class SeoAnalyzer
     {
+        HtmlDocument _doc = new HtmlDocument();
+        HtmlWeb _web = new HtmlWeb();
         private ScraperEngine Engine { get; set; } = new ScraperEngine();
         private ScraperEngineHelper Helper { get; set; } = new ScraperEngineHelper();
-        public Dictionary<string, HttpStatusCode> HealthyLinks { get; set; } = new Dictionary<string, HttpStatusCode>();
-        public Dictionary<string, HttpStatusCode> BrokenLinks { get; set; } = new Dictionary<string, HttpStatusCode>();
-        public Dictionary<string, HttpStatusCode> RedirectLinks { get; set; } = new Dictionary<string, HttpStatusCode>();
-        public Dictionary<string, HttpStatusCode> BlockedLinks { get; set; } = new Dictionary<string, HttpStatusCode>();
-        HtmlDocument doc = new HtmlDocument();
-        HtmlWeb web = new HtmlWeb();
-        public List<string> TempResults { get; set; } = new List<string>();
+        public Dictionary<string, HttpStatusCode> AllLinks { get; set; }
+        public Dictionary<string, HttpStatusCode> HealthyLinks { get; set; }
+        public Dictionary<string, HttpStatusCode> BrokenLinks { get; set; }
+        public Dictionary<string, HttpStatusCode> LinksWithIssues { get; set; }
+        public Dictionary<string, HttpStatusCode> RedirectLinks { get; set; }
+        public Dictionary<string, HttpStatusCode> BlockedLinks { get; set; }
+        public List<string> Results { get; set; } = new List<string>();
 
         public async Task<string> Analyze(string websiteName)
         {
-            System.Diagnostics.Debug.Print("Analyzer:\n");
-            var responses = Engine.GetHrefsFromRoot(websiteName, 70, 0);
+            AllLinks = new Dictionary<string, HttpStatusCode>();
+            HealthyLinks = new Dictionary<string, HttpStatusCode>();
+            BrokenLinks = new Dictionary<string, HttpStatusCode>();
+            LinksWithIssues = new Dictionary<string, HttpStatusCode>();
+            BlockedLinks = new Dictionary<string, HttpStatusCode>();
+            RedirectLinks = new Dictionary<string, HttpStatusCode>();
+            var responses = Engine.GetHrefsFromRoot(websiteName, 100, 0);
             Helper.SetUrl(websiteName);
             await foreach (var response in responses)
             {
                 var url = FormatHrefForAnalyzer(response.Url);
+                //href includes tel and mailto, we don't want these as our links
                 if (url.Contains("tel:") || url.Contains("mailto:")) continue;
-                TempResults.Add(url);
-                doc = web.Load(url);
-                if (web.StatusCode == HttpStatusCode.OK)
+                Results.Add(url);
+                List<Task> tasks = new List<Task>();
+                tasks.Add(Task.Run(() =>
                 {
-                    if (!HealthyLinks.ContainsKey(url))
+                    _doc = _web.Load(url);
+                    if (_web.StatusCode == HttpStatusCode.OK)
                     {
-                        HealthyLinks.Add(url, web.StatusCode);
+                        if (!HealthyLinks.ContainsKey(url) && !AllLinks.ContainsKey(url))
+                        {
+                            AllLinks.Add(url, _web.StatusCode);
+                            HealthyLinks.Add(url, _web.StatusCode);
+                        }
                     }
-                }
-                else
-                {
-                    if (!BrokenLinks.ContainsKey(url))
+                    else if (_web.StatusCode == HttpStatusCode.Unauthorized || _web.StatusCode == HttpStatusCode.Forbidden)
                     {
-                        BrokenLinks.Add(url, web.StatusCode);
+                        if (!BlockedLinks.ContainsKey(url) && !AllLinks.ContainsKey(url))
+                        {
+                            AllLinks.Add(url, _web.StatusCode);
+                            BlockedLinks.Add(url, _web.StatusCode);
+                        }
                     }
-                }
+                    else if (_web.StatusCode == HttpStatusCode.Redirect || _web.StatusCode == HttpStatusCode.Moved)
+                    {
+                        if (!RedirectLinks.ContainsKey(url) && !AllLinks.ContainsKey(url))
+                        {
+                            AllLinks.Add(url, _web.StatusCode);
+                            RedirectLinks.Add(url, _web.StatusCode);
+                        }
+                    }
+                    else
+                    {
+                        if (!BrokenLinks.ContainsKey(url) && !AllLinks.ContainsKey(url)) 
+                        {
+                            AllLinks.Add(url, _web.StatusCode);
+                            BrokenLinks.Add(url, _web.StatusCode);
+                        }
+                    }
+                }));
             }
-            Console.WriteLine("Good links: ");
-            HealthyLinks.Select(i => $"{i.Key}: {i.Value}").ToList().ForEach(Console.WriteLine);
-            Console.WriteLine("---");
-            Console.WriteLine("Bad links: ");
-            BrokenLinks.Select(i => $"{i.Key}: {i.Value}").ToList().ForEach(Console.WriteLine);
             return "done";
         }
 

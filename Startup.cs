@@ -16,6 +16,7 @@ using OpenQA.Selenium.Chrome;
 using WebScraper.Data;
 using WebScraper.Data.Authentication;
 using WebScraper.Data.Engine;
+using WebScraper.Data.Plugins;
 
 namespace WebScraper
 {
@@ -41,6 +42,7 @@ namespace WebScraper
             services.AddSingleton<ChromeService>();
 			services.AddSingleton<HealthCheck>();
             services.AddSingleton<ScraperEngine>();
+            services.AddSingleton<SeoAnalyzer>();
 
             services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
         }
