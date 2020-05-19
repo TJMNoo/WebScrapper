@@ -1505,3 +1505,16 @@ C:\Users\Toni\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\staticwebasse
 C:\Users\Toni\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.dll
 C:\Users\Toni\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.pdb
 C:\Users\Toni\Documents\GitHub\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.genruntimeconfig.cache
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Old\ElementSelect.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Old\PointClick.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Old\Scrape.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Old\SEO.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\ShowEngine.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Shared\Footer.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\bin\Debug\netcoreapp3.1\ActionScheduler.dll
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Old\ElementSelect.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Old\PointClick.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Old\Scrape.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Old\SEO.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\ShowEngine.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Shared\Footer.razor.g.cs

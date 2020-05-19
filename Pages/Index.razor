@@ -379,7 +379,7 @@
      {
          //Goggle Keyword
          var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");
-         FakeGoogleKeywordTracker b = new FakeGoogleKeywordTracker();
+         GoogleKeywordTracker b = new GoogleKeywordTracker();
          StateHasChanged();
          //
          

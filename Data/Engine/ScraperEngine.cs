@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
-using WebScraper.Data.FakePlugins;
+using WebScraper.Data.Plugins;
 
 namespace WebScraper.Data.Engine
 {
