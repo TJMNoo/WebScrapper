@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using WebScraper.Data.FakePlugins;
 
 namespace WebScraper.Data.Engine
 {
@@ -12,9 +13,10 @@ namespace WebScraper.Data.Engine
     {
         private ScraperEngineHelper Helper { get; set; } = new ScraperEngineHelper(); 
         
-        public async IAsyncEnumerable<ScraperEngineResponse> GetGooglePages(string keyword, string location = "us", int pages = 2, int delay = 10000)
+        public async IAsyncEnumerable<ScraperEngineResponse> GetGooglePages(string keyword, string userAgent, string location = "us", int pages = 2, int delay = 10000)
         {
             HtmlWeb web = new HtmlWeb();
+            web.UserAgent = userAgent;
             web.PreRequest = delegate (HttpWebRequest webRequest) {webRequest.Timeout = 10000; return true;};
             
             List<Task<ScraperEngineResponse>> tasks = new List<Task<ScraperEngineResponse>>();

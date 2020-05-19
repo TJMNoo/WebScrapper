@@ -1,4 +1,5 @@
 ﻿@page "/showengine"
+@using System.Collections
 @using System.Text.RegularExpressions;
 @using HtmlAgilityPack
 @using WebScraper.Data
@@ -6,13 +7,16 @@
 @using Microsoft.CodeAnalysis.CSharp
 @using OpenQA.Selenium
 @using WebScraper.Data.FakePlugins
+@using WebScraper.Pages.Old
+@inject IJSRuntime JSRuntime
+
 
 <div class="container" style="width: 70%;">
     <h1 class="text-center" style="margin-bottom: 40px;">Show engine</h1>
 
     <button @onclick="@LoadHtml" class="btn btn-outline-primary" type="button">CLICK ME & WAIT</button>
     
-    <div class="row mt-4">
+    <div class="row mt-4 mb-4">
         <div class="col-sm-4">
             <h4>Analyzer results (docs/hrefs)</h4>
             @for(int i=0; i<analyzerResult.Count; i++)
@@ -22,15 +26,56 @@
                 </ul>
             }
         </div>
+        <form>
+            <div class="form-group">
+                <label for="KeywordID">Enter keywords</label>
+                <input @bind="kljucnarijec" type="text" class="form-control" id="KeywordID" placeholder="e.g. Coffee">
+            </div>
+            <div class="form-group">
+                <label for="ClientWeb">Enter URL</label>
+                <input type="text" class="form-control" id="ClientWeb" placeholder="e.g. https://www.mywebpage.com">
+            </div>
+            <div class="dropdown">
+                <button @onclick="@Show" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Pick Location
+                </button>
+                <div hidden="@IsShow" >
+                    <div>
+                        <!-- Dropdown menu links -->
+                        <button @onclick="settous" @onclick:preventDefault class="dropdown-item">US</button>
+                        <button @onclick="settohr" @onclick:preventDefault class="dropdown-item">HR</button>
+                        <button @onclick="settouk" @onclick:preventDefault class="dropdown-item">UK</button>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group">
+                <button @onclick="@LoadHtml" type="button" class="btn btn-secondary">
+                    Click me
+                </button>
+            </div>
+        </form>
         <div class="col-sm-4">
-            <h4>Keyword: rentals new york | Location: US | Pagelimit: 2</h4>
-            @for (int i = 0; i < kwfinderResult.Count; i++)
-            {
-                <ul>
-                    <li>@(i+1). html page length: @kwfinderResult[i]</li>
-                </ul>
-            }
+            <table>
+                <thead>
+                <tr>
+                    <th>Position</th>
+                    <th>URL</th>
+                    <th>Title</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in _kwfinderResult)
+                    {
+                        <tr>
+                            <td>@r.Position</td>
+                            <td>@r.Url</td>
+                            <td>@r.Title</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
+
         <div class="col-sm-4">
             <h4>Optimizer result (docs)</h4>
             @for (int i = 0; i < optimizerResult.Count; i++)
@@ -43,28 +88,55 @@
     </div>
 </div>
 
+
 @code{
     private List<string> analyzerResult = new List<string>();
-    private List<int> kwfinderResult = new List<int>();
     private List<int> optimizerResult = new List<int>();
+    private List<Result> _kwfinderResult = new List<Result>();
+    private bool IsShow { get; set; } = false;
+    private string kljucnarijec;
+    private string lokacija;
 
+    //da..
+    public void settous()
+    {
+        lokacija = "us";
+        Console.WriteLine(lokacija);
+    }
+    public void settohr()
+    {
+        lokacija = "hr";
+        Console.WriteLine(lokacija);
+    }
+    public void settouk()
+    {
+        lokacija = "co.uk";
+        Console.WriteLine(lokacija);
+    }
+    
+    private void Show()
+    {
+        IsShow = !IsShow;
+    }
 
     protected async Task LoadHtml()
     {
-
-        FakeSeoAnalyzer analyzer = new FakeSeoAnalyzer();
+        var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");;
         FakeGoogleKeywordTracker kwfinder = new FakeGoogleKeywordTracker();
-        FakeOptimizer optimizer = new FakeOptimizer();
-        await analyzer.Analyze("args");
-        analyzerResult = analyzer.TempResults;
+        //FakeSeoAnalyzer analyzer = new FakeSeoAnalyzer()
+        //FakeOptimizer optimizer = new FakeOptimizer();
+        //await analyzer.Analyze("args");
+        //analyzerResult = analyzer.TempResults;
+        
+        //TrackSomething(string keyword, string userAgent, string location)
+        _kwfinderResult = await kwfinder.TrackSomething(kljucnarijec, remoteUserAgent, lokacija);
         StateHasChanged();
         
-        await kwfinder.Track("args");
-        kwfinderResult = kwfinder.TempResults;
-        StateHasChanged();
+        //kwfinderResult = kwfinder.TempResults;
+        //StateHasChanged();
 
-        await optimizer.Optimize("args");
-        optimizerResult = optimizer.TempResults;
-        StateHasChanged();
+        //await optimizer.Optimize("args");
+        //optimizerResult = optimizer.TempResults;
+        //StateHasChanged();
     }
 }

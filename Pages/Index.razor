@@ -2,6 +2,7 @@
 @using System.Text.RegularExpressions;
 @using HtmlAgilityPack
 @using WebScraper.Data
+@using WebScraper.Data.FakePlugins
 
 @inject IJSRuntime JSRuntime
 @inject IToastService ToastService
@@ -332,6 +333,7 @@
     </table>
 }
 
+
 @code{
      private string Feedback { get; set; }
      private string PairTag { get; set; }
@@ -340,16 +342,18 @@
      private string TextContains { get; set; }
      private string PageUrl { get; set; }
      private string ResultTags { get; set; } = "";
-    private bool LoadingButton { get; set; } = false;
+     private bool LoadingButton { get; set; } = false;
      private bool FollowThrough { get; set; } = true;
      private int MaxWidth { get; set; } = 20;
      private string _feedback { get; set; } = "";
      private bool _loaded { get; set; } = false;
-    private bool ChildRoutes { get; set; } = false;
-    private bool CriticalErrors { get; set; } = false;
-    private bool Warnings { get; set; } = false;
-    private bool LinkHealth { get; set; } = false;
+     private bool ChildRoutes { get; set; } = false;
+     private bool CriticalErrors { get; set; } = false;
+     private bool Warnings { get; set; } = false;
+     private bool LinkHealth { get; set; } = false;
 
+    
+    
     public int IncrementCount(int Count)
     {
         return Count + 1;
@@ -367,8 +371,7 @@
     
      private HtmlWeb _web = new HtmlWeb();
      private HtmlDocument _doc = new HtmlDocument();
- 
-     private string _outerHtml = "";
+    private string _outerHtml = "";
      private List<string> _tags = new List<string>();
 
     public void LoadChildRoutes()
@@ -383,6 +386,12 @@
     
      protected async Task LoadHtml()
      {
+         //Goggle Keyword
+         var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");
+         FakeGoogleKeywordTracker b = new FakeGoogleKeywordTracker();
+         StateHasChanged();
+         //
+         
          LoadingButton = true;
          await Task.Delay(TimeSpan.FromSeconds(0.1));
  
