@@ -1,23 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\WebScraper.csproj": {}
+    "C:\\Users\\Toni\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\WebScraper.csproj": {
+    "C:\\Users\\Toni\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\WebScraper.csproj",
+        "projectUniqueName": "C:\\Users\\Toni\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj",
         "projectName": "WebScraper",
-        "projectPath": "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\WebScraper.csproj",
-        "packagesPath": "C:\\Users\\nikki\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\obj\\",
+        "projectPath": "C:\\Users\\Toni\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj",
+        "packagesPath": "C:\\Users\\Toni\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Toni\\Documents\\GitHub\\WebScrapper\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\nikki\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Toni\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"

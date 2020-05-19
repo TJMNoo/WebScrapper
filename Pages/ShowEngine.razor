@@ -123,7 +123,9 @@
     {
         var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");;
         GoogleKeywordTracker kwfinder = new GoogleKeywordTracker();
+        _kwfinderResult = await kwfinder.TrackSomething(kljucnarijec, remoteUserAgent, lokacija);
         StateHasChanged();
+        
         SeoAnalyzer analyzer = new SeoAnalyzer();
         Optimizer optimizer = new Optimizer();
         await analyzer.Analyze("https://rentberry.com/apartments/s/new-york-ny");
@@ -131,8 +133,7 @@
         StateHasChanged();
         
         //TrackSomething(string keyword, string userAgent, string location)
-        _kwfinderResult = await kwfinder.TrackSomething(kljucnarijec, remoteUserAgent, lokacija);
-        StateHasChanged();
+
         
         //kwfinderResult = kwfinder.TempResults;
         //StateHasChanged();
