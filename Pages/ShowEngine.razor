@@ -33,7 +33,7 @@
             </div>
             <div class="form-group">
                 <label for="ClientWeb">Enter URL</label>
-                <input type="text" class="form-control" id="ClientWeb" placeholder="e.g. https://www.mywebpage.com">
+                <input @bind="enteredurl" type="text" class="form-control" id="ClientWeb" placeholder="e.g. https://www.mywebpage.com">
             </div>
             <div class="dropdown">
                 <button @onclick="@Show" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -64,17 +64,38 @@
                 </tr>
                 </thead>
                 <tbody>
-                    @foreach (var r in _kwfinderResult)
-                    {
-                        <tr>
-                            <td>@r.Position</td>
-                            <td>@r.Url</td>
-                            <td>@r.Title</td>
-                        </tr>
-                    }
+                @foreach (var r in _kwfinderResult)
+                {
+                    <tr>
+                        <td>@r.Position</td>
+                        <td>@r.Url</td>
+                        <td>@r.Title</td>
+                    </tr>
+                }
                 </tbody>
             </table>
         </div>
+                <div class="col-sm-4">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>URL</th>
+                            <th>Title</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in found)
+                            {
+                                <tr>
+                                    <td>@r.Position</td>
+                                    <td>@r.Url</td>
+                                    <td>@r.Title</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
 
         <div class="col-sm-4">
             <h4>Optimizer result (docs)</h4>
@@ -93,9 +114,11 @@
     private List<string> analyzerResult = new List<string>();
     private List<int> optimizerResult = new List<int>();
     private List<Result> _kwfinderResult = new List<Result>();
+    private List<Result> found = new List<Result>();
     private bool IsShow { get; set; } = false;
     private string kljucnarijec;
     private string lokacija;
+    private string enteredurl;
 
     //da..
     public void settous()
@@ -123,7 +146,8 @@
     {
         var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");;
         GoogleKeywordTracker kwfinder = new GoogleKeywordTracker();
-        _kwfinderResult = await kwfinder.TrackSomething(kljucnarijec, remoteUserAgent, lokacija);
+        found = kwfinder.Rezultatici;
+        _kwfinderResult = await kwfinder.TrackSomething(kljucnarijec, remoteUserAgent, lokacija, enteredurl);
         StateHasChanged();
         
         SeoAnalyzer analyzer = new SeoAnalyzer();

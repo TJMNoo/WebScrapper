@@ -343,8 +343,7 @@
      private bool Warnings { get; set; } = false;
      private bool LinkHealth { get; set; } = false;
 
-    
-    
+
     public int IncrementCount(int Count)
     {
         return Count + 1;
@@ -385,8 +384,7 @@
          
          LoadingButton = true;
          await Task.Delay(TimeSpan.FromSeconds(0.1));
- 
- 
+
          if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
          Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
              RegexOptions.Compiled | RegexOptions.IgnoreCase);
