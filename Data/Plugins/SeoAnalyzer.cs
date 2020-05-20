@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -31,6 +32,7 @@ namespace WebScraper.Data.Plugins
             LinksWithIssues = new Dictionary<string, HttpStatusCode>();
             BlockedLinks = new Dictionary<string, HttpStatusCode>();
             RedirectLinks = new Dictionary<string, HttpStatusCode>();
+
             var responses = Engine.GetHrefsFromRoot(websiteName, 100, 0);
             Helper.SetUrl(websiteName);
             await foreach (var response in responses)
@@ -43,36 +45,47 @@ namespace WebScraper.Data.Plugins
                 tasks.Add(Task.Run(() =>
                 {
                     _doc = _web.Load(url);
-                    if (_web.StatusCode == HttpStatusCode.OK)
+                    if (!AllLinks.ContainsKey(url)) AllLinks.Add(url, _web.StatusCode);
+                    
+                    switch (_web.StatusCode)
                     {
-                        if (!HealthyLinks.ContainsKey(url) && !AllLinks.ContainsKey(url))
+                        case HttpStatusCode.OK:
                         {
-                            AllLinks.Add(url, _web.StatusCode);
-                            HealthyLinks.Add(url, _web.StatusCode);
+                            if (!HealthyLinks.ContainsKey(url))
+                            {
+                                HealthyLinks.Add(url, _web.StatusCode);
+                            }
+
+                            break;
                         }
-                    }
-                    else if (_web.StatusCode == HttpStatusCode.Unauthorized || _web.StatusCode == HttpStatusCode.Forbidden)
-                    {
-                        if (!BlockedLinks.ContainsKey(url) && !AllLinks.ContainsKey(url))
+                        case HttpStatusCode.Unauthorized:
+                        case HttpStatusCode.Forbidden:
                         {
-                            AllLinks.Add(url, _web.StatusCode);
-                            BlockedLinks.Add(url, _web.StatusCode);
+                            if (!BlockedLinks.ContainsKey(url))
+                            {
+                                BlockedLinks.Add(url, _web.StatusCode);
+                            }
+
+                            break;
                         }
-                    }
-                    else if (_web.StatusCode == HttpStatusCode.Redirect || _web.StatusCode == HttpStatusCode.Moved)
-                    {
-                        if (!RedirectLinks.ContainsKey(url) && !AllLinks.ContainsKey(url))
+                        case HttpStatusCode.Redirect:
+                        case HttpStatusCode.Moved:
                         {
-                            AllLinks.Add(url, _web.StatusCode);
-                            RedirectLinks.Add(url, _web.StatusCode);
+                            if (!RedirectLinks.ContainsKey(url))
+                            {
+                                RedirectLinks.Add(url, _web.StatusCode);
+                            }
+
+                            break;
                         }
-                    }
-                    else
-                    {
-                        if (!BrokenLinks.ContainsKey(url) && !AllLinks.ContainsKey(url)) 
+                        default:
                         {
-                            AllLinks.Add(url, _web.StatusCode);
-                            BrokenLinks.Add(url, _web.StatusCode);
+                            if (!BrokenLinks.ContainsKey(url)) 
+                            {
+                                BrokenLinks.Add(url, _web.StatusCode);
+                            }
+
+                            break;
                         }
                     }
                 }));
@@ -83,9 +96,9 @@ namespace WebScraper.Data.Plugins
         public string FormatHrefForAnalyzer(string href)
         {
             Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            if (checkIfHttps.IsMatch(href) && href.Contains(Helper.WebsiteName)) return href;
-            else if (checkIfHttps.IsMatch(href)) return href;
+            if (checkIfHttps.IsMatch(href)) return href;
 
+            if (href.StartsWith("//")) return href.Substring(2);
             if (href[0] == '.' && href[1] == '/') return Helper.BaseDomain + href.Substring(1);
             if (href[0] != '/') return Helper.BaseDomain + "/" + href;
             else return Helper.BaseDomain + href;
