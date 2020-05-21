@@ -12,23 +12,22 @@
 @inject SeoAnalyzer Analyzer
 
 
+<div style="background: linear-gradient(to right, #ffffff, #66ffb2) !important; margin-top: 20px;" class="jumbotron">
+    <h1 class="text-center" style="margin-top: 80px; font-size: 70px; font-weight: 700;">SEO Analyzer</h1>
+    <h4 class="text-center" style="margin-top: 20px; margin-bottom: 50px; color: gray;">If you’re struggling to get more visitors to your site, the answer might just lie in this FREE report!</h4>
+    <form onsubmit="return false;">
+        <div class="form-group text-center">
+            <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" class="form-control form-control-lg text-center mx-auto" type="text" placeholder="Enter website URL" style="font-size: 40px;padding: 15px; height: auto; width: 80%;"/>
+            <br/>
+            <button @onclick="@LoadHtml" class="btn btn-dark btn-lg" type="button" style="font-size: 32px; padding: 18px; height: auto; margin-top: 40px; border-radius: 5%;">Analyze!</button>
+        </div>
+    </form>
 
-    <div style="background: linear-gradient(to right, #ffffff, #66ffb2) !important; margin-top: 20px;" class="jumbotron">
-        <h1 class="text-center" style="margin-top: 80px; font-size: 70px; font-weight: 700;">SEO Analyzer</h1>
-        <h4 class="text-center" style="margin-top: 20px; margin-bottom: 50px; color: gray;">If you’re struggling to get more visitors to your site, the answer might just lie in this FREE report!</h4>
-        <form onsubmit="return false;">
-            <div class="form-group text-center">
-                <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" class="form-control form-control-lg text-center mx-auto" type="text" placeholder="Enter website URL" style="font-size: 40px;padding: 15px; height: auto; width: 80%;"/>
-                <br/>
-                <button @onclick="@LoadHtml" class="btn btn-dark btn-lg" type="button" style="font-size: 32px; padding: 18px; height: auto; margin-top: 40px; border-radius: 5%;">Analyze!</button>
-            </div>
-        </form>
-        
-        @if (_feedback.Length > 0)
-        {
-            <h3 style="margin-top: 20px; color: red; text-align: center;">@_feedback</h3>
-        }
-    </div>
+    @if (_feedback.Length > 0)
+    {
+        <h3 style="margin-top: 20px; color: red; text-align: center;">@_feedback</h3>
+    }
+</div>
 
 @if (_loaded && !ChildRoutes && !CriticalErrors && !Warnings)
 {
@@ -94,30 +93,34 @@
         <div class="col-sm-8">
             <div class="card arrow_box_left">
                 <div class="card-body">
-                    @if(LinkHealth)
+                    @if (LinkHealth)
                     {
-                    <div id="table-wrapper">
-                        <div id="table-scroll">
-                            <!--dummy table, umetnuti programatski ispis-->
-                            <table>
-                                <thead>
-                                <tr>
-                                    <th><span class="text">Link</span></th>
-                                    <th><span class="text">Status Code</span></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                 @foreach (KeyValuePair<string, HttpStatusCode> pair in Analyzer.AllLinks)
-                                 {
-                                     <tr>
-                                         <td>@pair.Key</td>
-                                         <td>@pair.Value</td>
-                                     </tr>
-                                 }
-                                </tbody>
-                            </table>
+                        <div id="table-wrapper">
+                            <div id="table-scroll">
+                                <!--dummy table, umetnuti programatski ispis-->
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            <span class="text">Link</span>
+                                        </th>
+                                        <th>
+                                            <span class="text">Status Code</span>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (KeyValuePair<string, HttpStatusCode> pair in Analyzer.AllLinks)
+                                    {
+                                        <tr>
+                                            <td>@pair.Key</td>
+                                            <td>@pair.Value</td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
                     }
                     else
                     {
@@ -126,30 +129,61 @@
                     }
                 </div>
             </div>
-        </div>        
+        </div>
     </div>
-    
+
     <div class="row col-12">
         <div class="col-sm-8">
             <div class="card arrow_box_right">
                 <div class="card-body">
-                    <p class="card-text">Finding said images and introducing an alt text will improve your SEO visibility! bla bla...</p>
-                    <button @onclick="@LoadChildRoutes" class="btn btn-dark">View</button>
+                    @if (MissingAlt)
+                    {
+                        <div id="table-wrapper">
+                            <div id="table-scroll">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            <span class="text">Img</span>
+                                        </th>
+                                        <th>
+                                            <span class="text">Url</span>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (KeyValuePair<string, string> pair in Analyzer.ImgsWithNoAlt)
+                                    {
+                                        <tr>
+                                            <td>@pair.Key</td>
+                                            <td>@pair.Value</td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>Finding said images and introducing an alt text will improve your SEO visibility! bla bla...</p>
+                        <button @onclick="@LoadMissingAlt" class="btn btn-dark">View</button>
+                    }
                 </div>
             </div>
-        </div>        
+        </div>
         <div class="col-sm-4">
             <div class="card">
                 <div class="card-header" style="background: #66ffb2;">ALT TEXT</div>
                 <div class="card-body">
                     <p class="card-text" style="text-align: center;">On your page we have found</p>
-                    <p style="font-size: 72px; text-align: center;">3</p>
+                    <p style="font-size: 72px; text-align: center;">@Analyzer.ImgsWithNoAlt.Count</p>
                     <p class="card-text" style="text-align: center;">instances of missing alt text.</p>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="row col-12">
         <div class="offset-2 col-8">
             <div class="card">
@@ -169,12 +203,12 @@
                     </div>
                     <div class="col-3">
                         <p>Your page is lightning fast. Anything under 2s load time is considered good.</p>
-                    </div>                    
+                    </div>
                 </div>
             </div>
         </div>
-    </div>    
-    
+    </div>
+
     <div class="row">
         <div class="col-sm-3">
             <div class="card">
@@ -189,7 +223,7 @@
                     </ul>
                 </div>
             </div>
-        </div>        
+        </div>
         <div class="col-sm-3">
             <div class="card">
                 <div class="card-header" style="background: #66ffb2;">CHILD ROUTES</div>
@@ -217,89 +251,89 @@
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
 }
-    @if (CriticalErrors)
-    {
-        <button @onclick="@LoadCriticalErrors" class="btn btn-dark" style="margin-bottom: 10px;">Back to report</button>
-        <table class="table">
-            <thead class="thead-dark">
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">SEO ISSUES ANALYZED</th>
-                <th scope="col">DIFFICULTY</th>
-                <th scope="col">SEO IMPACT</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>6 pages with duplicate title tags</td>
-                <td>MODERATE</td>
-                <td>HIGH</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>10 pages have a low word count</td>
-                <td>MODERATE</td>
-                <td>HIGH</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>7 pages with no title tags</td>
-                <td>MODERATE</td>
-                <td>HIGH</td>
-            </tr>
-            </tbody>
-        </table>
-    }
+@if (CriticalErrors)
+{
+    <button @onclick="@LoadCriticalErrors" class="btn btn-dark" style="margin-bottom: 10px;">Back to report</button>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">SEO ISSUES ANALYZED</th>
+            <th scope="col">DIFFICULTY</th>
+            <th scope="col">SEO IMPACT</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>6 pages with duplicate title tags</td>
+            <td>MODERATE</td>
+            <td>HIGH</td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>10 pages have a low word count</td>
+            <td>MODERATE</td>
+            <td>HIGH</td>
+        </tr>
+        <tr>
+            <th scope="row">3</th>
+            <td>7 pages with no title tags</td>
+            <td>MODERATE</td>
+            <td>HIGH</td>
+        </tr>
+        </tbody>
+    </table>
+}
 
-    @if (Warnings)
-    {
-        <button @onclick="@LoadWarnings" class="btn btn-dark" style="margin-bottom: 10px;">Back to report</button>
-        <table class="table">
-            <thead class="thead-dark">
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">SEO ISSUES ANALYZED</th>
-                <th scope="col">DIFFICULTY</th>
-                <th scope="col">SEO IMPACT</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>5 pages without an H1 heading</td>
-                <td>EASY</td>
-                <td>MEDIUM</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>15 pages with no meta description</td>
-                <td>MODERATE</td>
-                <td>MEDIUM</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>3 pages with URLs that are too long</td>
-                <td>EASY</td>
-                <td>MEDIUM</td>
-            </tr>
-            <tr>
-                <th scope="row">4</th>
-                <td>9 pages with a title tag that is too long</td>
-                <td>EASY</td>
-                <td>MEDIUM</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>20 pages with a title tag that is too short</td>
-                <td>EASY</td>
-                <td>MEDIUM</td>
-            </tr>
-            </tbody>
-        </table>
-    }
+@if (Warnings)
+{
+    <button @onclick="@LoadWarnings" class="btn btn-dark" style="margin-bottom: 10px;">Back to report</button>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">SEO ISSUES ANALYZED</th>
+            <th scope="col">DIFFICULTY</th>
+            <th scope="col">SEO IMPACT</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>5 pages without an H1 heading</td>
+            <td>EASY</td>
+            <td>MEDIUM</td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>15 pages with no meta description</td>
+            <td>MODERATE</td>
+            <td>MEDIUM</td>
+        </tr>
+        <tr>
+            <th scope="row">3</th>
+            <td>3 pages with URLs that are too long</td>
+            <td>EASY</td>
+            <td>MEDIUM</td>
+        </tr>
+        <tr>
+            <th scope="row">4</th>
+            <td>9 pages with a title tag that is too long</td>
+            <td>EASY</td>
+            <td>MEDIUM</td>
+        </tr>
+        <tr>
+            <th scope="row">3</th>
+            <td>20 pages with a title tag that is too short</td>
+            <td>EASY</td>
+            <td>MEDIUM</td>
+        </tr>
+        </tbody>
+    </table>
+}
 
 @if (ChildRoutes)
 {
@@ -317,7 +351,9 @@
             int n = Traverse.AllUrls.Count;
             <tr>
                 <th scope="row">@IncrementCount(i)</th>
-                <td><a href="@Traverse.AllUrls[n - i - 1]" style="overflow: hidden;">@Traverse.AllUrls[n - i - 1]</a></td>
+                <td>
+                    <a href="@Traverse.AllUrls[n - i - 1]" style="overflow: hidden;">@Traverse.AllUrls[n - i - 1]</a>
+                </td>
             </tr>
         }
         </tbody>
@@ -326,23 +362,23 @@
 
 
 @code{
-     private string Feedback { get; set; }
-     private string PairTag { get; set; }
-     private string TextTag { get; set; }
-     private string TextAttr { get; set; }
-     private string TextContains { get; set; }
-     private string PageUrl { get; set; }
-     private string ResultTags { get; set; } = "";
-     private bool LoadingButton { get; set; } = false;
-     private bool FollowThrough { get; set; } = true;
-     private int MaxWidth { get; set; } = 50;
-     private string _feedback { get; set; } = "";
-     private bool _loaded { get; set; } = false;
-     private bool ChildRoutes { get; set; } = false;
-     private bool CriticalErrors { get; set; } = false;
-     private bool Warnings { get; set; } = false;
-     private bool LinkHealth { get; set; } = false;
-
+    private string Feedback { get; set; }
+    private string PairTag { get; set; }
+    private string TextTag { get; set; }
+    private string TextAttr { get; set; }
+    private string TextContains { get; set; }
+    private string PageUrl { get; set; }
+    private string ResultTags { get; set; } = "";
+    private bool LoadingButton { get; set; } = false;
+    private bool FollowThrough { get; set; } = true;
+    private int MaxWidth { get; set; } = 50;
+    private string _feedback { get; set; } = "";
+    private bool _loaded { get; set; } = false;
+    private bool ChildRoutes { get; set; } = false;
+    private bool CriticalErrors { get; set; } = false;
+    private bool Warnings { get; set; } = false;
+    private bool LinkHealth { get; set; } = false;
+    private bool MissingAlt { get; set; } = false;
 
     public int IncrementCount(int Count)
     {
@@ -353,108 +389,113 @@
     {
         Warnings = !Warnings;
     }
-    
+
     public void LoadCriticalErrors()
     {
         CriticalErrors = !CriticalErrors;
     }
-    
-     private HtmlWeb _web = new HtmlWeb();
-     private HtmlDocument _doc = new HtmlDocument();
+
+    private HtmlWeb _web = new HtmlWeb();
+    private HtmlDocument _doc = new HtmlDocument();
     private string _outerHtml = "";
-     private List<string> _tags = new List<string>();
+    private List<string> _tags = new List<string>();
 
     public void LoadChildRoutes()
     {
         ChildRoutes = !ChildRoutes;
     }
-    
+
     public void LoadLinkHealth()
     {
         LinkHealth = !LinkHealth;
     }
-    
-     protected async Task LoadHtml()
-     {
-         //Goggle Keyword
-         var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");
-         GoogleKeywordTracker b = new GoogleKeywordTracker();
-         StateHasChanged();
-         //
-         
-         LoadingButton = true;
-         await Task.Delay(TimeSpan.FromSeconds(0.1));
 
-         if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
-         Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
-             RegexOptions.Compiled | RegexOptions.IgnoreCase);
- 
-         if (checkIfValid.IsMatch(PageUrl))
-         {
-             Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-             if (!checkIfHttps.IsMatch(PageUrl))
-             {
-                 PageUrl = PageUrl.Insert(0, "https://");
-             }
-             try
-             {
-                 _doc = _web.Load(PageUrl);
-                 _loaded = true;
-                 ToastService.ShowSuccess("URL is nicely formatted!");
-                 await Analyzer.Analyze(PageUrl);
-                 if (FollowThrough && MaxWidth > 0)
-                 {
-                     Feedback = "Wait..";
-                     Traverse.StateHasChangedDelegate = () => InvokeAsync(StateHasChanged);
-                     Traverse.SetUrl(PageUrl);
-                     var watch = System.Diagnostics.Stopwatch.StartNew();
-                     await Traverse.BfsAsync(MaxWidth);
-                     watch.Stop();
-                     System.Diagnostics.Debug.Print("BFS Async, width " + MaxWidth + " pages = " + (float)watch.ElapsedMilliseconds / 1000 + " seconds\n");
-                 }
-                 Feedback = "Done.";
-                 _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
-                 LoadingButton = false;
-             }
-             catch (Exception e)
-             {
-                 LoadingButton = false;
-                 ToastService.ShowError("Error!");
-                 Console.WriteLine(e.Message);
-                 _outerHtml = e.Message;
-             }
-         }
-         else
-         {
-             LoadingButton = false;
-             ToastService.ShowError("URL is not valid!");
-         }
-     }
+    public void LoadMissingAlt()
+    {
+        MissingAlt = !MissingAlt;
+    }
+
+    protected async Task LoadHtml()
+    {
+    //Goggle Keyword
+        var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");
+        GoogleKeywordTracker b = new GoogleKeywordTracker();
+        StateHasChanged();
+    //
+
+        LoadingButton = true;
+        await Task.Delay(TimeSpan.FromSeconds(0.1));
+
+        if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
+        Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        if (checkIfValid.IsMatch(PageUrl))
+        {
+            Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            if (!checkIfHttps.IsMatch(PageUrl))
+            {
+                PageUrl = PageUrl.Insert(0, "https://");
+            }
+            try
+            {
+                _doc = _web.Load(PageUrl);
+                _loaded = true;
+                ToastService.ShowSuccess("URL is nicely formatted!");
+                await Analyzer.Analyze(PageUrl);
+                if (FollowThrough && MaxWidth > 0)
+                {
+                    Feedback = "Wait..";
+                    Traverse.StateHasChangedDelegate = () => InvokeAsync(StateHasChanged);
+                    Traverse.SetUrl(PageUrl);
+                    var watch = System.Diagnostics.Stopwatch.StartNew();
+                    await Traverse.BfsAsync(MaxWidth);
+                    watch.Stop();
+                    System.Diagnostics.Debug.Print("BFS Async, width " + MaxWidth + " pages = " + (float) watch.ElapsedMilliseconds / 1000 + " seconds\n");
+                }
+                Feedback = "Done.";
+                _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
+                LoadingButton = false;
+            }
+            catch (Exception e)
+            {
+                LoadingButton = false;
+                ToastService.ShowError("Error!");
+                Console.WriteLine(e.Message);
+                _outerHtml = e.Message;
+            }
+        }
+        else
+        {
+            LoadingButton = false;
+            ToastService.ShowError("URL is not valid!");
+        }
+    }
 
     public async void DownloadFile(string fileName)
-     {
-         await JSRuntime.InvokeAsync<object>(
-             "FileSaveAs",
-             fileName, ResultTags
-             );
-     }
- 
-     public async void DownloadHtmlFile(string fileName)
-     {
-         await JSRuntime.InvokeAsync<object>(
-             "FileSaveAs",
-             fileName, _outerHtml
-             );
-     }
- 
-     async Task KeyPressLoadHtmlInput(KeyboardEventArgs e)
-     {
-         if (e.Key == "Enter")
-         {
-             LoadingButton = true;
-             await LoadHtml();
-         }
-     }
+    {
+        await JSRuntime.InvokeAsync<object>(
+            "FileSaveAs",
+            fileName, ResultTags
+            );
+    }
+
+    public async void DownloadHtmlFile(string fileName)
+    {
+        await JSRuntime.InvokeAsync<object>(
+            "FileSaveAs",
+            fileName, _outerHtml
+            );
+    }
+
+    async Task KeyPressLoadHtmlInput(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            LoadingButton = true;
+            await LoadHtml();
+        }
+    }
 
 }
 

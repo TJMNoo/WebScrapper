@@ -6,6 +6,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using Microsoft.CodeAnalysis;
 using WebScraper.Data.Engine;
 
 namespace WebScraper.Data.Plugins
@@ -23,8 +24,16 @@ namespace WebScraper.Data.Plugins
         public Dictionary<string, HttpStatusCode> RedirectLinks { get; set; }
         public Dictionary<string, HttpStatusCode> BlockedLinks { get; set; }
         public List<string> Results { get; set; } = new List<string>();
+        public Dictionary<string, string> ImgsWithNoAlt { get; set; }
 
         public async Task<string> Analyze(string websiteName)
+        {
+            await AnalyzeLinks(websiteName);
+            await AnalyzeImgs(websiteName);
+            return "done";
+        }
+
+        public async Task<string> AnalyzeLinks(string websiteName)
         {
             AllLinks = new Dictionary<string, HttpStatusCode>();
             HealthyLinks = new Dictionary<string, HttpStatusCode>();
@@ -46,7 +55,7 @@ namespace WebScraper.Data.Plugins
                 {
                     _doc = _web.Load(url);
                     if (!AllLinks.ContainsKey(url)) AllLinks.Add(url, _web.StatusCode);
-                    
+
                     switch (_web.StatusCode)
                     {
                         case HttpStatusCode.OK:
@@ -80,7 +89,7 @@ namespace WebScraper.Data.Plugins
                         }
                         default:
                         {
-                            if (!BrokenLinks.ContainsKey(url)) 
+                            if (!BrokenLinks.ContainsKey(url))
                             {
                                 BrokenLinks.Add(url, _web.StatusCode);
                             }
@@ -90,6 +99,7 @@ namespace WebScraper.Data.Plugins
                     }
                 }));
             }
+
             return "done";
         }
 
@@ -102,6 +112,24 @@ namespace WebScraper.Data.Plugins
             if (href[0] == '.' && href[1] == '/') return Helper.BaseDomain + href.Substring(1);
             if (href[0] != '/') return Helper.BaseDomain + "/" + href;
             else return Helper.BaseDomain + href;
+        }
+
+        public async Task<string> AnalyzeImgs(string websiteName)
+        {
+            ImgsWithNoAlt = new Dictionary<string, string>();
+            var responses = Engine.GetDocsFromRoot(websiteName, 100, 0);
+            await foreach (var response in responses)
+            {
+                var results = response.Doc.DocumentNode.SelectNodes("//img[@alt='']");
+                if (results == null) return "done";
+                foreach (var result in results)
+                {
+                    if (result.OuterHtml == null) continue;
+                    if (!ImgsWithNoAlt.ContainsKey(result.OuterHtml)) ImgsWithNoAlt.Add(result.OuterHtml, response.Url);
+                }
+            }
+
+            return "done";
         }
     }
 }
