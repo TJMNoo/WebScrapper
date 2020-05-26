@@ -1676,3 +1676,6 @@ C:\Users\Jurica\Desktop\novii\WebScrapper\obj\Debug\netcoreapp3.1\Razor\_Imports
 C:\Users\Jurica\Desktop\novii\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.Views.pdb
 C:\Users\Jurica\Desktop\novii\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.dll
 C:\Users\Jurica\Desktop\novii\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.pdb
+C:\Users\nikki\Documents\GitHub\webscraper\bin\Debug\netcoreapp3.1\ChartJs.Blazor.dll
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Graphs.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Graphs.razor.g.cs

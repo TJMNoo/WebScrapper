@@ -102,19 +102,20 @@
                                     <thead>
                                     <tr>
                                         <th>
-                                            <span class="text">Link</span>
+                                            <span class="text">Url</span>
                                         </th>
                                         <th>
-                                            <span class="text">Status Code</span>
+                                            <span class="text">Status</span>
                                         </th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach (KeyValuePair<string, HttpStatusCode> pair in Analyzer.AllLinks)
+                                    @foreach (var x in Analyzer.AllLinks)
                                     {
                                         <tr>
-                                            <td>@pair.Key</td>
-                                            <td>@pair.Value</td>
+                                            <td>@x.Url</td>
+                                            <td>@x.Status</td>
+
                                         </tr>
                                     }
                                     </tbody>
@@ -185,6 +186,65 @@
     </div>
 
     <div class="row col-12">
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-header" style="background: #66ffb2;">TITLE HEALTH</div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item list-group-item-danger">No titles - @Analyzer.NoTitles.Count</li>
+                        <li class="list-group-item list-group-item-warning">Too long titles - @Analyzer.TooLongTitles.Count</li>
+                        <li class="list-group-item list-group-item-secondary">Too short titles - @Analyzer.TooShortTitles.Count</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="card arrow_box_left">
+                <div class="card-body">
+                    @if (TitleHealth)
+                    {
+                        <div id="table-wrapper">
+                            <div id="table-scroll">
+                                <!--dummy table, umetnuti programatski ispis-->
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            <span class="text">Type</span>
+                                        </th>
+                                        <th>
+                                            <span class="text">Title</span>
+                                        </th>
+                                        <th>
+                                            <span class="text">Url</span>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var x in Analyzer.AllTitles)
+                                    {
+                                        <tr>
+                                            <td>@x.Type</td>
+                                            <td>@x.Title</td>
+                                            <td>@x.Url</td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>View your titles... bla bla...</p>
+                        <button @onclick="@LoadTitleHealth" class="btn btn-dark">View</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row col-12">
         <div class="offset-2 col-8">
             <div class="card">
                 <div class="card-body" style="display: flex;">
@@ -217,7 +277,7 @@
                     <ul class="list-group">
                         <li class="list-group-item list-group-item-success">Healthy links - @Analyzer.HealthyLinks.Count</li>
                         <li class="list-group-item list-group-item-danger">Broken links - @Analyzer.BrokenLinks.Count</li>
-                        <li class="list-group-item list-group-item-warning">Issue links - @Analyzer.LinksWithIssues.Count</li>
+                        <li class="list-group-item list-group-item-warning">Issue links - @Analyzer.BrokenLinks.Count</li>
                         <li class="list-group-item list-group-item-secondary">Redirect links - @Analyzer.RedirectLinks.Count</li>
                         <li class="list-group-item list-group-item-dark">Blocked links - @Analyzer.BlockedLinks.Count</li>
                     </ul>
@@ -363,10 +423,6 @@
 
 @code{
     private string Feedback { get; set; }
-    private string PairTag { get; set; }
-    private string TextTag { get; set; }
-    private string TextAttr { get; set; }
-    private string TextContains { get; set; }
     private string PageUrl { get; set; }
     private string ResultTags { get; set; } = "";
     private bool LoadingButton { get; set; } = false;
@@ -379,6 +435,7 @@
     private bool Warnings { get; set; } = false;
     private bool LinkHealth { get; set; } = false;
     private bool MissingAlt { get; set; } = false;
+    private bool TitleHealth { get; set; } = false;
 
     public int IncrementCount(int Count)
     {
@@ -413,6 +470,11 @@
     public void LoadMissingAlt()
     {
         MissingAlt = !MissingAlt;
+    }
+
+    public void LoadTitleHealth()
+    {
+        TitleHealth = !TitleHealth;
     }
 
     protected async Task LoadHtml()
