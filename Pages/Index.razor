@@ -11,30 +11,32 @@
 @inject HealthCheck Health
 @inject SeoAnalyzer Analyzer
 
+@if (!_loaded || ChildRoutes || CriticalErrors || Warnings)
+{
+    <div style="background-image: url(../images/img01.png); background-size: cover;" class="jumbotron">
+        <h1 class="text-center" style="margin-top: 80px; color: white; font-size: 70px; font-weight: 700;">SEO Analyzer</h1>
+        <h4 class="text-center" style="margin-top: 20px; margin-bottom: 50px; color: white;">If you’re struggling to get more visitors to your site, the answer might just lie in this FREE report!</h4>
+        <form onsubmit="return false;">
+            <div class="form-group text-center">
+                <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" class="form-control form-control-lg text-center mx-auto" type="text" placeholder="Enter website URL" style="font-size: 40px;padding: 15px; height: auto; width: 80%;"/>
+                <br/>
+                <button @onclick="@LoadHtml" class="btn btn-dark btn-lg" type="button" style="font-size: 32px; padding: 18px; height: auto; margin-top: 40px; border-radius: 5%;">Analyze!</button>
+            </div>
+        </form>
 
-<div style="background: linear-gradient(to right, #ffffff, #66ffb2) !important; margin-top: 20px;" class="jumbotron">
-    <h1 class="text-center" style="margin-top: 80px; font-size: 70px; font-weight: 700;">SEO Analyzer</h1>
-    <h4 class="text-center" style="margin-top: 20px; margin-bottom: 50px; color: gray;">If you’re struggling to get more visitors to your site, the answer might just lie in this FREE report!</h4>
-    <form onsubmit="return false;">
-        <div class="form-group text-center">
-            <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" class="form-control form-control-lg text-center mx-auto" type="text" placeholder="Enter website URL" style="font-size: 40px;padding: 15px; height: auto; width: 80%;"/>
-            <br/>
-            <button @onclick="@LoadHtml" class="btn btn-dark btn-lg" type="button" style="font-size: 32px; padding: 18px; height: auto; margin-top: 40px; border-radius: 5%;">Analyze!</button>
-        </div>
-    </form>
-
-    @if (_feedback.Length > 0)
-    {
-        <h3 style="margin-top: 20px; color: red; text-align: center;">@_feedback</h3>
-    }
-</div>
+        @if (_feedback.Length > 0)
+        {
+            <h3 style="margin-top: 20px; color: red; text-align: center;">@_feedback</h3>
+        }
+    </div>
+}
 
 @if (_loaded && !ChildRoutes && !CriticalErrors && !Warnings)
 {
     <div class="row">
         <div class="col-3">
             <div class="card" style="height: 80%;">
-                <div class="card-header" style="background: #66ffb2;">ON-PAGE SEO SCORE</div>
+                <div class="card-header" style="background: #343A40; color: white;">ON-PAGE SEO SCORE</div>
                 <div class="card-body">
                     <p class="card-text">83 <b>GREAT</b></p>
                 </div>
@@ -42,7 +44,7 @@
         </div>
         <div class="col-3">
             <div class="card" style="height: 80%;">
-                <div class="card-header" style="background: #66ffb2;">ORGANIC MONTHLY TRAFFIC</div>
+                <div class="card-header" style="background: #343A40; color: white;">MONTHLY TRAFFIC</div>
                 <div class="card-body">
                     <p class="card-text">1.234.123 <b>GREAT</b></p>
                 </div>
@@ -50,7 +52,7 @@
         </div>
         <div class="col-3">
             <div class="card" style="height: 80%;">
-                <div class="card-header" style="background: #66ffb2;">ORGANIC KEYWORDS</div>
+                <div class="card-header" style="background: #343A40; color: white;">ORGANIC KEYWORDS</div>
                 <div class="card-body">
                     <p class="card-text">238.983 <b>GREAT</b></p>
                 </div>
@@ -58,7 +60,7 @@
         </div>
         <div class="col-3">
             <div class="card" style="height: 80%;">
-                <div class="card-header" style="background: #66ffb2;">BACKLINKS</div>
+                <div class="card-header" style="background: #343A40; color: white;">BACKLINKS</div>
                 <div class="card-body">
                     <p class="card-text">2.619.908 <b>GREAT</b></p>
                 </div>
@@ -66,7 +68,7 @@
         </div>
     </div>
     <div class="card">
-        <div class="card-header" style="background: #66ffb2;">CRAWLED PAGES</div>
+        <div class="card-header" style="background: #343A40; color: white;">CRAWLED PAGES</div>
         <div class="card-body">
             <blockquote class="blockquote mb-0">
                 <p>We found more than @Analyzer.AllLinks.Count pages on your website. Google ranks sites higher when every page is optimized for SEO.</p>
@@ -78,7 +80,7 @@
     <div class="row col-12">
         <div class="col-sm-4">
             <div class="card">
-                <div class="card-header" style="background: #66ffb2;">LINK HEALTH</div>
+                <div class="card-header" style="background: #343A40; color: white;">LINK HEALTH</div>
                 <div class="card-body">
                     <ul class="list-group">
                         <li class="list-group-item list-group-item-success">Healthy links - @Analyzer.HealthyLinks.Count</li>
@@ -125,8 +127,16 @@
                     }
                     else
                     {
-                        <p>View your links... bla bla... ako nema problema, Your links work as they should!...</p>
-                        <button @onclick="@LoadLinkHealth" class="btn btn-dark">View</button>
+                        @if (Analyzer.BrokenLinks.Count != 0 || Analyzer.LinksWithIssues.Count != 0 || Analyzer.RedirectLinks.Count != 0 || Analyzer.BlockedLinks.Count != 0)
+                        {
+                            <p>Healthy links insure proper crawling and better visibility. Your page has issues on this front that need addressing!</p>
+                            <p>Press View to get indepth data on the status of your links.</p>
+                            <button @onclick="@LoadLinkHealth" class="btn btn-dark">View</button>
+                        }
+                        else
+                        {
+                            <p>It seems you have done everything in your power to ensure a healthy state of your links!</p>
+                        }
                     }
                 </div>
             </div>
@@ -167,15 +177,24 @@
                     }
                     else
                     {
-                        <p>Finding said images and introducing an alt text will improve your SEO visibility! bla bla...</p>
-                        <button @onclick="@LoadMissingAlt" class="btn btn-dark">View</button>
+                        @if (Analyzer.ImgsWithNoAlt.Count != 0)
+                        {
+                            <p>Finding images without alt text and introducing it will improve not only your SEO visibility but also the usability of the page in certain circumstances.</p>
+                            <p>Press View to find out more about your image alt text.</p>
+                            <button @onclick="@LoadMissingAlt" class="btn btn-dark">View</button>
+                        }
+                        else
+                        {
+                            <p>All your images have alt text per recommendation!</p>
+                        }
+                        
                     }
                 </div>
             </div>
         </div>
         <div class="col-sm-4">
             <div class="card">
-                <div class="card-header" style="background: #66ffb2;">ALT TEXT</div>
+                <div class="card-header" style="background: #343A40; color: white;">ALT TEXT</div>
                 <div class="card-body">
                     <p class="card-text" style="text-align: center;">On your page we have found</p>
                     <p style="font-size: 72px; text-align: center;">@Analyzer.ImgsWithNoAlt.Count</p>
@@ -188,7 +207,7 @@
     <div class="row col-12">
         <div class="col-sm-4">
             <div class="card">
-                <div class="card-header" style="background: #66ffb2;">TITLE HEALTH</div>
+                <div class="card-header" style="background: #343A40; color: white;">TITLE HEALTH</div>
                 <div class="card-body">
                     <ul class="list-group">
                         <li class="list-group-item list-group-item-danger">No titles - @Analyzer.NoTitles.Count</li>
@@ -244,7 +263,7 @@
         </div>
     </div>
 
-    <div class="row col-12">
+    <div class="row col-12" style="padding-bottom: 80px;">
         <div class="offset-2 col-8">
             <div class="card">
                 <div class="card-body" style="display: flex;">
@@ -268,50 +287,7 @@
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-sm-3">
-            <div class="card">
-                <div class="card-header" style="background: #66ffb2;">PAGE HEALTH</div>
-                <div class="card-body">
-                    <ul class="list-group">
-                        <li class="list-group-item list-group-item-success">Healthy links - @Analyzer.HealthyLinks.Count</li>
-                        <li class="list-group-item list-group-item-danger">Broken links - @Analyzer.BrokenLinks.Count</li>
-                        <li class="list-group-item list-group-item-warning">Issue links - @Analyzer.BrokenLinks.Count</li>
-                        <li class="list-group-item list-group-item-secondary">Redirect links - @Analyzer.RedirectLinks.Count</li>
-                        <li class="list-group-item list-group-item-dark">Blocked links - @Analyzer.BlockedLinks.Count</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="card">
-                <div class="card-header" style="background: #66ffb2;">CHILD ROUTES</div>
-                <div class="card-body">
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <button @onclick="@LoadChildRoutes" class="btn btn-dark">View</button>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="card">
-                <div class="card-header" style="background: #66ffb2;">CRITICAL ERRORS</div>
-                <div class="card-body">
-                    <p class="card-text">Critical errors are the issues that have the highest impact on your overall SEO health.</p>
-                    <button @onclick="@LoadCriticalErrors" class="btn btn-dark">View</button>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="card">
-                <div class="card-header" style="background: #66ffb2;">WARNINGS</div>
-                <div class="card-body">
-                    <p class="card-text">Warnings are less impactful errors to your overall SEO health. These are usually less technical and something most people can start fixing immediately.</p>
-                    <button @onclick="@LoadWarnings" class="btn btn-dark">View</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 }
 @if (CriticalErrors)
 {

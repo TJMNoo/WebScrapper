@@ -6847,28 +6847,26 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\nikki\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\Marko\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\WebScraper.csproj",
+      "projectUniqueName": "C:\\Users\\Marko\\Desktop\\WebScrapper\\WebScraper.csproj",
       "projectName": "WebScraper",
-      "projectPath": "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\WebScraper.csproj",
-      "packagesPath": "C:\\Users\\nikki\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\obj\\",
+      "projectPath": "C:\\Users\\Marko\\Desktop\\WebScrapper\\WebScraper.csproj",
+      "packagesPath": "C:\\Users\\Marko\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Marko\\Desktop\\WebScrapper\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\nikki\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Marko\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -6940,7 +6938,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.102\\RuntimeIdentifierGraph.json"
       }
     }
   }
