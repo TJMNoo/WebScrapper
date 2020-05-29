@@ -48,7 +48,7 @@ div.content {
 }
 
 body {
-    background: #9A9DA0;
+    background: linear-gradient(to right, #FFFFCC, #FFFFCC);
 }
 
 html, body {

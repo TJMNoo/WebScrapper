@@ -45,7 +45,7 @@
 </ul>
 
 <div class="container">
-<table class="table" style="overflow-y:scroll; height: 500px; display:block;">
+<table class="table" style="overflow-y:scroll; height: 500px; width: 100%; display:block; border: 2px solid black;">
     <thead class="thead-dark" style="position: sticky; top: 0;">
     <tr>
         <th scope="col" style="position: sticky; top: 0;">#</th>
@@ -59,7 +59,7 @@
         <tr>
             <th scope="row">@IncrementCount(i)</th>
             <td>
-                <a href="@Traverse.AllUrls[n - i - 1]" style="overflow: hidden; color: white;">@Traverse.AllUrls[n - i - 1]</a>
+                <a href="@Traverse.AllUrls[n - i - 1]" style="overflow: hidden; color: black;">@Traverse.AllUrls[n - i - 1]</a>
             </td>
         </tr>
     }
