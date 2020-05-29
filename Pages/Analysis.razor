@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/analysis"
 @using System.Text.RegularExpressions;
 @using HtmlAgilityPack
 @using WebScraper.Data
@@ -11,61 +11,39 @@
 @inject HealthCheck Health
 @inject SeoAnalyzer Analyzer
 
-@if (!_loaded || ChildRoutes || CriticalErrors || Warnings)
-{
-    <div style="background-image: url(../images/img01.png); background-size: cover;" class="jumbotron">
-        <h1 class="text-center" style="margin-top: 80px; color: white; font-size: 70px; font-weight: 700;">SEO Analyzer</h1>
-        <h4 class="text-center" style="margin-top: 20px; margin-bottom: 50px; color: white;">If you’re struggling to get more visitors to your site, the answer might just lie in this FREE report!</h4>
-        <form onsubmit="return false;">
-            <div class="form-group text-center">
-                <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" class="form-control form-control-lg text-center mx-auto" type="text" placeholder="Enter website URL" style="font-size: 40px;padding: 15px; height: auto; width: 80%;"/>
-                <br/>
-                <button @onclick="@LoadHtml" class="btn btn-dark btn-lg" type="button" style="font-size: 32px; padding: 18px; height: auto; margin-top: 40px; border-radius: 5%;">Analyze!</button>
-            </div>
-        </form>
+<ul class="navbar mr-auto navbar-dark bg-dark justify-content-center" style="margin-top: 30px; border-radius: 20px;">
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="analysis" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Home
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="graphs" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Graphs
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="links" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Link health
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="routes" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Child routes
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="titles" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Titles
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="images" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Images
+        </NavLink>
+    </li>
+</ul>
 
-        @if (_feedback.Length > 0)
-        {
-            <h3 style="margin-top: 20px; color: red; text-align: center;">@_feedback</h3>
-        }
-    </div>
-}
-
-@if (_loaded && !ChildRoutes && !CriticalErrors && !Warnings)
-{
-    <ul class="navbar mr-auto navbar-dark bg-dark justify-content-center" style="margin-top: 30px; border-radius: 20px;">
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="analysis" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="graphs" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Graphs
-            </NavLink>
-        </li>
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="links" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Link health
-            </NavLink>
-        </li>
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="routes" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Child routes
-            </NavLink>
-        </li>
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="titles" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Titles
-            </NavLink>
-        </li>
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="images" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Images
-            </NavLink>
-        </li>
-    </ul>
-    
     <div class="row">
                 <div class="col-3">
                     <div class="card" style="height: 80%;">
@@ -110,35 +88,31 @@
         </div>
     </div>
 
-   
-
-    
-
-    <div class="row col-12" style="padding-bottom: 80px;">
-        <div class="offset-2 col-8">
-            <div class="card">
-                <div class="card-body" style="display: flex;">
-                    <div class="col-3" style="border-right: 1px solid gray;">
-                        <p>Your page is too large. Consider reducing the size of any page above 5MB.</p>
-                    </div>
-                    <div class="col-3" style="border-right: 5px solid gray;">
-                        <p>Your page is</p>
-                        <p style="font-size: 42px; text-align: center;">5.4MB</p>
-                        <p>large in size.</p>
-                    </div>
-                    <div class="col-3" style="border-right: 1px solid gray;">
-                        <p>Your page took</p>
-                        <p style="font-size: 42px; text-align: center;">0.989s</p>
-                        <p>to fully load.</p>
-                    </div>
-                    <div class="col-3">
-                        <p>Your page is lightning fast. Anything under 2s load time is considered good.</p>
-                    </div>
+<div class="row col-12" style="padding-bottom: 80px;">
+    <div class="offset-2 col-8">
+        <div class="card">
+            <div class="card-body" style="display: flex;">
+                <div class="col-3" style="border-right: 1px solid gray;">
+                    <p>Your page is too large. Consider reducing the size of any page above 5MB.</p>
+                </div>
+                <div class="col-3" style="border-right: 5px solid gray;">
+                    <p>Your page is</p>
+                    <p style="font-size: 42px; text-align: center;">5.4MB</p>
+                    <p>large in size.</p>
+                </div>
+                <div class="col-3" style="border-right: 1px solid gray;">
+                    <p>Your page took</p>
+                    <p style="font-size: 42px; text-align: center;">0.989s</p>
+                    <p>to fully load.</p>
+                </div>
+                <div class="col-3">
+                    <p>Your page is lightning fast. Anything under 2s load time is considered good.</p>
                 </div>
             </div>
         </div>
     </div>
-    
+</div>
+
 }
 @if (CriticalErrors)
 {
@@ -218,31 +192,6 @@
             <td>EASY</td>
             <td>MEDIUM</td>
         </tr>
-        </tbody>
-    </table>
-}
-
-@if (ChildRoutes)
-{
-    <button @onclick="@LoadChildRoutes" class="btn btn-dark" style="margin-bottom: 10px;">Back to report</button>
-    <table class="table">
-        <thead class="thead-dark">
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">CHILD ROUTES</th>
-        </tr>
-        </thead>
-        <tbody>
-        @for (int i = 0; i < Traverse.AllUrls.Count; i++)
-        {
-            int n = Traverse.AllUrls.Count;
-            <tr>
-                <th scope="row">@IncrementCount(i)</th>
-                <td>
-                    <a href="@Traverse.AllUrls[n - i - 1]" style="overflow: hidden;">@Traverse.AllUrls[n - i - 1]</a>
-                </td>
-            </tr>
-        }
         </tbody>
     </table>
 }

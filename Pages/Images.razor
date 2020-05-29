@@ -1,0 +1,307 @@
+﻿@page "/images"
+@using System.Text.RegularExpressions;
+@using HtmlAgilityPack
+@using WebScraper.Data
+@using WebScraper.Data.Plugins
+@using System.Net
+
+@inject IJSRuntime JSRuntime
+@inject IToastService ToastService
+@inject TraverseService Traverse
+@inject HealthCheck Health
+@inject SeoAnalyzer Analyzer 
+
+<ul class="navbar mr-auto navbar-dark bg-dark justify-content-center" style="margin-top: 30px; border-radius: 20px;">
+        <li class="nav-item" style="list-style-type: none;">
+            <NavLink class="nav-link" href="analysis" Match="NavLinkMatch.All" style="color: white;">
+                <span class="oi oi-bar-chart" style="color: white;"></span> Home
+            </NavLink>
+        </li>
+        <li class="nav-item" style="list-style-type: none;">
+            <NavLink class="nav-link" href="graphs" Match="NavLinkMatch.All" style="color: white;">
+                <span class="oi oi-bar-chart" style="color: white;"></span> Graphs
+            </NavLink>
+        </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="links" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Link health
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="routes" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Child routes
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="titles" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Titles
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="images" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Images
+        </NavLink>
+    </li>
+</ul>
+
+<div class="row col-12">
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-header" style="background: #343A40; color: white;">TITLE HEALTH</div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item list-group-item-danger">No titles - @Analyzer.NoTitles.Count</li>
+                        <li class="list-group-item list-group-item-warning">Too long titles - @Analyzer.TooLongTitles.Count</li>
+                        <li class="list-group-item list-group-item-secondary">Too short titles - @Analyzer.TooShortTitles.Count</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="card arrow_box_left">
+                <div class="card-body">
+                    @if (TitleHealth)
+                    {
+                        <div id="table-wrapper">
+                            <div id="table-scroll">
+                                <!--dummy table, umetnuti programatski ispis-->
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            <span class="text">Type</span>
+                                        </th>
+                                        <th>
+                                            <span class="text">Title</span>
+                                        </th>
+                                        <th>
+                                            <span class="text">Url</span>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var x in Analyzer.AllTitles)
+                                    {
+                                        <tr>
+                                            <td>@x.Type</td>
+                                            <td>@x.Title</td>
+                                            <td>@x.Url</td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>View your titles... bla bla...</p>
+                        <button @onclick="@LoadTitleHealth" class="btn btn-dark">View</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+@code{
+    private string Feedback { get; set; }
+    private string PageUrl { get; set; }
+    private string ResultTags { get; set; } = "";
+    private bool LoadingButton { get; set; } = false;
+    private bool FollowThrough { get; set; } = true;
+    private int MaxWidth { get; set; } = 50;
+    private string _feedback { get; set; } = "";
+    private bool _loaded { get; set; } = false;
+    private bool ChildRoutes { get; set; } = false;
+    private bool CriticalErrors { get; set; } = false;
+    private bool Warnings { get; set; } = false;
+    private bool LinkHealth { get; set; } = false;
+    private bool MissingAlt { get; set; } = false;
+    private bool TitleHealth { get; set; } = false;
+
+    public int IncrementCount(int Count)
+    {
+        return Count + 1;
+    }
+
+    public void LoadWarnings()
+    {
+        Warnings = !Warnings;
+    }
+
+    public void LoadCriticalErrors()
+    {
+        CriticalErrors = !CriticalErrors;
+    }
+
+    private HtmlWeb _web = new HtmlWeb();
+    private HtmlDocument _doc = new HtmlDocument();
+    private string _outerHtml = "";
+    private List<string> _tags = new List<string>();
+
+    public void LoadChildRoutes()
+    {
+        ChildRoutes = !ChildRoutes;
+    }
+
+    public void LoadLinkHealth()
+    {
+        LinkHealth = !LinkHealth;
+    }
+
+    public void LoadMissingAlt()
+    {
+        MissingAlt = !MissingAlt;
+    }
+
+    public void LoadTitleHealth()
+    {
+        TitleHealth = !TitleHealth;
+    }
+
+    protected async Task LoadHtml()
+    {
+    //Goggle Keyword
+        var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");
+        GoogleKeywordTracker b = new GoogleKeywordTracker();
+        StateHasChanged();
+    //
+
+        LoadingButton = true;
+        await Task.Delay(TimeSpan.FromSeconds(0.1));
+
+        if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
+        Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        if (checkIfValid.IsMatch(PageUrl))
+        {
+            Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            if (!checkIfHttps.IsMatch(PageUrl))
+            {
+                PageUrl = PageUrl.Insert(0, "https://");
+            }
+            try
+            {
+                _doc = _web.Load(PageUrl);
+                _loaded = true;
+                ToastService.ShowSuccess("URL is nicely formatted!");
+                await Analyzer.Analyze(PageUrl);
+                if (FollowThrough && MaxWidth > 0)
+                {
+                    Feedback = "Wait..";
+                    Traverse.StateHasChangedDelegate = () => InvokeAsync(StateHasChanged);
+                    Traverse.SetUrl(PageUrl);
+                    var watch = System.Diagnostics.Stopwatch.StartNew();
+                    await Traverse.BfsAsync(MaxWidth);
+                    watch.Stop();
+                    System.Diagnostics.Debug.Print("BFS Async, width " + MaxWidth + " pages = " + (float) watch.ElapsedMilliseconds / 1000 + " seconds\n");
+                }
+                Feedback = "Done.";
+                _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
+                LoadingButton = false;
+            }
+            catch (Exception e)
+            {
+                LoadingButton = false;
+                ToastService.ShowError("Error!");
+                Console.WriteLine(e.Message);
+                _outerHtml = e.Message;
+            }
+        }
+        else
+        {
+            LoadingButton = false;
+            ToastService.ShowError("URL is not valid!");
+        }
+    }
+
+    public async void DownloadFile(string fileName)
+    {
+        await JSRuntime.InvokeAsync<object>(
+            "FileSaveAs",
+            fileName, ResultTags
+            );
+    }
+
+    public async void DownloadHtmlFile(string fileName)
+    {
+        await JSRuntime.InvokeAsync<object>(
+            "FileSaveAs",
+            fileName, _outerHtml
+            );
+    }
+
+    async Task KeyPressLoadHtmlInput(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            LoadingButton = true;
+            await LoadHtml();
+        }
+    }
+
+}
+
+<style>
+    .arrow_box_left {
+        position: relative;
+        background: #ffffff;
+    }
+    .arrow_box_left:after {
+        right: 100%;
+        top: 50%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-color: rgba(255, 255, 255, 0);
+        border-right-color: #ffffff;
+        border-width: 30px;
+        margin-top: -30px;
+    }
+    .arrow_box_right {
+    	position: relative;
+    	background: #ffffff;
+    }
+    .arrow_box_right:after {
+    	left: 100%;
+    	top: 50%;
+    	border: solid transparent;
+    	content: " ";
+    	height: 0;
+    	width: 0;
+    	position: absolute;
+    	pointer-events: none;
+    	border-color: rgba(255, 255, 255, 0);
+    	border-left-color: #ffffff;
+    	border-width: 30px;
+    	margin-top: -30px;
+    }
+    .card{
+        margin: 40px;
+    }
+    #table-wrapper {
+      position:relative;
+    }
+    #table-scroll {
+      height:260px;
+      overflow:auto;  
+      margin-top:20px;
+    }
+    #table-wrapper table {
+      width:90%;
+    }
+    #table-wrapper table * {
+      background:white;
+      color:black;
+    }
+    #table-wrapper table thead th .text {
+      position:absolute;   
+      top:-20px;
+      z-index:2;
+      height:20px;
+    }
+</style>
