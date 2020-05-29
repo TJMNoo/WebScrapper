@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
-using Microsoft.CodeAnalysis;
 using WebScraper.Data.Engine;
 
 namespace WebScraper.Data.Plugins
@@ -27,16 +27,16 @@ namespace WebScraper.Data.Plugins
         }
     }
     
-    public class TitleCheck
+    public class TitleDescCheck
     {
         public readonly string Type;
-        public readonly string Title;
+        public readonly string TitleDesc;
         public readonly string Url;
         
-        public TitleCheck(string t, string ti, string u)
+        public TitleDescCheck(string t, string ti, string u)
         {
             Type = t;
-            Title = ti;
+            TitleDesc = ti;
             Url = u;
         }
     }
@@ -54,19 +54,29 @@ namespace WebScraper.Data.Plugins
         public List<LinkCheck> RedirectLinks { get; set; }
         public List<LinkCheck> LinksWithIssues { get; set; }
         public Dictionary<string, string> ImgsWithNoAlt { get; set; }
-        
-        public List<TitleCheck> AllTitles { get; set; }
-        public List<TitleCheck> NoTitles { get; set; }
-        public List<TitleCheck> TooLongTitles { get; set; }
-        public List<TitleCheck> TooShortTitles { get; set; }
-
+        public List<TitleDescCheck> AllTitles { get; set; }
+        public List<TitleDescCheck> GoodTitles { get; set; }
+        public List<TitleDescCheck> EmptyTitles { get; set; }
+        public List<TitleDescCheck> LongTitles { get; set; }
+        public List<TitleDescCheck> ShortTitles { get; set; }
+        public List<TitleDescCheck> AllDescriptions { get; set; }
+        public List<TitleDescCheck> GoodDescriptions { get; set; }
+        public List<TitleDescCheck> EmptyDescriptions { get; set; }
+        public List<TitleDescCheck> LongDescriptions { get; set; }
+        public List<TitleDescCheck> ShortDescriptions { get; set; }
+        public IAsyncEnumerable<ScraperEngineResponse> Responses;
+        public IAsyncEnumerable<ScraperEngineResponse> ResponsesHref;
 
 
         public async Task<string> Analyze(string websiteName)
         {
+            Responses = Engine.GetDocsFromRoot(websiteName, 100, 0);            
+            ResponsesHref = Engine.GetHrefsFromRoot(websiteName, 100, 0);
+            await AnalyzeTitles();
+            await AnalyzeDescriptions();
             await AnalyzeLinks(websiteName);
-            await AnalyzeImgs(websiteName);
-            await AnalyzeTitles(websiteName);
+            await AnalyzeImgs();
+
             return "done";
         }
 
@@ -78,14 +88,13 @@ namespace WebScraper.Data.Plugins
             BlockedLinks = new List<LinkCheck>();
             RedirectLinks = new List<LinkCheck>();
             LinksWithIssues = new List<LinkCheck>();
-            
-            var responses = Engine.GetHrefsFromRoot(websiteName, 100, 0);
+
             Helper.SetUrl(websiteName);
-            await foreach (var response in responses)
+            await foreach (var response in ResponsesHref)
             {
                 var url = FormatHrefForAnalyzer(response.Url);
                 //href includes tel and mailto, we don't want these as our links
-                if (url.Contains("tel:") || url.Contains("mailto:")) continue;
+                if (url.Contains("tel:") || url.Contains("mailto:") || url.Contains("callto:")) continue;
                 List<Task> tasks = new List<Task>();
                 tasks.Add(Task.Run(() =>
                 {
@@ -93,6 +102,9 @@ namespace WebScraper.Data.Plugins
 
                     switch (_web.StatusCode)
                     {
+                        case HttpStatusCode.NoContent:
+                        case HttpStatusCode.IMUsed:
+                        case HttpStatusCode.Accepted:
                         case HttpStatusCode.OK:
                         {
                             if (!Results.Contains(url))
@@ -105,7 +117,14 @@ namespace WebScraper.Data.Plugins
                             break;
                         }
                         case HttpStatusCode.Unauthorized:
+                        case HttpStatusCode.FailedDependency:
+                        case HttpStatusCode.MethodNotAllowed:
+                        case HttpStatusCode.ExpectationFailed:
+                        case HttpStatusCode.NotAcceptable:
                         case HttpStatusCode.Forbidden:
+                        case HttpStatusCode.NetworkAuthenticationRequired:
+                        case HttpStatusCode.TooManyRequests:
+                        case HttpStatusCode.UnavailableForLegalReasons:
                         {
                             if (!Results.Contains(url))
                             {
@@ -117,8 +136,28 @@ namespace WebScraper.Data.Plugins
 
                             break;
                         }
+                        case HttpStatusCode.Gone:
+                        case HttpStatusCode.InternalServerError:
+                        case HttpStatusCode.GatewayTimeout:
+                        case HttpStatusCode.MisdirectedRequest:
+                        case HttpStatusCode.NotImplemented:
+                        case HttpStatusCode.ServiceUnavailable:
+                        {
+                            if (!Results.Contains(url))
+                            {
+                                Results.Add(url);
+                                LinkCheck result = new LinkCheck("Has Issues", response.Url, url, _web.StatusCode);
+                                AllLinks.Add(result);
+                                LinksWithIssues.Add(result);
+                            }
+
+                            break;
+                        }
+                        case HttpStatusCode.Ambiguous:
                         case HttpStatusCode.Redirect:
                         case HttpStatusCode.Moved:
+                        case HttpStatusCode.PermanentRedirect:
+                        case HttpStatusCode.TemporaryRedirect:
                         {
                             if (!Results.Contains(url))
                             {
@@ -149,6 +188,120 @@ namespace WebScraper.Data.Plugins
             return "done";
         }
 
+        public async Task<string> AnalyzeImgs()
+        {
+            ImgsWithNoAlt = new Dictionary<string, string>();
+            await foreach (var response in Responses)
+            {
+                //var results = response.Doc.DocumentNode.SelectNodes("//img[@alt='']");
+                var results = response.Doc.DocumentNode.SelectNodes("//img[not(@alt)] | //img[@alt='']");
+                if (results != null)
+                {
+                    foreach (var result in results)
+                    {
+                        if (result.OuterHtml == null) continue;
+                        if (!ImgsWithNoAlt.ContainsKey(result.OuterHtml))
+                            ImgsWithNoAlt.Add(result.OuterHtml, response.Url);
+                    }
+                }
+            }
+
+            return "done";
+        }
+        
+        public async Task<string> AnalyzeTitles()
+        {
+            AllTitles = new List<TitleDescCheck>();
+            GoodTitles = new List<TitleDescCheck>();
+            EmptyTitles = new List<TitleDescCheck>();
+            LongTitles = new List<TitleDescCheck>();
+            ShortTitles = new List<TitleDescCheck>();
+            
+            await foreach (var response in Responses)
+            {
+                var results = response.Doc.DocumentNode.SelectNodes("//title");
+                if (results != null)
+                {
+                    foreach (var result in results)
+                    {
+                        if (result.OuterHtml == null || result.InnerText == "")
+                        {
+                            TitleDescCheck title = new TitleDescCheck("Missing title", result.InnerText, response.Url);
+                            EmptyTitles.Add(title);
+                            AllTitles.Add(title);
+                        }
+                        else if (result.InnerText.Length >= 60)
+                        {
+                            TitleDescCheck title = new TitleDescCheck("Too long", result.InnerText, response.Url);
+                            LongTitles.Add(title);
+                            AllTitles.Add(title);
+                        }
+                        else if (result.InnerText.Length <= 40)
+                        {
+                            TitleDescCheck title = new TitleDescCheck("Too short", result.InnerText, response.Url);
+                            ShortTitles.Add(title);
+                            AllTitles.Add(title);
+                        }
+                        else
+                        {
+                            TitleDescCheck title = new TitleDescCheck("Good", result.InnerText, response.Url);
+                            GoodTitles.Add(title);
+                            AllTitles.Add(title);
+                        }
+                    }
+                }
+            }
+
+            return "done";
+        }
+        public async Task<string> AnalyzeDescriptions()
+        {
+            AllDescriptions = new List<TitleDescCheck>();
+            GoodDescriptions = new List<TitleDescCheck>();
+            EmptyDescriptions = new List<TitleDescCheck>();
+            LongDescriptions = new List<TitleDescCheck>();
+            ShortDescriptions = new List<TitleDescCheck>();
+            
+            await foreach (var response in Responses)
+            {
+                var results = response.Doc.DocumentNode.SelectNodes("//meta[@name='description']");
+                if (results != null)
+                {
+                    foreach (var result in results)
+                    {
+                        var innerText = result.GetAttributeValue("content", "none");
+                        if (innerText.Equals("none") || innerText.Equals(""))
+                        {
+                            TitleDescCheck description =
+                                new TitleDescCheck("Missing description", innerText, response.Url);
+                            EmptyDescriptions.Add(description);
+                            AllDescriptions.Add(description);
+                        }
+                        else if (innerText.Length > 160)
+                        {
+                            TitleDescCheck description = new TitleDescCheck("Too long", innerText, response.Url);
+                            LongDescriptions.Add(description);
+                            AllDescriptions.Add(description);
+                        }
+                        else if (innerText.Length <= 50)
+                        {
+                            TitleDescCheck description = new TitleDescCheck("Too short", innerText, response.Url);
+                            ShortDescriptions.Add(description);
+                            AllDescriptions.Add(description);
+                        }
+                        else
+                        {
+                            TitleDescCheck description = new TitleDescCheck("Good", innerText, response.Url);
+                            GoodDescriptions.Add(description);
+                            AllDescriptions.Add(description);
+                        }
+                    }
+                }
+                
+            }
+
+            return "done";
+        }
         public string FormatHrefForAnalyzer(string href)
         {
             Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -158,62 +311,6 @@ namespace WebScraper.Data.Plugins
             if (href[0] == '.' && href[1] == '/') return Helper.BaseDomain + href.Substring(1);
             if (href[0] != '/') return Helper.BaseDomain + "/" + href;
             else return Helper.BaseDomain + href;
-        }
-
-        public async Task<string> AnalyzeImgs(string websiteName)
-        {
-            ImgsWithNoAlt = new Dictionary<string, string>();
-            var responses = Engine.GetDocsFromRoot(websiteName, 100, 0);
-            await foreach (var response in responses)
-            {
-                var results = response.Doc.DocumentNode.SelectNodes("//img[@alt='']");
-                if (results == null) return "done";
-                foreach (var result in results)
-                {
-                    if (result.OuterHtml == null) continue;
-                    if (!ImgsWithNoAlt.ContainsKey(result.OuterHtml)) ImgsWithNoAlt.Add(result.OuterHtml, response.Url);
-                }
-            }
-
-            return "done";
-        }
-        
-        public async Task<string> AnalyzeTitles(string websiteName)
-        {
-            AllTitles = new List<TitleCheck>();
-            NoTitles = new List<TitleCheck>();
-            TooLongTitles = new List<TitleCheck>();
-            TooShortTitles = new List<TitleCheck>();
-
-            var responses = Engine.GetDocsFromRoot(websiteName, 100, 0);
-            await foreach (var response in responses)
-            {
-                var results = response.Doc.DocumentNode.SelectNodes("//title");
-                if (results == null) return "done";
-                foreach (var result in results)
-                {
-                    if (result.OuterHtml == null || result.InnerText == "")
-                    {
-                        TitleCheck title = new TitleCheck("Missing title", result.InnerText, response.Url);
-                        NoTitles.Add(title);
-                        AllTitles.Add(title);
-                    }
-                    else if (result.InnerText.Length >= 60)
-                    {
-                        TitleCheck title = new TitleCheck("Too long", result.InnerText, response.Url);
-                        TooLongTitles.Add(title);
-                        AllTitles.Add(title);
-                    }
-                    else if (result.InnerText.Length <= 40)
-                    {
-                        TitleCheck title = new TitleCheck("Too short", result.InnerText, response.Url);
-                        TooShortTitles.Add(title);
-                        AllTitles.Add(title);
-                    }
-                }
-            }
-
-            return "done";
         }
     }
 }
