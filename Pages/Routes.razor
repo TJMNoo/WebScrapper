@@ -12,16 +12,16 @@
 @inject SeoAnalyzer Analyzer
 
 <ul class="navbar mr-auto navbar-dark bg-dark justify-content-center" style="margin-top: 30px; border-radius: 20px;">
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="analysis" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="graphs" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Graphs
-            </NavLink>
-        </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="analysis" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Home
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="graphs" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Graphs
+        </NavLink>
+    </li>
     <li class="nav-item" style="list-style-type: none;">
         <NavLink class="nav-link" href="links" Match="NavLinkMatch.All" style="color: white;">
             <span class="oi oi-bar-chart" style="color: white;"></span> Link health
@@ -38,6 +38,11 @@
         </NavLink>
     </li>
     <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="descriptions" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Descriptions
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
         <NavLink class="nav-link" href="images" Match="NavLinkMatch.All" style="color: white;">
             <span class="oi oi-bar-chart" style="color: white;"></span> Images
         </NavLink>
@@ -45,26 +50,26 @@
 </ul>
 
 <div class="container">
-<table class="table" style="overflow-y:scroll; height: 500px; display:block;">
-    <thead class="thead-dark" style="position: sticky; top: 0;">
-    <tr>
-        <th scope="col" style="position: sticky; top: 0;">#</th>
-        <th scope="col" style="position: sticky; top: 0;">CHILD ROUTES</th>
-    </tr>
-    </thead>
-    <tbody>
-    @for (int i = 0; i < Traverse.AllUrls.Count; i++)
-    {
-        int n = Traverse.AllUrls.Count;
+    <table class="table" style="overflow-y:scroll; height: 500px; display:block;">
+        <thead class="thead-dark" style="position: sticky; top: 0;">
         <tr>
-            <th scope="row">@IncrementCount(i)</th>
-            <td>
-                <a href="@Traverse.AllUrls[n - i - 1]" style="overflow: hidden; color: white;">@Traverse.AllUrls[n - i - 1]</a>
-            </td>
+            <th scope="col" style="position: sticky; top: 0;">#</th>
+            <th scope="col" style="position: sticky; top: 0;">CHILD ROUTES</th>
         </tr>
-    }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < Traverse.AllUrls.Count; i++)
+        {
+            int n = Traverse.AllUrls.Count;
+            <tr>
+                <th scope="row">@IncrementCount(i)</th>
+                <td>
+                    <a href="@Traverse.AllUrls[n - i - 1]" style="overflow: hidden; color: white;">@Traverse.AllUrls[n - i - 1]</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
 </div>
 
 @code{

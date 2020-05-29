@@ -1,9 +1,10 @@
-﻿@page "/links"
+﻿@page "/descriptions"
 @using System.Text.RegularExpressions;
 @using HtmlAgilityPack
 @using WebScraper.Data
 @using WebScraper.Data.Plugins
 @using System.Net
+
 @inject IJSRuntime JSRuntime
 @inject IToastService ToastService
 @inject TraverseService Traverse
@@ -51,14 +52,13 @@
 <div class="row col-12">
     <div class="col-sm-4">
         <div class="card">
-            <div class="card-header" style="background: #343A40; color: white;">LINK HEALTH</div>
+            <div class="card-header" style="background: #343A40; color: white;">DESCRIPTION HEALTH</div>
             <div class="card-body">
                 <ul class="list-group">
-                    <li class="list-group-item list-group-item-success">Healthy links - @Analyzer.HealthyLinks.Count</li>
-                    <li class="list-group-item list-group-item-danger">Broken links - @Analyzer.BrokenLinks.Count</li>
-                    <li class="list-group-item list-group-item-warning">Issue links - @Analyzer.LinksWithIssues.Count</li>
-                    <li class="list-group-item list-group-item-secondary">Redirect links - @Analyzer.RedirectLinks.Count</li>
-                    <li class="list-group-item list-group-item-dark">Blocked links - @Analyzer.BlockedLinks.Count</li>
+                    <li class="list-group-item list-group-item-success">Healthy descriptions - @Analyzer.HealthyDescriptions.Count</li>
+                    <li class="list-group-item list-group-item-danger">No descriptions - @Analyzer.EmptyDescriptions.Count</li>
+                    <li class="list-group-item list-group-item-warning">Long descriptions - @Analyzer.LongDescriptions.Count</li>
+                    <li class="list-group-item list-group-item-secondary">Short descriptions - @Analyzer.ShortDescriptions.Count</li>
                 </ul>
             </div>
         </div>
@@ -66,29 +66,31 @@
     <div class="col-sm-8">
         <div class="card arrow_box_left">
             <div class="card-body">
-                @if (LinkHealth)
+                @if (DescriptionHealth)
                 {
                     <div id="table-wrapper">
                         <div id="table-scroll">
-                            <!--dummy table, umetnuti programatski ispis-->
                             <table>
                                 <thead>
                                 <tr>
                                     <th>
-                                        <span class="text">Url</span>
+                                        <span class="text">Type</span>
                                     </th>
                                     <th>
-                                        <span class="text">Status</span>
+                                        <span class="text">Title</span>
+                                    </th>
+                                    <th>
+                                        <span class="text">Url</span>
                                     </th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach (var x in Analyzer.AllLinks)
+                                @foreach (var x in Analyzer.AllDescriptions)
                                 {
                                     <tr>
+                                        <td>@x.Type</td>
+                                        <td>@x.TitleDesc</td>
                                         <td>@x.Url</td>
-                                        <td>@x.Status</td>
-
                                     </tr>
                                 }
                                 </tbody>
@@ -98,16 +100,8 @@
                 }
                 else
                 {
-                    @if (Analyzer.BrokenLinks.Count != 0 || Analyzer.LinksWithIssues.Count != 0 || Analyzer.RedirectLinks.Count != 0 || Analyzer.BlockedLinks.Count != 0)
-                    {
-                        <p>Healthy links insure proper crawling and better visibility. Your page has issues on this front that need addressing!</p>
-                        <p>Press View to get indepth data on the status of your links.</p>
-                        <button @onclick="@LoadLinkHealth" class="btn btn-dark">View</button>
-                    }
-                    else
-                    {
-                        <p>It seems you have done everything in your power to ensure a healthy state of your links!</p>
-                    }
+                    <p>View your descriptions... bla bla...</p>
+                    <button @onclick="@LoadDescriptionHealth" class="btn btn-dark">View</button>
                 }
             </div>
         </div>
@@ -115,11 +109,13 @@
 </div>
 
 @code{
-    private bool LinkHealth { get; set; } = false;
-    public void LoadLinkHealth()
+    private bool DescriptionHealth { get; set; } = false;
+
+    public void LoadDescriptionHealth()
     {
-        LinkHealth = !LinkHealth;
+        DescriptionHealth = !DescriptionHealth;
     }
+
 }
 
 <style>

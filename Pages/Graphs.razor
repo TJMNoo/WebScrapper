@@ -42,6 +42,11 @@
         </NavLink>
     </li>
     <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="descriptions" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Descriptions
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
         <NavLink class="nav-link" href="images" Match="NavLinkMatch.All" style="color: white;">
             <span class="oi oi-bar-chart" style="color: white;"></span> Images
         </NavLink>
@@ -51,7 +56,7 @@
 <div class="container" style="width: 70%;">
     <h1 class="text-center" style="margin-bottom: 40px;">Keyword rank tracker</h1>
     <button @onclick="@GetChartData">Next keyword</button>
-    <ChartJsLineChart @ref="_lineChartJs" Config="@_lineConfig" Width="50" Height="20" />
+    <ChartJsLineChart @ref="_lineChartJs" Config="@_lineConfig" Width="50" Height="20"/>
 
 </div>
 
@@ -70,7 +75,7 @@
 
         _WeightDataSet.RemoveAll(e => true);
 
-        for(int i=0; i<data.position.Count; i++)
+        for (int i = 0; i < data.position.Count; i++)
         {
             var pos = data.position[i];
             var date = data.date[i];
@@ -119,7 +124,6 @@
                                 Min = 1,
                                 Max = 50
                             },
-
                         },
                     },
                     xAxes = new List<CartesianAxis>
@@ -168,4 +172,5 @@
 
         await GetChartData();
     }
+
 }

@@ -55,12 +55,12 @@ namespace WebScraper.Data.Plugins
         public List<LinkCheck> LinksWithIssues { get; set; }
         public Dictionary<string, string> ImgsWithNoAlt { get; set; }
         public List<TitleDescCheck> AllTitles { get; set; }
-        public List<TitleDescCheck> GoodTitles { get; set; }
+        public List<TitleDescCheck> HealthyTitles { get; set; }
         public List<TitleDescCheck> EmptyTitles { get; set; }
         public List<TitleDescCheck> LongTitles { get; set; }
         public List<TitleDescCheck> ShortTitles { get; set; }
         public List<TitleDescCheck> AllDescriptions { get; set; }
-        public List<TitleDescCheck> GoodDescriptions { get; set; }
+        public List<TitleDescCheck> HealthyDescriptions { get; set; }
         public List<TitleDescCheck> EmptyDescriptions { get; set; }
         public List<TitleDescCheck> LongDescriptions { get; set; }
         public List<TitleDescCheck> ShortDescriptions { get; set; }
@@ -212,7 +212,7 @@ namespace WebScraper.Data.Plugins
         public async Task<string> AnalyzeTitles()
         {
             AllTitles = new List<TitleDescCheck>();
-            GoodTitles = new List<TitleDescCheck>();
+            HealthyTitles = new List<TitleDescCheck>();
             EmptyTitles = new List<TitleDescCheck>();
             LongTitles = new List<TitleDescCheck>();
             ShortTitles = new List<TitleDescCheck>();
@@ -245,7 +245,7 @@ namespace WebScraper.Data.Plugins
                         else
                         {
                             TitleDescCheck title = new TitleDescCheck("Good", result.InnerText, response.Url);
-                            GoodTitles.Add(title);
+                            HealthyTitles.Add(title);
                             AllTitles.Add(title);
                         }
                     }
@@ -257,7 +257,7 @@ namespace WebScraper.Data.Plugins
         public async Task<string> AnalyzeDescriptions()
         {
             AllDescriptions = new List<TitleDescCheck>();
-            GoodDescriptions = new List<TitleDescCheck>();
+            HealthyDescriptions = new List<TitleDescCheck>();
             EmptyDescriptions = new List<TitleDescCheck>();
             LongDescriptions = new List<TitleDescCheck>();
             ShortDescriptions = new List<TitleDescCheck>();
@@ -292,7 +292,7 @@ namespace WebScraper.Data.Plugins
                         else
                         {
                             TitleDescCheck description = new TitleDescCheck("Good", innerText, response.Url);
-                            GoodDescriptions.Add(description);
+                            HealthyDescriptions.Add(description);
                             AllDescriptions.Add(description);
                         }
                     }

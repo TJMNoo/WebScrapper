@@ -1865,3 +1865,15 @@ C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaratio
 C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\Images.razor.g.cs
 C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Routes.razor.g.cs
 C:\Users\Timon\RiderProjects\WebScrapper\obj\Debug\netcoreapp3.1\Razor\Pages\Routes.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Analysis.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Images.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Links.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Routes.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Titles.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Analysis.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Images.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Links.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Routes.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Titles.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Descriptions.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\Descriptions.razor.g.cs
