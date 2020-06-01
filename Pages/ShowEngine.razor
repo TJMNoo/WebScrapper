@@ -54,58 +54,96 @@
                 </button>
             </div>
         </form>
-        <div class="col-sm-4">
-            <table>
-                <thead>
-                <tr>
-                    <th>Position</th>
-                    <th>URL</th>
-                    <th>Title</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var r in _kwfinderResult)
-                {
+        @* Normalni rezultati *@
+        <div class="row">
+            <div class="col-sm-4">
+                <h1>Regular</h1>
+                <table>
+                    <thead>
                     <tr>
-                        <td>@r.Position</td>
-                        <td>@r.Url</td>
-                        <td>@r.Title</td>
+                        <th>Keyword</th>
+                        <th>Position</th>
+                        <th>URL</th>
+                        <th>Time</th>
                     </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-                <div class="col-sm-4">
-                    <table>
-                        <thead>
+                    </thead>
+                    <tbody>
+                    @foreach (var r in _kwfinderResult)
+                    {
                         <tr>
-                            <th>Position</th>
-                            <th>URL</th>
-                            <th>Title</th>
+                            <td>@r.Keyword</td>
+                            <td>@r.Position</td>
+                            <td>@r.Url</td>
+                            <td>@r.Date</td>
                         </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var r in found)
-                            {
-                                <tr>
-                                    <td>@r.Position</td>
-                                    <td>@r.Url</td>
-                                    <td>@r.Title</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-
-        <div class="col-sm-4">
-            <h4>Optimizer result (docs)</h4>
-            @for (int i = 0; i < optimizerResult.Count; i++)
-            {
-                <ul>
-                    <li>@(i + 1). html page length: @optimizerResult[i]</li>
-                </ul>
-            }
+                    }
+                    </tbody>
+                </table>
+            </div>
+    </div>
+        @* Pronadena stranica/e *@
+        <div class="row mt-4 mb-4">
+            <div class="col-sm-4">
+                <h1>Pronadene stranice</h1>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Position</th>
+                        <th>URL</th>
+                        <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var r in _found)
+                    {
+                        <tr>
+                            <td>@r.Position</td>
+                            <td>@r.Url</td>
+                            <td>@r.Date</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
         </div>
+        @* Reklame *@
+        <div class="row mt-4 mb-4">
+            <div class="col-sm-4">
+                <h1>Reklame</h1>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>URL</th>
+                        <th>Domain</th>
+                        <th>Subject</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var r in _ads)
+                    {
+                        <tr>
+                            <td>@r.Url</td>
+                            <td>@r.Domain</td>
+                            <td>@r.Subject</td>
+                            <td>@r.Description</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row mt-4 mb-4">
+            <div class="col-sm-4">
+                <h4>Optimizer result (docs)</h4>
+                @for (int i = 0; i < optimizerResult.Count; i++)
+                {
+                    <ul>
+                        <li>@(i + 1). html page length: @optimizerResult[i]</li>
+                    </ul>
+                }
+            </div>
+            </div>
     </div>
 </div>
 
@@ -114,7 +152,8 @@
     private List<string> analyzerResult = new List<string>();
     private List<int> optimizerResult = new List<int>();
     private List<Result> _kwfinderResult = new List<Result>();
-    private List<Result> found = new List<Result>();
+    private List<Found> _found = new List<Found>();
+    private List<Advert> _ads = new List<Advert>();
     private bool IsShow { get; set; } = false;
     private string kljucnarijec;
     private string lokacija;
@@ -146,7 +185,8 @@
     {
         var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");;
         GoogleKeywordTracker kwfinder = new GoogleKeywordTracker();
-        found = kwfinder.Rezultatici;
+        _found = kwfinder.Pronadeni;
+        _ads = kwfinder.Reklame;
         _kwfinderResult = await kwfinder.TrackSomething(kljucnarijec, remoteUserAgent, lokacija, enteredurl);
         StateHasChanged();
         

@@ -23,7 +23,7 @@ namespace WebScraper.Data.Engine
             for (int i = 0; i < pages; i++)
             {
                 //start=0 -> page1, start=1-10 -> page 2, start=11-20 -> page3...
-                string nextPage = "https://google.com/search?gl=" + location + "&q=" + keyword + "&start=" + i * 10;
+                string nextPage = "https://google.com/search?hl=" + location + "&q=" + keyword + "&start=" + i * 10;
                 var task = Task.Run(() =>
                 {
                     try
