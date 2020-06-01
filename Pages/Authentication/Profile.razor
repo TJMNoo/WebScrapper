@@ -1,10 +1,179 @@
 ﻿@page "/profile"
 
+@using ChartJs.Blazor.Charts
 @using WebScraper.Data
 
-<h1 class="text-center mt-3">Profile</h1>
-<h3 class="text-center">In construction..</h3>
+    <div class="container w-75">
+        <h1 class="text-center mt-3 mb-4">Profile</h1>
+
+        <div class="btn-group w-100 mb-4">
+            <button @onclick="@Keywords" class="btn btn-primary mr-2">Show keyword rankings</button>
+            <button @onclick="@DeleteHistory" class="btn btn-primary mr-2">Delete keyword history</button>
+            <button @onclick="@ChangePassword" class="btn btn-primary mr-2">Change password</button>
+            <button @onclick="@ChangeUsername" class="btn btn-primary mr-2">Change username</button>
+            <button @onclick="@ChangeEmail" class="btn btn-primary">Change email</button>
+        </div>
+        
+        @if (cKeywords)
+        {
+            <div class="row">
+                <div class="col-sm-4">
+                    <ChartJsLineChart @ref="charters[0]._lineChartJs" Config="@charters[0]._lineConfig"/>
+                </div>
+                <div class="col-sm-4">
+                    <ChartJsLineChart @ref="charters[1]._lineChartJs" Config="@charters[1]._lineConfig"/>
+                </div>
+                <div class="col-sm-4">
+                    <ChartJsLineChart @ref="charters[2]._lineChartJs" Config="@charters[2]._lineConfig"/>
+                </div>
+                <div class="col-sm-4">
+                    <ChartJsLineChart @ref="charters[3]._lineChartJs" Config="@charters[3]._lineConfig"/>
+                </div>
+                <div class="col-sm-4">
+                    <ChartJsLineChart @ref="charters[4]._lineChartJs" Config="@charters[4]._lineConfig"/>
+                </div>
+                <div class="col-sm-4">
+                    <ChartJsLineChart @ref="charters[5]._lineChartJs" Config="@charters[5]._lineConfig"/>
+                </div>
+                <div class="col-sm-4">
+                    <ChartJsLineChart @ref="charters[6]._lineChartJs" Config="@charters[6]._lineConfig"/>
+                </div>
+                <div class="col-sm-4">
+                    <ChartJsLineChart @ref="charters[7]._lineChartJs" Config="@charters[7]._lineConfig"/>
+                </div>
+                <div class="col-sm-4">
+                    <ChartJsLineChart @ref="charters[8]._lineChartJs" Config="@charters[8]._lineConfig"/>
+                </div>
+            </div>
+        }
+
+        @if (cHistory)
+        {
+            <h1 class="text-center">Your keyword tracking history has been deleted.</h1>
+        }
+
+        @if (cPassword)
+        {
+            <form class="text-center">
+                <div class="form-group text-left">
+                    <label for="currentPassword">Current password: </label>
+                    <input type="password" class="form-control" id="currentPassword" />
+                </div>
+                <div class="form-group text-left">
+                    <label for="newPassword">New password: </label>
+                    <input type="password" class="form-control" id="newPassword" />
+                </div>
+                <div class="form-group text-left">
+                    <label for="newPasswordAgain">Confirm new password: </label>
+                    <input type="password" class="form-control" id="newPasswordAgain" />
+                </div>
+                <button type="button" class="btn btn-primary mb-4">Change</button>
+            </form>
+        }
+        @if (cUsername)
+        {
+            <form class="text-center">
+                <div class="form-group text-left">
+                    <label for="newUsername">New username:</label>
+                    <input type="text" class="form-control" id="newUsername" />
+                </div>
+                <div class="form-group text-left">
+                    <label for="password">Password:</label>
+                    <input type="password" class="form-control" id="password" />
+                </div>
+                <div class="form-group text-left">
+                    <label for="passwordAgain">Confirm password:</label>
+                    <input type="password" class="form-control" id="passwordAgain" />
+                </div>
+                <button type="button" class="btn btn-primary mb-4">Change</button>
+            </form>
+        }
+        @if (cEmail)
+        {
+            <form class="text-center">
+                <div class="form-group text-left">
+                    <label for="newUsername">New email: </label>
+                    <input type="text" class="form-control" id="newEmail" />
+                </div>
+                <div class="form-group text-left">
+                    <label for="password">Password: </label>
+                    <input type="password" class="form-control" id="password" />
+                </div>
+                <div class="form-group text-left">
+                    <label for="passwordAgain">Confirm password: </label>
+                    <input type="password" class="form-control" id="passwordAgain" />
+                </div>
+                <button type="button" class="btn btn-primary mb-4">Change</button>
+            </form>
+        }
+    </div>
 
 @code {
-  
+    private bool cKeywords = true;
+    private bool cHistory = false;
+    private bool cPassword = false;
+    private bool cUsername = false;
+    private bool cEmail = false;
+    private List<Charter> charters = new List<Charter>();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+       LoadCharters();
+    }
+
+    void LoadCharters()
+    {
+        charters.Clear();
+        charters.Add(new Charter("best kitchen pot"));
+        charters.Add(new Charter("coffee houston tx"));
+        charters.Add(new Charter("motorcycle for sale new york"));
+        charters.Add(new Charter("dentist austin"));
+        charters.Add(new Charter("doctor in la"));
+        charters.Add(new Charter("coffee bars in miami"));
+        charters.Add(new Charter("boats for sale nyc"));
+        charters.Add(new Charter("real estate dallas"));
+        charters.Add(new Charter("luxury apartments in la"));
+    }
+
+    void Keywords()
+    {
+        Reset();
+        LoadCharters();
+        cKeywords = true;
+    }
+
+    void DeleteHistory()
+    {
+        Reset();
+        cHistory = true;
+    }
+
+    void ChangePassword()
+    {
+        Reset();
+        cPassword = true;
+    }
+
+    void ChangeUsername()
+    {
+        Reset();
+        cUsername = true;
+    }
+
+    void ChangeEmail()
+    {
+        Reset();
+        cEmail = true;
+    }
+
+    void Reset()
+    {
+        cKeywords = false;
+        cHistory = false;
+        cPassword = false;
+        cUsername = false;
+        cEmail = false;
+    }
 }

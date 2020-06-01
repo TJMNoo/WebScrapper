@@ -2,13 +2,18 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 5vh">
     <a class="navbar-brand" href="#">TJMNoo</a>
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="apitesting" Match="NavLinkMatch.All">
+                    <span class="oi oi-person"></span> API TESTING
                 </NavLink>
             </li>
             <AuthorizeView>

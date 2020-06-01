@@ -15,14 +15,14 @@
     <h1 class="text-center" style="margin-bottom: 40px;">Show engine</h1>
 
     <button @onclick="@LoadHtml" class="btn btn-outline-primary" type="button">CLICK ME & WAIT</button>
-    
+
     <div class="row mt-4 mb-4">
         <div class="col-sm-4">
             <h4>Analyzer results (docs/hrefs)</h4>
-            @for(int i=0; i<analyzerResult.Count; i++)
+            @for (int i = 0; i < analyzerResult.Count; i++)
             {
                 <ul>
-                    <li>@(i+1) href: @analyzerResult[i]</li>
+                    <li>@(i + 1) href: @analyzerResult[i]</li>
                 </ul>
             }
         </div>
@@ -39,7 +39,7 @@
                 <button @onclick="@Show" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Pick Location
                 </button>
-                <div hidden="@IsShow" >
+                <div hidden="@IsShow">
                     <div>
                         <!-- Dropdown menu links -->
                         <button @onclick="settous" @onclick:preventDefault class="dropdown-item">US</button>
@@ -165,17 +165,19 @@
         lokacija = "us";
         Console.WriteLine(lokacija);
     }
+
     public void settohr()
     {
         lokacija = "hr";
         Console.WriteLine(lokacija);
     }
+
     public void settouk()
     {
         lokacija = "co.uk";
         Console.WriteLine(lokacija);
     }
-    
+
     private void Show()
     {
         IsShow = !IsShow;
@@ -183,27 +185,29 @@
 
     protected async Task LoadHtml()
     {
-        var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");;
+        var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");
+        ;
         GoogleKeywordTracker kwfinder = new GoogleKeywordTracker();
         _found = kwfinder.Pronadeni;
         _ads = kwfinder.Reklame;
         _kwfinderResult = await kwfinder.TrackSomething(kljucnarijec, remoteUserAgent, lokacija, enteredurl);
         StateHasChanged();
-        
+
         SeoAnalyzer analyzer = new SeoAnalyzer();
         Optimizer optimizer = new Optimizer();
-        await analyzer.Analyze("https://rentberry.com/apartments/s/new-york-ny");
+        await analyzer.AnalyzeLinks("https://rentberry.com/apartments/s/new-york-ny");
         analyzerResult = analyzer.Results;
         StateHasChanged();
-        
-        //TrackSomething(string keyword, string userAgent, string location)
 
-        
-        //kwfinderResult = kwfinder.TempResults;
-        //StateHasChanged();
+    //TrackSomething(string keyword, string userAgent, string location)
 
-        //await optimizer.Optimize("args");
-        //optimizerResult = optimizer.TempResults;
-        //StateHasChanged();
+
+    //kwfinderResult = kwfinder.TempResults;
+    //StateHasChanged();
+
+    //await optimizer.Optimize("args");
+    //optimizerResult = optimizer.TempResults;
+    //StateHasChanged();
     }
+
 }

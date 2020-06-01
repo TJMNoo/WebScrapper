@@ -1,0 +1,176 @@
+﻿@page "/graphs"
+@using System.Collections
+@using HtmlAgilityPack
+@using WebScraper.Data
+@using ChartJs.Blazor;
+@using ChartJs.Blazor.ChartJS.Common.Axes
+@using ChartJs.Blazor.ChartJS.Common.Axes.Ticks
+@using ChartJs.Blazor.ChartJS.Common.Enums
+@using ChartJs.Blazor.ChartJS.Common.Handlers
+
+@using ChartJs.Blazor.Charts
+@using ChartJs.Blazor.ChartJS.PieChart
+@using ChartJs.Blazor.ChartJS.Common.Properties
+@using ChartJs.Blazor.ChartJS.Common.Time
+@using ChartJs.Blazor.ChartJS.LineChart
+@using ChartJs.Blazor.Util
+
+<ul class="navbar mr-auto navbar-dark bg-dark justify-content-center" style="margin-top: 30px; border-radius: 20px;">
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="analysis" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Home
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="graphs" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Graphs
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="links" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Link health
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="routes" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Child routes
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="titles" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Titles
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="descriptions" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Descriptions
+        </NavLink>
+    </li>
+    <li class="nav-item" style="list-style-type: none;">
+        <NavLink class="nav-link" href="images" Match="NavLinkMatch.All" style="color: white;">
+            <span class="oi oi-bar-chart" style="color: white;"></span> Images
+        </NavLink>
+    </li>
+</ul>
+
+<div class="container" style="width: 70%;">
+    <h1 class="text-center" style="margin-bottom: 40px;">Keyword rank tracker</h1>
+    <button @onclick="@GetChartData">Next keyword</button>
+    <ChartJsLineChart @ref="_lineChartJs" Config="@_lineConfig" Width="50" Height="20"/>
+
+</div>
+
+
+@code{
+    LineConfig _lineConfig;
+    ChartJsLineChart _lineChartJs = new ChartJsLineChart();
+    private LineDataset<TimeTuple<int>> _WeightDataSet;
+    private GraphDummyData data = new GraphDummyData();
+    private bool firstTime = true;
+
+    async Task GetChartData()
+    {
+        if (!firstTime) data.Shuffle();
+        else firstTime = false;
+
+        _WeightDataSet.RemoveAll(e => true);
+
+        for (int i = 0; i < data.position.Count; i++)
+        {
+            var pos = data.position[i];
+            var date = data.date[i];
+            _WeightDataSet.Add(new TimeTuple<int>(new Moment(date), pos));
+        }
+
+        _lineConfig.Data.Datasets.Clear();
+        _lineConfig.Data.Datasets.Add(_WeightDataSet);
+        await _lineChartJs.Update();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _lineConfig = new LineConfig
+        {
+            Options = new LineOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Keyword: best restaurant in dallas"
+                },
+                Legend = new Legend
+                {
+                    Display = false
+                },
+                Tooltips = new Tooltips
+                {
+                    Mode = InteractionMode.Nearest,
+                    Intersect = false
+                },
+                Scales = new Scales
+                {
+                    yAxes = new List<CartesianAxis>
+                    {
+                        new LinearCartesianAxis
+                        {
+                            ScaleLabel = new ScaleLabel
+                            {
+                                LabelString = "Position"
+                            },
+                            Ticks = new LinearCartesianTicks
+                            {
+                                Reverse = true,
+                                Min = 1,
+                                Max = 50
+                            },
+                        },
+                    },
+                    xAxes = new List<CartesianAxis>
+                    {
+                        new TimeAxis
+                        {
+                            Distribution = TimeDistribution.Linear,
+                            Ticks = new TimeTicks
+                            {
+                                Source = TickSource.Data
+                            },
+                            Time = new TimeOptions
+                            {
+                                Unit = TimeMeasurement.Day,
+                                Round = TimeMeasurement.Day,
+                                TooltipFormat = "MM.DD.YYYY",
+                                DisplayFormats = TimeDisplayFormats.DE_CH
+                            },
+                            ScaleLabel = new ScaleLabel
+                            {
+                                LabelString = "Date"
+                            }
+                        }
+                    }
+                },
+                Hover = new LineOptionsHover
+                {
+                    Intersect = true,
+                    Mode = InteractionMode.Y
+                }
+            }
+        };
+
+        _WeightDataSet = new LineDataset<TimeTuple<int>>
+        {
+            BackgroundColor = ColorUtil.FromDrawingColor(System.Drawing.Color.White),
+            BorderColor = ColorUtil.FromDrawingColor(System.Drawing.Color.Red),
+            Label = "Position",
+            Fill = false,
+            BorderWidth = 2,
+            PointRadius = 2,
+            PointBorderWidth = 2,
+            SteppedLine = SteppedLine.False,
+            Hidden = false
+        };
+
+        await GetChartData();
+    }
+
+}
