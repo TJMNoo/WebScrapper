@@ -116,9 +116,8 @@
 
         RequestService requester = new RequestService();
         var username = await sessionStorage.GetItemAsync<string>("username");
-        //_response = requester.Get("https://webscraperapi.herokuapp.com/api/health/" + username);
-        _response = requester.Get("https://localhost:44321/api/health/" + username);
-
+        _response = requester.Get("https://webscraperapi.herokuapp.com/api/health/" + username);
+        l
 
         resultHealth = new HealthAnalysis(_response["data"]);
         _feedback = (string)_response["message"];
@@ -186,9 +185,8 @@
 
         RequestService requester = new RequestService();
         string dataStr = data.ToString(Newtonsoft.Json.Formatting.None);
-        //_response = requester.Post("https://webscraperapi.herokuapp.com/api/health", dataStr, "application/json");
-        _response = requester.Post("https://localhost:44321/api/health", dataStr, "application/json");
-
+        _response = requester.Post("https://webscraperapi.herokuapp.com/api/health", dataStr, "application/json");
+        
         _feedback = (string)_response["message"];
     }
 
