@@ -91,5 +91,22 @@ namespace WebScraper.Data
                 return json;
             }
         }
+
+        public JObject Delete(string uri)
+        {
+            
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            request.Method = "DELETE";
+
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                var jsonString = reader.ReadToEnd();
+                JObject json = JObject.Parse(jsonString);
+                return json;
+            }
+        }
     }
 }

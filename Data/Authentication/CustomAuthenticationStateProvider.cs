@@ -47,6 +47,7 @@ namespace WebScraper.Data.Authentication
         public void MarkUserAsLoggedOut()
         {
             _sessionStorageService.RemoveItemAsync("token");
+            _sessionStorageService.RemoveItemAsync("username");
             var identity = new ClaimsIdentity();
             var user = new ClaimsPrincipal(identity);
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));

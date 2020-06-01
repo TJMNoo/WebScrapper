@@ -1,28 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\WebScraper.csproj": {}
+    "C:\\Users\\Jurica\\Desktop\\praktikum_stuff\\api\\WebScrapper\\WebScraper.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\WebScraper.csproj": {
+    "C:\\Users\\Jurica\\Desktop\\praktikum_stuff\\api\\WebScrapper\\WebScraper.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\WebScraper.csproj",
+        "projectUniqueName": "C:\\Users\\Jurica\\Desktop\\praktikum_stuff\\api\\WebScrapper\\WebScraper.csproj",
         "projectName": "WebScraper",
-        "projectPath": "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\WebScraper.csproj",
-        "packagesPath": "C:\\Users\\nikki\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nikki\\Documents\\GitHub\\webscraper\\obj\\",
+        "projectPath": "C:\\Users\\Jurica\\Desktop\\praktikum_stuff\\api\\WebScrapper\\WebScraper.csproj",
+        "packagesPath": "C:\\Users\\Jurica\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Jurica\\Desktop\\praktikum_stuff\\api\\WebScrapper\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\nikki\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Jurica\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -62,6 +61,10 @@
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[3.1.1, )"
+            },
+            "MongoDB.Bson": {
+              "target": "Package",
+              "version": "[2.3.0, )"
             },
             "Selenium.Support": {
               "target": "Package",
