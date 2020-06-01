@@ -17,7 +17,6 @@ namespace WebScraper.Data.Plugins
         public readonly string FoundAt;
         public readonly string Url;
         public readonly HttpStatusCode Status;
-        
         public LinkCheck(string t, string f, string u, HttpStatusCode s)
         {
             Type = t;
@@ -66,16 +65,18 @@ namespace WebScraper.Data.Plugins
         public List<TitleDescCheck> ShortDescriptions { get; set; }
         public IAsyncEnumerable<ScraperEngineResponse> Responses;
         public IAsyncEnumerable<ScraperEngineResponse> ResponsesHref;
-
-
         public async Task<string> Analyze(string websiteName)
         {
             Responses = Engine.GetDocsFromRoot(websiteName, 100, 0);            
             ResponsesHref = Engine.GetHrefsFromRoot(websiteName, 100, 0);
             await AnalyzeTitles();
+            Console.WriteLine("titles ok");
             await AnalyzeDescriptions();
+            Console.WriteLine("desc ok");
             await AnalyzeLinks(websiteName);
+            Console.WriteLine("links ok");
             await AnalyzeImgs();
+            Console.WriteLine("imgs ok");
 
             return "done";
         }
@@ -191,6 +192,7 @@ namespace WebScraper.Data.Plugins
         public async Task<string> AnalyzeImgs()
         {
             ImgsWithNoAlt = new Dictionary<string, string>();
+            
             await foreach (var response in Responses)
             {
                 //var results = response.Doc.DocumentNode.SelectNodes("//img[@alt='']");

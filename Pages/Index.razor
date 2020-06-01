@@ -4,12 +4,15 @@
 @using WebScraper.Data
 @using WebScraper.Data.Plugins
 @using System.Net
+@using Newtonsoft.Json.Linq
+@using WebScraper.Data.ApiData
 
 @inject IJSRuntime JSRuntime
 @inject IToastService ToastService
 @inject TraverseService Traverse
 @inject HealthCheck Health
 @inject SeoAnalyzer Analyzer
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
 @if (!_loaded || ChildRoutes || CriticalErrors || Warnings)
 {
@@ -264,6 +267,7 @@
     private bool LinkHealth { get; set; } = false;
     private bool MissingAlt { get; set; } = false;
     private bool TitleHealth { get; set; } = false;
+    private JObject _response { get; set; }
 
     public int IncrementCount(int Count)
     {
@@ -333,6 +337,7 @@
                 _loaded = true;
                 ToastService.ShowSuccess("URL is nicely formatted!");
                 await Analyzer.Analyze(PageUrl);
+                await PostHealth();
                 if (FollowThrough && MaxWidth > 0)
                 {
                     Feedback = "Wait..";
@@ -359,6 +364,45 @@
         {
             LoadingButton = false;
             ToastService.ShowError("URL is not valid!");
+        }
+    }
+
+    private async Task PostHealth()
+    {
+        var username = await sessionStorage.GetItemAsync<string>("username");
+        if (username != null)
+        {
+            _feedback = "Loading..";
+            HealthPost newHealth = new HealthPost();
+            newHealth.Date = "2020-01-20";
+                //DateTime.Now.ToString("'yyyy’-‘MM’-‘dd’"); //year-month-day
+            newHealth.Url = PageUrl;
+            newHealth.Username = username;
+            newHealth.NumOfAllLinks = Analyzer.AllLinks.Count;
+            newHealth.NumOfHealthyLinks = Analyzer.HealthyLinks.Count;
+            newHealth.NumOfBlockedLinks = Analyzer.BlockedLinks.Count;
+            newHealth.NumOfBrokenLinks = Analyzer.BrokenLinks.Count;
+            newHealth.NumOfRedirectLinks = Analyzer.RedirectLinks.Count;
+            newHealth.NumOfLinksWithIssues = Analyzer.LinksWithIssues.Count;
+            newHealth.NumOfAllTitles = Analyzer.AllTitles.Count;
+            newHealth.NumOfHealthyTitles = Analyzer.HealthyTitles.Count;
+            newHealth.NumOfEmptyTitles = Analyzer.EmptyTitles.Count;
+            newHealth.NumOfLongTitles = Analyzer.LongTitles.Count;
+            newHealth.NumOfShortTitles = Analyzer.ShortTitles.Count;
+            newHealth.NumOfImgsWithNoAlt = Analyzer.ImgsWithNoAlt.Count;
+            newHealth.NumOfAllDescriptions = Analyzer.AllDescriptions.Count;
+            newHealth.NumOfHealthyDescriptions = Analyzer.HealthyDescriptions.Count;
+            newHealth.NumOfEmptyDescriptions = Analyzer.EmptyDescriptions.Count;
+            newHealth.NumOfLongDescriptions = Analyzer.LongDescriptions.Count;
+            newHealth.NumOfShortDescriptions = Analyzer.ShortDescriptions.Count;
+
+            var data = newHealth.ConvertToJObject();
+
+            RequestService requester = new RequestService();
+            string dataStr = data.ToString(Newtonsoft.Json.Formatting.None);
+            _response = requester.Post("https://webscraperapi.herokuapp.com/api/health", dataStr, "application/json");
+
+            _feedback = (string) _response["message"];
         }
     }
 

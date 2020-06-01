@@ -2223,3 +2223,6 @@ C:\Users\Jurica\Desktop\kek\WebScrapper\obj\Debug\netcoreapp3.1\staticwebassets\
 C:\Users\Jurica\Desktop\kek\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.dll
 C:\Users\Jurica\Desktop\kek\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.pdb
 C:\Users\Jurica\Desktop\kek\WebScrapper\obj\Debug\netcoreapp3.1\WebScraper.genruntimeconfig.cache
+C:\Users\nikki\Documents\GitHub\webscraper\bin\Debug\netcoreapp3.1\MongoDB.Bson.dll
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\APITESTING.razor.g.cs
+C:\Users\nikki\Documents\GitHub\webscraper\obj\Debug\netcoreapp3.1\Razor\Pages\APITESTING.razor.g.cs
