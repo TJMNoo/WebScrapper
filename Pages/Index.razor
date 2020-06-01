@@ -374,8 +374,7 @@
         {
             _feedback = "Loading..";
             HealthPost newHealth = new HealthPost();
-            newHealth.Date = "2020-01-20";
-                //DateTime.Now.ToString("'yyyy’-‘MM’-‘dd’"); //year-month-day
+            newHealth.Date = DateTime.Now.ToString("yyyy-MM-dd");
             newHealth.Url = PageUrl;
             newHealth.Username = username;
             newHealth.NumOfAllLinks = Analyzer.AllLinks.Count;

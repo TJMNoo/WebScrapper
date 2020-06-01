@@ -17,6 +17,7 @@ namespace WebScraper.Data.Plugins
         public readonly string FoundAt;
         public readonly string Url;
         public readonly HttpStatusCode Status;
+
         public LinkCheck(string t, string f, string u, HttpStatusCode s)
         {
             Type = t;
@@ -25,13 +26,13 @@ namespace WebScraper.Data.Plugins
             Status = s;
         }
     }
-    
+
     public class TitleDescCheck
     {
         public readonly string Type;
         public readonly string TitleDesc;
         public readonly string Url;
-        
+
         public TitleDescCheck(string t, string ti, string u)
         {
             Type = t;
@@ -39,6 +40,7 @@ namespace WebScraper.Data.Plugins
             Url = u;
         }
     }
+
     public class SeoAnalyzer
     {
         HtmlDocument _doc = new HtmlDocument();
@@ -65,9 +67,10 @@ namespace WebScraper.Data.Plugins
         public List<TitleDescCheck> ShortDescriptions { get; set; }
         public IAsyncEnumerable<ScraperEngineResponse> Responses;
         public IAsyncEnumerable<ScraperEngineResponse> ResponsesHref;
+
         public async Task<string> Analyze(string websiteName)
         {
-            Responses = Engine.GetDocsFromRoot(websiteName, 100, 0);            
+            Responses = Engine.GetDocsFromRoot(websiteName, 100, 0);
             ResponsesHref = Engine.GetHrefsFromRoot(websiteName, 100, 0);
             await AnalyzeTitles();
             Console.WriteLine("titles ok");
@@ -115,6 +118,7 @@ namespace WebScraper.Data.Plugins
                                 AllLinks.Add(result);
                                 HealthyLinks.Add(result);
                             }
+
                             break;
                         }
                         case HttpStatusCode.Unauthorized:
@@ -192,25 +196,29 @@ namespace WebScraper.Data.Plugins
         public async Task<string> AnalyzeImgs()
         {
             ImgsWithNoAlt = new Dictionary<string, string>();
-            
+
             await foreach (var response in Responses)
             {
                 //var results = response.Doc.DocumentNode.SelectNodes("//img[@alt='']");
                 var results = response.Doc.DocumentNode.SelectNodes("//img[not(@alt)] | //img[@alt='']");
                 if (results != null)
                 {
-                    foreach (var result in results)
+                    List<Task> tasks = new List<Task>();
+                    tasks.Add(Task.Run(() =>
                     {
-                        if (result.OuterHtml == null) continue;
-                        if (!ImgsWithNoAlt.ContainsKey(result.OuterHtml))
-                            ImgsWithNoAlt.Add(result.OuterHtml, response.Url);
-                    }
+                        foreach (var result in results)
+                        {
+                            if (result.OuterHtml == null) continue;
+                            if (!ImgsWithNoAlt.ContainsKey(result.OuterHtml))
+                                ImgsWithNoAlt.Add(result.OuterHtml, response.Url);
+                        }
+                    }));
                 }
             }
 
             return "done";
         }
-        
+
         public async Task<string> AnalyzeTitles()
         {
             AllTitles = new List<TitleDescCheck>();
@@ -218,7 +226,7 @@ namespace WebScraper.Data.Plugins
             EmptyTitles = new List<TitleDescCheck>();
             LongTitles = new List<TitleDescCheck>();
             ShortTitles = new List<TitleDescCheck>();
-            
+
             await foreach (var response in Responses)
             {
                 var results = response.Doc.DocumentNode.SelectNodes("//title");
@@ -256,6 +264,7 @@ namespace WebScraper.Data.Plugins
 
             return "done";
         }
+
         public async Task<string> AnalyzeDescriptions()
         {
             AllDescriptions = new List<TitleDescCheck>();
@@ -263,7 +272,7 @@ namespace WebScraper.Data.Plugins
             EmptyDescriptions = new List<TitleDescCheck>();
             LongDescriptions = new List<TitleDescCheck>();
             ShortDescriptions = new List<TitleDescCheck>();
-            
+
             await foreach (var response in Responses)
             {
                 var results = response.Doc.DocumentNode.SelectNodes("//meta[@name='description']");
@@ -299,11 +308,11 @@ namespace WebScraper.Data.Plugins
                         }
                     }
                 }
-                
             }
 
             return "done";
         }
+
         public string FormatHrefForAnalyzer(string href)
         {
             Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
