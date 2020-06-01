@@ -45,7 +45,11 @@
                             <li class="list-group-item">All links: @resultHealth.NumOfAllLinks[i]</li>
                             <li class="list-group-item">Broken links: @resultHealth.NumOfBrokenLinks[i]</li>
                             <li class="list-group-item">Blocked links: @resultHealth.NumOfBlockedLinks[i]</li>
-                            <li class="list-group-item">Healthy links: @resultHealth.NumOfHealthyLinks[i]</li>
+                            <li class="list-group-item">Long descriptions: @resultHealth.NumOfLongDescriptions[i]</li>
+                            <li class="list-group-item">Short descriptions: @resultHealth.NumOfShortDescriptions[i]</li>
+                            <li class="list-group-item">Empty descriptions: @resultHealth.NumOfEmptyDescriptions[i]</li>
+                            <li class="list-group-item">All descriptions: @resultHealth.NumOfAllDescriptions[i]</li>
+                            <li class="list-group-item">Healthy descriptions: @resultHealth.NumOfHealthyDescriptions[i]</li>
                             <li class="list-group-item">..etc</li>
                         }
                     </ul>
@@ -112,7 +116,9 @@
 
         RequestService requester = new RequestService();
         var username = await sessionStorage.GetItemAsync<string>("username");
-        _response = requester.Get("https://webscraperapi.herokuapp.com/api/health/" + username);
+        //_response = requester.Get("https://webscraperapi.herokuapp.com/api/health/" + username);
+        _response = requester.Get("https://localhost:44321/api/health/" + username);
+
 
         resultHealth = new HealthAnalysis(_response["data"]);
         _feedback = (string)_response["message"];
@@ -152,15 +158,14 @@
 
         //modify what you insert here
         HealthPost newHealth = new HealthPost();
-        newHealth.Date = "2020-06-01";
+        newHealth.Date = "2020-06-01"; //year-month-day
+        newHealth.Url = "http://mywebsite.com";
         newHealth.Username = username;
-        newHealth.NumOfAllDescriptions = 12;
         newHealth.NumOfAllLinks = 20;
         newHealth.NumOfAllTitles = 10;
         newHealth.NumOfBlockedLinks = 5;
         newHealth.NumOfBrokenLinks = 3;
         newHealth.NumOfEmptyTitles = 2;
-        newHealth.NumOfHealthyDescriptions = 1;
         newHealth.NumOfHealthyLinks = 12;
         newHealth.NumOfHealthyTitles = 1;
         newHealth.NumOfImgsWithNoAlt = 0;
@@ -171,12 +176,18 @@
         newHealth.NumOfRedirectLinks = 3;
         newHealth.NumOfEmptyTitles = 2;
         newHealth.NumOfShortTitles = 3;
+        newHealth.NumOfAllDescriptions = 11;
+        newHealth.NumOfHealthyDescriptions = 1;
+        newHealth.NumOfLongDescriptions = 24;
+        newHealth.NumOfShortDescriptions = 10;
+        newHealth.NumOfEmptyDescriptions = 1;
 
         var data = newHealth.ConvertToJObject();
 
         RequestService requester = new RequestService();
         string dataStr = data.ToString(Newtonsoft.Json.Formatting.None);
-        _response = requester.Post("https://webscraperapi.herokuapp.com/api/health", dataStr, "application/json");
+        //_response = requester.Post("https://webscraperapi.herokuapp.com/api/health", dataStr, "application/json");
+        _response = requester.Post("https://localhost:44321/api/health", dataStr, "application/json");
 
         _feedback = (string)_response["message"];
     }

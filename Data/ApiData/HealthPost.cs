@@ -38,6 +38,12 @@ namespace WebScraper.Data.ApiData
 
         public int NumOfHealthyDescriptions { get; set; }
 
+        public int NumOfEmptyDescriptions { get; set; }
+
+        public int NumOfLongDescriptions { get; set; }
+
+        public int NumOfShortDescriptions { get; set; }
+
         public string Date { get; set; }
 
         public string Url { get; set; }
@@ -66,6 +72,9 @@ namespace WebScraper.Data.ApiData
             data["NumOfShortTitles"] = NumOfShortTitles;
             data["NumOfAllDescriptions"] = NumOfAllDescriptions;
             data["NumOfHealthyDescriptions"] = NumOfHealthyDescriptions;
+            data["NumOfEmptyDescriptions"] = NumOfEmptyDescriptions;
+            data["NumOfLongDescriptions"] = NumOfLongDescriptions;
+            data["NumOfShortDescriptions"] = NumOfShortDescriptions;
 
             return data;
         }

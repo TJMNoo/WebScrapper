@@ -7299,11 +7299,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Jurica\\Desktop\\praktikum_stuff\\api\\WebScrapper\\WebScraper.csproj",
+      "projectUniqueName": "C:\\Users\\Jurica\\Desktop\\kek\\WebScrapper\\WebScraper.csproj",
       "projectName": "WebScraper",
-      "projectPath": "C:\\Users\\Jurica\\Desktop\\praktikum_stuff\\api\\WebScrapper\\WebScraper.csproj",
+      "projectPath": "C:\\Users\\Jurica\\Desktop\\kek\\WebScrapper\\WebScraper.csproj",
       "packagesPath": "C:\\Users\\Jurica\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Jurica\\Desktop\\praktikum_stuff\\api\\WebScrapper\\obj\\",
+      "outputPath": "C:\\Users\\Jurica\\Desktop\\kek\\WebScrapper\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Jurica\\AppData\\Roaming\\NuGet\\NuGet.Config",

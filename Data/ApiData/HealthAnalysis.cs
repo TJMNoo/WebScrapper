@@ -24,6 +24,9 @@ namespace WebScraper.Data.ApiData
         public List<int> NumOfShortTitles { get; set; } = new List<int>();
         public List<int> NumOfAllDescriptions { get; set; } = new List<int>();
         public List<int> NumOfHealthyDescriptions { get; set; } = new List<int>();
+        public List<int> NumOfEmptyDescriptions { get; set; } = new List<int>();
+        public List<int> NumOfLongDescriptions { get; set; } = new List<int>();
+        public List<int> NumOfShortDescriptions { get; set; } = new List<int>();
         public List<string> Dates { get; set; } = new List<string>();
         public string Url { get; set; }
         public string UserFk { get; set; }
@@ -31,7 +34,7 @@ namespace WebScraper.Data.ApiData
         public HealthAnalysis() { }
         public HealthAnalysis(JToken health)
         {
-            if (!health.HasValues) return;
+            if (health == null || !health.HasValues) return;
             Url = (string) health["url"];
             UserFk = (string) health["userFk"];
             NumOfAllLinks = health["numOfAllLinks"].ToObject<List<int>>();
@@ -48,6 +51,9 @@ namespace WebScraper.Data.ApiData
             NumOfShortTitles = health["numOfShortTitles"].ToObject<List<int>>();
             NumOfAllDescriptions = health["numOfAllDescriptions"].ToObject<List<int>>();
             NumOfHealthyDescriptions = health["numOfHealthyDescriptions"].ToObject<List<int>>();
+            NumOfEmptyDescriptions = health["numOfEmptyDescriptions"].ToObject<List<int>>();
+            NumOfLongDescriptions = health["numOfLongDescriptions"].ToObject<List<int>>();
+            NumOfShortDescriptions = health["numOfShortDescriptions"].ToObject<List<int>>();
             Dates = health["dates"].ToObject<List<string>>();
         }
     }
