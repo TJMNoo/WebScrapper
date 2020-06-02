@@ -186,12 +186,11 @@
     protected async Task LoadHtml()
     {
         var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");
-        ;
-        GoogleKeywordTracker kwfinder = new GoogleKeywordTracker();
-        _found = kwfinder.Pronadeni;
-        _ads = kwfinder.Reklame;
-        _kwfinderResult = await kwfinder.TrackSomething(kljucnarijec, remoteUserAgent, lokacija, enteredurl);
-        StateHasChanged();
+        // GoogleKeywordTracker kwfinder = new GoogleKeywordTracker();
+        // _found = kwfinder.Pronadeni;
+        // _ads = kwfinder.Reklame;
+        // _kwfinderResult = await kwfinder.TrackSomething(kljucnarijec, remoteUserAgent, lokacija, enteredurl);
+        // StateHasChanged();
 
         SeoAnalyzer analyzer = new SeoAnalyzer();
         Optimizer optimizer = new Optimizer();

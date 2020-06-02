@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Security.Policy;
 using System.Text.RegularExpressions;
@@ -9,6 +10,8 @@ using System.Net;
 using WebScraper.Data.Engine;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Configuration.UserSecrets;
+using Newtonsoft.Json.Linq;
+using WebScraper.Data.ApiData;
 
 
 namespace WebScraper.Data.Plugins
@@ -61,35 +64,30 @@ namespace WebScraper.Data.Plugins
     public class GoogleKeywordTracker
     {
         private ScraperEngine Engine { get; set; } = new ScraperEngine();
+        public List<Advert> Reklame { get; set; } = new List<Advert>();
+        public SerpPost NewSerp = new SerpPost();
+        private string _feedback { get; set; } = "";
+        private JObject _response { get; set; }
+        private string Datum { get; set; }
+        private int Position { get; set; }
+        private string Url { get; set; }
+        private bool Found { get; set; }
+        private int TempPosition { get; set; }
 
-        public List<Result> Rezultati { get; set; } = new List<Result>();
-
-        public List<Found> Pronadeni { get; set; } = new List<Found>();
-
-        public List<Advert> Reklame { get; set; } = new List<Advert>(); 
-
-        public async Task<List<Result>> TrackSomething(string keyword, string userAgent, string location, string enteredpage)
+        public async Task<string> TrackSomething(string keyword, string userAgent, string location, string enteredpage, string username)
         {
             var responses = Engine.GetGooglePages(keyword, userAgent, location, 2, 10000);
-            var position = 0;
-
             await foreach (var response in responses)
             {
-                //kw, position, datetime, url
-                //Regularno skrejpanje
-                var resultsOnly = response.Doc.GetElementbyId("rso").SelectNodes(".//div[@class='g']");
-                if (resultsOnly == null) return new List<Result>();
+                var resultsOnly = response.Doc.GetElementbyId("rso").SelectNodes(".//div[@class='g']");//kw, position, datetime, url
+                if (resultsOnly == null) return null;
                 foreach (var result in resultsOnly)
                 {
-                    position++;
+                    Position++;
                     var divClass = result.GetAttributeValue("class", "");
                     if (divClass != "g") continue;
-                    var a = result.SelectSingleNode(".//a");
-                    var title = a.SelectSingleNode(".//h3").InnerText;
-                    var href = result.SelectSingleNode(".//a").Attributes["href"].Value;
-                    
-                    //If users page found on google
-                    if (enteredpage != null)
+                    Url = result.SelectSingleNode(".//a").Attributes["href"].Value;
+                    if (enteredpage != null) //Checks if entered URL is on Google search 
                     {
                         if (!enteredpage.StartsWith("https://")) //if http || wwww
                         {
@@ -98,13 +96,33 @@ namespace WebScraper.Data.Plugins
                                 enteredpage = "http://" + enteredpage;
                             }
                             Uri uri = new Uri(enteredpage);
-                            var url = uri.Host;
-                            if (url.Contains("www.")) url = url.Substring(4);
-                            if (href.Contains(url))
+                            var temp = uri.Host;
+                            if (temp.Contains("www.")) temp = temp.Substring(4);
+                            
+                            if (Url.Contains(temp))
                             {
-                                DateTime regdatum = DateTime.Now;
-                                Found temp = new Found(position, url, regdatum);
-                                Pronadeni.Add(temp);
+                                Found = true;
+                                NewSerp.Position = Position;
+                                Datum = DateTime.Now.ToString("yyyy-MM-dd");
+                                NewSerp.Date = Datum;
+                                Console.WriteLine(NewSerp.Date);
+                                NewSerp.Url = Url;
+                                Console.WriteLine(NewSerp.Url);
+                                NewSerp.Keyword = keyword;
+                                Console.WriteLine(NewSerp.Keyword);
+                                Console.WriteLine(NewSerp.Position);
+                                NewSerp.Username = username;
+                                Console.WriteLine(NewSerp.Username);
+                                var data = NewSerp.ConvertToJObject();
+                                RequestService requester = new RequestService();
+                                string dataStr = data.ToString(Newtonsoft.Json.Formatting.None);
+                                _response = requester.Post("https://webscraperapi.herokuapp.com/api/serp", dataStr, "application/json");
+                                _feedback = (string)_response["message"];
+                                break;
+                            }
+                            else
+                            {
+                                Found = false;
                             }
                         }
                         else //if https
@@ -112,21 +130,53 @@ namespace WebScraper.Data.Plugins
                             enteredpage = enteredpage.Substring(8); //remove https part bcs uri needs http
                             enteredpage = "http://" + enteredpage;
                             Uri uri = new Uri(enteredpage);
-                            var url = uri.Host;
-                            if (url.Contains("www.")) url = url.Substring(4);
-                            if (href.Contains(url))
+                            var temp = uri.Host;
+                            if (temp.Contains("www.")) temp = temp.Substring(4);
+                            if (Url.Contains(temp))
                             {
-                                DateTime regdatum = DateTime.Now;;
-                                Found temp = new Found(position, url, regdatum);
-                                Pronadeni.Add(temp);
+                                Found = true;
+                                NewSerp.Position = Position;
+                                Datum = DateTime.Now.ToString("yyyy-MM-dd");
+                                NewSerp.Date = Datum;
+                                Console.WriteLine(NewSerp.Date);
+                                NewSerp.Url = Url;
+                                Console.WriteLine(NewSerp.Url);
+                                NewSerp.Keyword = keyword;
+                                Console.WriteLine(NewSerp.Keyword);
+                                Console.WriteLine(NewSerp.Position);
+                                NewSerp.Username = username;
+                                Console.WriteLine(NewSerp.Username);
+                                var data = NewSerp.ConvertToJObject();
+                                RequestService requester = new RequestService();
+                                string dataStr = data.ToString(Newtonsoft.Json.Formatting.None);
+                                _response = requester.Post("https://webscraperapi.herokuapp.com/api/serp", dataStr, "application/json");
+                                _feedback = (string)_response["message"];
+                                break;
+                            }
+                            else
+                            {
+                                Found = false;
                             }
                         }
                     }
-                    DateTime datum = DateTime.Now;
-                    Result tempres = new Result(keyword, position, href, datum);
-                    Rezultati.Add(tempres);
+                    Console.WriteLine(Url);
                 }
-
+                Datum = DateTime.Now.ToString("yyyy-MM-dd");
+                NewSerp.Date = Datum;
+                Console.WriteLine(NewSerp.Date);
+                NewSerp.Url = Url;
+                Console.WriteLine(NewSerp.Url);
+                NewSerp.Keyword = keyword;
+                Console.WriteLine(NewSerp.Keyword);
+                Console.WriteLine(NewSerp.Position);
+                NewSerp.Username = username;
+                Console.WriteLine(NewSerp.Username);
+                var data3 = NewSerp.ConvertToJObject();
+                RequestService requester3 = new RequestService();
+                string dataStr3 = data3.ToString(Newtonsoft.Json.Formatting.None);
+                _response = requester3.Post("https://webscraperapi.herokuapp.com/api/serp", dataStr3, "application/json");
+                _feedback = (string)_response["message"];
+                
                 var doorstep = response.Doc.GetElementbyId("tads");
                 if (doorstep != null)
                 {
@@ -193,20 +243,18 @@ namespace WebScraper.Data.Plugins
                         var desc = adresult.SelectSingleNode(".//div[@class='ads-creative']").InnerText;
                         Console.WriteLine("Desc: " + desc);
                         Console.WriteLine("\n");
-                        //Dodaj vrijeme, reklame imaju vrijeme
                         Advert tempres = new Advert(filtereddomain, filtrirana,subject, desc);
                         Reklame.Add(tempres);
                     }
-                    //subject(naslov), description line 1, description line 2, url, domain
                 }
                 else
                 {
                     Console.WriteLine("Nema reklama");
-                    if(doorstep == null) return new List<Result>();
+                    if(doorstep == null) return null;
                 }
                 //Bekend i ostatak
             }
-            return Rezultati;
+            return "done";
         }
     }
 }

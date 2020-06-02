@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Jurica\\Desktop\\praktikum_stuff\\api\\WebScrapper\\WebScraper.csproj": {}
+    "C:\\Users\\Toni\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Jurica\\Desktop\\praktikum_stuff\\api\\WebScrapper\\WebScraper.csproj": {
+    "C:\\Users\\Toni\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Jurica\\Desktop\\praktikum_stuff\\api\\WebScrapper\\WebScraper.csproj",
+        "projectUniqueName": "C:\\Users\\Toni\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj",
         "projectName": "WebScraper",
-        "projectPath": "C:\\Users\\Jurica\\Desktop\\praktikum_stuff\\api\\WebScrapper\\WebScraper.csproj",
-        "packagesPath": "C:\\Users\\Jurica\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Jurica\\Desktop\\praktikum_stuff\\api\\WebScrapper\\obj\\",
+        "projectPath": "C:\\Users\\Toni\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj",
+        "packagesPath": "C:\\Users\\Toni\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Toni\\Documents\\GitHub\\WebScrapper\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Jurica\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Toni\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

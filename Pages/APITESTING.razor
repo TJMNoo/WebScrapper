@@ -125,7 +125,7 @@
         _feedback = "Loading..";
 
         var username = await sessionStorage.GetItemAsync<string>("username");
-
+        GoogleKeywordTracker b = new GoogleKeywordTracker();
         //modify what you insert here
         SerpPost newSerp = new SerpPost();
         newSerp.Keyword = "laptops for sale houston";

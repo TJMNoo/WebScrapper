@@ -10,6 +10,7 @@
 @inject TraverseService Traverse
 @inject HealthCheck Health
 @inject SeoAnalyzer Analyzer
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
 @if (!_loaded || ChildRoutes || CriticalErrors || Warnings)
 {
@@ -264,6 +265,9 @@
     private bool LinkHealth { get; set; } = false;
     private bool MissingAlt { get; set; } = false;
     private bool TitleHealth { get; set; } = false;
+    private string Kljucnarijec { get; set; } = "index"; //treba frontend unos
+    private string Lokacija { get; set; } = "hr"; //treba frontend unos
+    private string Enteredurl { get; set; } = "index.hr"; // treba frontend unos
 
     public int IncrementCount(int Count)
     {
@@ -309,9 +313,11 @@
     {
     //Goggle Keyword
         var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");
-        GoogleKeywordTracker b = new GoogleKeywordTracker();
+        var username = await sessionStorage.GetItemAsync<string>("username");
+
+        GoogleKeywordTracker bs = new GoogleKeywordTracker();
+        await bs.TrackSomething(Kljucnarijec, remoteUserAgent, Lokacija, Enteredurl, username);
         StateHasChanged();
-    //
 
         LoadingButton = true;
         await Task.Delay(TimeSpan.FromSeconds(0.1));
