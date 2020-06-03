@@ -62,6 +62,7 @@ namespace WebScraper.Data.Plugins
             Organic.Clear();
             OrganicFound.Clear();
             Reklame.Clear();
+            Position = 0;
 
             var responses = Engine.GetGooglePages(keyword, userAgent, location, 4, 5000);
             await foreach (var response in responses)
