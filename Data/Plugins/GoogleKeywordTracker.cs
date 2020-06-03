@@ -59,6 +59,10 @@ namespace WebScraper.Data.Plugins
         
         public async Task<List<SerpPost>> TrackSomething(string keyword, string userAgent, string location, string enteredpage, string username)
         {
+            Organic.Clear();
+            OrganicFound.Clear();
+            Reklame.Clear();
+
             var responses = Engine.GetGooglePages(keyword, userAgent, location, 4, 5000);
             await foreach (var response in responses)
             {
