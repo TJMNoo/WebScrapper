@@ -16,6 +16,15 @@ namespace WebScraper.Data.ApiData
 
         public SerpPost() { }
 
+        public SerpPost(string date, string keyword, string url, int position, string username)
+        {
+            Date = date;
+            Keyword = keyword;
+            Url = url;
+            Position = position;
+            Username = username;
+        }
+
         public JObject ConvertToJObject()
         {
             JObject data = new JObject();

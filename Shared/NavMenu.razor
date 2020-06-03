@@ -1,77 +1,29 @@
 ﻿@using WebScraper.Data.Authentication
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">TJMNoo</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 5vh">
-    <a class="navbar-brand" href="#">TJMNoo</a>
-    <div class="collapse navbar-collapse">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Home
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                    <span class="oi oi-beaker" aria-hidden="true"></span> SEO Analyzer
                 </NavLink>
             </li>
             <li class="nav-item">
-                <NavLink class="nav-link" href="apitesting" Match="NavLinkMatch.All">
-                    <span class="oi oi-person"></span> API TESTING
+                <NavLink class="nav-link" href="keywordtracker" Match="NavLinkMatch.All">
+                    <span class="oi oi-browser"></span> Google Keyword Tracker
                 </NavLink>
             </li>
             <AuthorizeView>
                 <Authorized>
                     <li class="nav-item">
-                        <NavLink class="nav-link" href="profile" Match="NavLinkMatch.All">
-                            <span class="oi oi-person"></span> Profile
-                        </NavLink>
-                    </li>
-                    <li class="nav-item">
-                        <NavLink @onclick="@Logout" class="nav-link" href="login" Match="NavLinkMatch.All">
-                            <span class="oi oi-account-logout"></span> Logout
-                        </NavLink>
-                    </li>
-                </Authorized>
-                <NotAuthorized>
-                <li class="nav-item active">
-                    <NavLink class="nav-link" href="login" Match="NavLinkMatch.All">
-                        <span class="oi oi-account-login" aria-hidden="true"></span> Login
-                    </NavLink>
-                </li>
-                <li class="nav-item active">
-                    <NavLink class="nav-link" href="register" Match="NavLinkMatch.All">
-                        <span class="oi oi-check" aria-hidden="true"></span> Register
-                    </NavLink>
-                </li>
-                </NotAuthorized>
-            </AuthorizeView>
-        </ul>
-    </div>
-
-    <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Home
-                </NavLink>
-            </li>
-            <li class="nav-item">
-                <NavLink class="nav-link" href="pointclick" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> P & C
-                </NavLink>
-            </li>
-            <li class="nav-item">
-                <NavLink class="nav-link" href="seo" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> SEO
-                </NavLink>
-            </li>
-            <li class="nav-item">
-                <NavLink class="nav-link" href="scrape" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Scrape
-                </NavLink>
-            </li>
-            <AuthorizeView>
-                <Authorized>
-                    <li class="nav-item">
-                        <NavLink class="nav-link" href="profile" Match="NavLinkMatch.All">
-                            <span class="oi oi-person"></span> Profile
+                        <NavLink class="nav-link" href="mydata" Match="NavLinkMatch.All">
+                            <span class="oi oi-graph"></span> My data
                         </NavLink>
                     </li>
                     <li class="nav-item">
@@ -83,22 +35,18 @@
                 <NotAuthorized>
                     <li class="nav-item">
                         <NavLink class="nav-link" href="login" Match="NavLinkMatch.All">
-                            <span class="oi oi-account-login"></span> Login
+                            <span class="oi oi-account-login" aria-hidden="true"></span> Login
                         </NavLink>
                     </li>
                     <li class="nav-item">
                         <NavLink class="nav-link" href="register" Match="NavLinkMatch.All">
-                            <span class="oi oi-people"></span> Register
+                            <span class="oi oi-person" aria-hidden="true"></span> Register
                         </NavLink>
                     </li>
                 </NotAuthorized>
             </AuthorizeView>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-    </div>-->
+    </div>
 </nav>
 
 @code{

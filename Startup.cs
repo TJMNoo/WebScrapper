@@ -43,6 +43,7 @@ namespace WebScraper
 			services.AddSingleton<HealthCheck>();
             services.AddSingleton<ScraperEngine>();
             services.AddSingleton<SeoAnalyzer>();
+            services.AddSingleton<GoogleKeywordTracker>();
 
             services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
         }

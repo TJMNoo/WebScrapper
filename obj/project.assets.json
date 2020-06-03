@@ -7294,24 +7294,26 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Toni\\.nuget\\packages\\": {}
+    "C:\\Users\\Jurica\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Toni\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj",
+      "projectUniqueName": "C:\\Users\\Jurica\\Desktop\\release\\WebScrapper\\WebScraper.csproj",
       "projectName": "WebScraper",
-      "projectPath": "C:\\Users\\Toni\\Documents\\GitHub\\WebScrapper\\WebScraper.csproj",
-      "packagesPath": "C:\\Users\\Toni\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Toni\\Documents\\GitHub\\WebScrapper\\obj\\",
+      "projectPath": "C:\\Users\\Jurica\\Desktop\\release\\WebScrapper\\WebScraper.csproj",
+      "packagesPath": "C:\\Users\\Jurica\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Jurica\\Desktop\\release\\WebScrapper\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Toni\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Jurica\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

@@ -1,0 +1,205 @@
+﻿@page "/mydata"
+
+@using System.Security.Cryptography
+@using ChartJs.Blazor.Charts
+@using Newtonsoft.Json.Linq
+@using WebScraper.Data
+@using WebScraper.Data.ApiData
+
+
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+
+    <div class="container w-75">
+        <h1 class="text-center mt-3 mb-4">My data</h1>
+
+        <div class="btn-group w-100 mb-4">
+            <button @onclick="@Keywords" class="btn btn-primary mr-2">Show keyword rankings</button>
+            <button @onclick="@SeoAnalysis" class="btn btn-primary mr-2">Show SEO analysis</button>
+            <button @onclick="@DeleteSerps" class="btn btn-primary mr-2">Delete keyword history</button>
+            <button @onclick="@DeleteHealths" class="btn btn-primary mr-2">Delete SEO analysis history</button>
+        </div>
+
+        @if (cKeywords)
+        {
+            <div class="row">
+                @foreach (var chart in charters)
+                {
+                    <div class="col-sm-6 mb-4">
+                        <ChartJsLineChart @ref="chart._lineChartJs" Config="@chart._lineConfig" />
+                    </div>
+                }
+            </div>
+        }
+
+        else if (cSEOAnalysis)
+        {
+            <h2 class="text-center">@SEOWebsite</h2>
+            <div class="row">
+                @foreach (var chart in charters)
+                {
+                    <div class="col-sm-4 mb-4">
+                        <ChartJsLineChart @ref="chart._lineChartJs" Config="@chart._lineConfig" />
+                    </div>
+                }
+            </div>
+        }
+        else if (cHistory)
+        {
+            <h1 class="text-center">Your keyword tracking history has been deleted.</h1>
+        }
+    </div>
+
+@code {
+    private bool cKeywords = true;
+    private bool cSEOAnalysis = false;
+    private bool cHistory = false;
+    private List<Charter> charters = new List<Charter>();
+
+    private string Feedback { get; set; } = "";
+    private JObject Response { get; set; }
+
+    private List<Serp> ResultSerps { get; set; } = new List<Serp>();
+    private string SEOWebsite { get; set; } = "";
+
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadChartersSerp();
+    }
+
+    private async Task LoadChartersSerp()
+    {
+        charters.Clear();
+
+        RequestService requester = new RequestService();
+        var username = await sessionStorage.GetItemAsync<string>("username");
+        if (username == null) return;
+
+        Response = requester.Get("https://webscraperapi.herokuapp.com/api/serp/" + username);
+        Feedback = (string)Response["message"];
+
+        if (Response["data"] == null) return;
+
+        foreach (var responseSerp in Response["data"])
+        {
+            Serp serp = new Serp(responseSerp);
+            ResultSerps.Add(serp);
+
+            GraphData data = new GraphData(serp.Positions, serp.Dates);
+            charters.Add(new Charter(serp.Keyword + " | " + serp.Url, data, "Date", "Position", true, 1, 100));
+        }
+    }
+
+    private async Task LoadChartersHealth()
+    {
+        charters.Clear();
+
+        RequestService requester = new RequestService();
+        var username = await sessionStorage.GetItemAsync<string>("username");
+        if (username == null) return;
+
+        Response = requester.Get("https://webscraperapi.herokuapp.com/api/health/" + username);
+        Feedback = (string) Response["message"];
+
+        if (Response["data"] == null) return;
+
+        var resultHealth = new HealthAnalysis(Response["data"]);
+        if (resultHealth.Dates.Count == 0) return;
+
+        SEOWebsite = resultHealth.Url;
+
+        GraphData dataAllLinks = new GraphData(resultHealth.NumOfAllLinks, resultHealth.Dates);
+        GraphData dataHealthyLinks = new GraphData(resultHealth.NumOfHealthyLinks, resultHealth.Dates);
+        GraphData dataBrokenLinks = new GraphData(resultHealth.NumOfBrokenLinks, resultHealth.Dates);
+        GraphData dataBlockedLinks = new GraphData(resultHealth.NumOfBlockedLinks, resultHealth.Dates);
+        GraphData dataRedirectLinks = new GraphData(resultHealth.NumOfRedirectLinks, resultHealth.Dates);
+        GraphData dataLinkIssues= new GraphData(resultHealth.NumOfLinksWithIssues, resultHealth.Dates);
+
+        GraphData dataImgWithNoAlt = new GraphData(resultHealth.NumOfImgsWithNoAlt, resultHealth.Dates);
+        GraphData dataAllTitles = new GraphData(resultHealth.NumOfAllTitles, resultHealth.Dates);
+        GraphData dataHealthyTitles = new GraphData(resultHealth.NumOfHealthyTitles, resultHealth.Dates);
+        GraphData dataLongTitles = new GraphData(resultHealth.NumOfLongTitles, resultHealth.Dates);
+        GraphData dataShortTitles = new GraphData(resultHealth.NumOfShortTitles, resultHealth.Dates);
+        GraphData dataEmptyTitles = new GraphData(resultHealth.NumOfEmptyTitles, resultHealth.Dates);
+
+        GraphData dataAllDesc = new GraphData(resultHealth.NumOfAllDescriptions, resultHealth.Dates);
+        GraphData dataHealthyDesc = new GraphData(resultHealth.NumOfHealthyDescriptions, resultHealth.Dates);
+        GraphData dataLongDesc = new GraphData(resultHealth.NumOfLongDescriptions, resultHealth.Dates);
+        GraphData dataShortDesc = new GraphData(resultHealth.NumOfShortDescriptions, resultHealth.Dates);
+        GraphData dataEmptyDesc = new GraphData(resultHealth.NumOfEmptyDescriptions, resultHealth.Dates);
+
+        charters.Add(new Charter("All links", dataAllLinks, "Date", "Num of all links", false, 0 , getCorrectMax(resultHealth.NumOfAllLinks.Max() + 100)));
+        charters.Add(new Charter("Healthy links", dataHealthyLinks, "Date", "Num of healthy links", false, 0, getCorrectMax(resultHealth.NumOfHealthyLinks.Max() + 100)));
+        charters.Add(new Charter("Broken links", dataBrokenLinks, "Date", "Num of broken links", false, 0, getCorrectMax(resultHealth.NumOfBrokenLinks.Max() + 100)));
+        charters.Add(new Charter("Blocked links", dataBlockedLinks, "Date", "Num of blocked links", false, 0, getCorrectMax(resultHealth.NumOfBlockedLinks.Max() + 100)));
+        charters.Add(new Charter("Redirect links", dataRedirectLinks, "Date", "Num of redirect links", false, 0, getCorrectMax(resultHealth.NumOfRedirectLinks.Max() + 100)));
+        charters.Add(new Charter("Links with Issues", dataLinkIssues, "Date", "Num of links with issues", false, 0, getCorrectMax(resultHealth.NumOfLinksWithIssues.Max() + 100)));
+
+        charters.Add(new Charter("Images With No Alt", dataImgWithNoAlt, "Date", "Num of images with no alt", false, 0, getCorrectMax(resultHealth.NumOfImgsWithNoAlt.Max() + 100)));
+        charters.Add(new Charter("All titles", dataAllTitles, "Date", "Num of all titles", false, 0, getCorrectMax(resultHealth.NumOfAllTitles.Max() + 100)));
+        charters.Add(new Charter("Healthy titles", dataHealthyTitles, "Date", "Num of healthy titles", false, 0, getCorrectMax(resultHealth.NumOfHealthyTitles.Max() + 100)));
+        charters.Add(new Charter("Long titles", dataLongTitles, "Date", "Num of long titles", false, 0, getCorrectMax(resultHealth.NumOfLongTitles.Max() + 100)));
+        charters.Add(new Charter("Short titles", dataShortTitles, "Date", "Num of short titles", false, 0, getCorrectMax(resultHealth.NumOfShortTitles.Max() + 100)));
+        charters.Add(new Charter("Empty titles", dataEmptyTitles, "Date", "Num of empty titles", false, 0, getCorrectMax(resultHealth.NumOfEmptyTitles.Max() + 100)));
+
+        charters.Add(new Charter("All descriptions", dataAllDesc, "Date", "Num of all descriptions", false, 0, getCorrectMax(resultHealth.NumOfAllLinks.Max() + 100)));
+        charters.Add(new Charter("Healthy descriptions", dataHealthyDesc, "Date", "Num of healthy descriptions", false, 0, getCorrectMax(resultHealth.NumOfAllLinks.Max() + 100)));
+        charters.Add(new Charter("Long Descriptions", dataLongDesc, "Date", "Num of long descriptions", false, 0, getCorrectMax(resultHealth.NumOfAllLinks.Max() + 100)));
+        charters.Add(new Charter("Short descriptions", dataShortDesc, "Date", "Num of short descriptions", false, 0, getCorrectMax(resultHealth.NumOfAllLinks.Max() + 100)));
+        charters.Add(new Charter("Empty descriptions", dataEmptyDesc, "Date", "Num of empty descriptions", false, 0, getCorrectMax(resultHealth.NumOfAllLinks.Max() + 100)));
+    }
+
+    int getCorrectMax(int curMax)
+    {
+        while (curMax % 100 != 0) curMax++;
+        return curMax;
+    }
+
+    async Task Keywords()
+    {
+        cSEOAnalysis = false;
+        cKeywords = true;
+        await LoadChartersSerp();
+    }
+
+    async Task SeoAnalysis()
+    {
+        cKeywords = false;
+        cSEOAnalysis = true;
+        await LoadChartersHealth();
+    }
+
+    //DELETES
+    private async Task DeleteSerps()
+    {
+
+        RequestService requester = new RequestService();
+        var username = await sessionStorage.GetItemAsync<string>("username");
+        if (username == null) return;
+        Response = requester.Delete("https://webscraperapi.herokuapp.com/api/serp/" + username);
+        Feedback = (string)Response["message"];
+    }
+
+    private async Task DeleteSerps(string keyword)
+    {
+        cKeywords = false;
+        RequestService requester = new RequestService();
+        var username = await sessionStorage.GetItemAsync<string>("username");
+        if (username == null) return;
+        Response = requester.Delete("https://webscraperapi.herokuapp.com/api/serp/" + username + "/" + keyword);
+        Feedback = (string)Response["message"];
+    }
+
+    private async Task DeleteHealths()
+    {
+        cSEOAnalysis = false;
+        RequestService requester = new RequestService();
+        var username = await sessionStorage.GetItemAsync<string>("username");
+        if (username == null) return;
+        Response = requester.Delete("https://webscraperapi.herokuapp.com/api/health/" + username);
+        Feedback = (string)Response["message"];
+    }
+
+}

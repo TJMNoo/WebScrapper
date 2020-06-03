@@ -19,10 +19,12 @@ namespace WebScraper.Data
         public LineConfig _lineConfig;
         public ChartJsLineChart _lineChartJs = new ChartJsLineChart();
         private LineDataset<TimeTuple<int>> _WeightDataSet;
-        private GraphDummyData data = new GraphDummyData();
+        private GraphData Data { get; set; }
        
-        public Charter(string keyword)
+        public Charter(string keyword, GraphData data, string xLabel, string yLabel, bool reverse, int min, int max)
         {
+            Data = data;
+
             _lineConfig = new LineConfig
             {
                 Options = new LineOptions
@@ -50,13 +52,13 @@ namespace WebScraper.Data
                         {
                             ScaleLabel = new ScaleLabel
                             {
-                                LabelString = "Position"
+                                LabelString = yLabel
                             },
                             Ticks = new LinearCartesianTicks
                             {
-                                Reverse = true,
-                                Min = 1,
-                                Max = 50
+                                Reverse = reverse,
+                                Min = min,
+                                Max = max
                             },
 
                         },
@@ -79,7 +81,7 @@ namespace WebScraper.Data
                             },
                             ScaleLabel = new ScaleLabel
                             {
-                                LabelString = "Date"
+                                LabelString = xLabel
                             }
                         }
                     }
@@ -96,7 +98,7 @@ namespace WebScraper.Data
             {
                 BackgroundColor = ColorUtil.FromDrawingColor(System.Drawing.Color.White),
                 BorderColor = ColorUtil.FromDrawingColor(System.Drawing.Color.Red),
-                Label = "Position",
+                Label = yLabel,
                 Fill = false,
                 BorderWidth = 2,
                 PointRadius = 2,
@@ -107,11 +109,11 @@ namespace WebScraper.Data
 
             _WeightDataSet.RemoveAll(e => true);
 
-            data.Shuffle();
-            for (int i = 0; i < data.position.Count; i++)
+            //data.Shuffle();
+            for (int i = 0; i < Data.Positions.Count; i++)
             {
-                var pos = data.position[i];
-                var date = data.date[i];
+                var pos = Data.Positions[i];
+                var date = Data.Dates[i];
                 _WeightDataSet.Add(new TimeTuple<int>(new Moment(date), pos));
             }
 

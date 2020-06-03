@@ -9,21 +9,20 @@
 
 @inject IJSRuntime JSRuntime
 @inject IToastService ToastService
-@inject TraverseService Traverse
 @inject HealthCheck Health
 @inject SeoAnalyzer Analyzer
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
-@if (!_loaded || ChildRoutes || CriticalErrors || Warnings)
+@if (!_loaded)
 {
-    <div style="background-image: url(../images/img01.png); background-size: cover;" class="jumbotron">
-        <h1 class="text-center" style="margin-top: 80px; color: white; font-size: 70px; font-weight: 700;">SEO Analyzer</h1>
-        <h4 class="text-center" style="margin-top: 20px; margin-bottom: 50px; color: white;">If you’re struggling to get more visitors to your site, the answer might just lie in this FREE report!</h4>
+    <div style="background-color: #f1f1f1" class="jumbotron">
+        <h1 class="text-center" style="margin-top: 80px; font-size: 70px; font-weight: 700;">SEO Analyzer</h1>
+        <h4 class="text-center" style="margin-top: 20px; margin-bottom: 50px; ">If you’re struggling to get more visitors to your site, the answer might just lie in this FREE report!</h4>
         <form onsubmit="return false;">
             <div class="form-group text-center">
-                <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" class="form-control form-control-lg text-center mx-auto" type="text" placeholder="Enter website URL" style="font-size: 40px;padding: 15px; height: auto; width: 80%;"/>
-                <br/>
-                <button @onclick="@LoadHtml" class="btn btn-dark btn-lg" type="button" style="font-size: 32px; padding: 18px; height: auto; margin-top: 40px; border-radius: 5%;">Analyze!</button>
+                <input @bind="PageUrl" @onkeyup="KeyPressLoadHtmlInput" class="form-control form-control-lg text-center mx-auto" type="text" placeholder="Enter website URL" style="font-size: 40px;padding: 15px; height: auto; width: 80%;" />
+                <br />
+                <button @onclick="@LoadHtml" class="btn btn-dark btn-lg" type="button" style="font-size: 32px;padding: 18px;height: auto;margin-top: 40px;border-radius: 5%;">Analyze!</button>
             </div>
         </form>
 
@@ -34,349 +33,341 @@
     </div>
 }
 
-@if (_loaded && !ChildRoutes && !CriticalErrors && !Warnings)
+@if (_loaded && !seeMore)
 {
-    <ul class="navbar mr-auto navbar-dark bg-dark justify-content-center" style="margin-top: 30px; border-radius: 20px;">
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="analysis" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="graphs" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Graphs
-            </NavLink>
-        </li>
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="links" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Link health
-            </NavLink>
-        </li>
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="routes" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Child routes
-            </NavLink>
-        </li>
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="titles" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Titles
-            </NavLink>
-        </li>
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="descriptions" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Descriptions
-            </NavLink>
-        </li>
-        <li class="nav-item" style="list-style-type: none;">
-            <NavLink class="nav-link" href="images" Match="NavLinkMatch.All" style="color: white;">
-                <span class="oi oi-bar-chart" style="color: white;"></span> Images
-            </NavLink>
-        </li>
-    </ul>
+<div class="container" style="margin-bottom:70px;">
+    @if (status != "done") {<h1 class="text-center" style="margin: 20px 0px 40px 0px;">Please wait...</h1>}
+    @if (status == "done") {<h1 class="text-center" style="margin: 20px 0px 40px 0px;">Done</h1>}
 
-    <div class="row">
-        <div class="col-3">
-            <div class="card" style="height: 80%;">
-                <div class="card-header" style="background: #343A40; color: white;">ON-PAGE SEO SCORE</div>
-                <div class="card-body">
-                    <p class="card-text">83 <b>GREAT</b></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="card" style="height: 80%;">
-                <div class="card-header" style="background: #343A40; color: white;">MONTHLY TRAFFIC</div>
-                <div class="card-body">
-                    <p class="card-text">1.234.123 <b>GREAT</b></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="card" style="height: 80%;">
-                <div class="card-header" style="background: #343A40; color: white;">ORGANIC KEYWORDS</div>
-                <div class="card-body">
-                    <p class="card-text">238.983 <b>GREAT</b></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="card" style="height: 80%;">
-                <div class="card-header" style="background: #343A40; color: white;">BACKLINKS</div>
-                <div class="card-body">
-                    <p class="card-text">2.619.908 <b>GREAT</b></p>
-                </div>
+    @if (status == "done")
+    {
+        <button @onclick="@PostHealth" type="button" class="btn btn-lg btn-primary">Save to account</button>
+        <p>@_feedback</p>
+    }
+
+<div class="row w-100">
+    <div class="col-sm-4 mb-4">
+        <div class="card w-100" style="margin: 0px;">
+            <div class="card-header" style="background: #343A40; color: white;">LINK HEALTH</div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-success" style="font-size: 20px;">Healthy links: <span style="font-size: 30px; text-align: right;">@Analyzer.HealthyLinks.Count</span></li>
+                    <li class="list-group-item list-group-item-danger" style="font-size: 20px;">Broken links: <span style="font-size: 30px; text-align: right;">@Analyzer.BrokenLinks.Count</span></li>
+                    <li class="list-group-item list-group-item-warning" style="font-size: 20px;">Issue links: <span style="font-size: 30px;">@Analyzer.LinksWithIssues.Count</span></li>
+                    <li class="list-group-item list-group-item-secondary" style="font-size: 20px;">Redirect links: <span style="font-size: 30px;">@Analyzer.RedirectLinks.Count</span></li>
+                    <li class="list-group-item list-group-item-dark" style="font-size: 20px;">Blocked links: <span style="font-size: 30px;">@Analyzer.BlockedLinks.Count</span></li>
+                </ul>
             </div>
         </div>
     </div>
-    <div class="card">
-        <div class="card-header" style="background: #343A40; color: white;">CRAWLED PAGES</div>
-        <div class="card-body">
-            <blockquote class="blockquote mb-0">
-                <p>We found more than @Analyzer.AllLinks.Count pages on your website. Google ranks sites higher when every page is optimized for SEO.</p>
-                <footer class="blockquote-footer">Upgrade your account to crawl your whole website.</footer>
-            </blockquote>
+    <div class="col-sm-4 mb-4">
+        <div class="card w-100" style="margin: 0px;">
+            <div class="card-header" style="background: #343A40; color: white;">TITLE HEALTH</div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-success" style="font-size: 20px;">Healthy titles: <span style="font-size: 30px;">@Analyzer.HealthyTitles.Count</span></li>
+                    <li class="list-group-item list-group-item-danger" style="font-size: 20px;">No titles: <span style="font-size: 30px;">@Analyzer.EmptyTitles.Count</span></li>
+                    <li class="list-group-item list-group-item-warning" style="font-size: 20px;">Too long titles: <span style="font-size: 30px;">@Analyzer.LongTitles.Count</span></li>
+                    <li class="list-group-item list-group-item-secondary" style="font-size: 20px;">Too short titles: <span style="font-size: 30px;">@Analyzer.ShortTitles.Count</span></li>
+                    <li class="list-group-item list-group-item-dark" style="font-size: 20px;">Empty titles: <span style="font-size: 30px;">@Analyzer.EmptyTitles.Count</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4 mb-4">
+        <div class="card w-100" style="margin: 0px;">
+            <div class="card-header" style="background: #343A40; color: white;">DESCRIPTION HEALTH</div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-success" style="font-size: 20px;">Healthy descriptions: <span style="font-size: 30px;">@Analyzer.HealthyDescriptions.Count</span></li>
+                    <li class="list-group-item list-group-item-danger" style="font-size: 20px;">No descriptions: <span style="font-size: 30px;">@Analyzer.EmptyDescriptions.Count</span></li>
+                    <li class="list-group-item list-group-item-warning" style="font-size: 20px;">Long descriptions: <span style="font-size: 30px;">@Analyzer.LongDescriptions.Count</span></li>
+                    <li class="list-group-item list-group-item-secondary" style="font-size: 20px;">Short descriptions: <span style="font-size: 30px;">@Analyzer.ShortDescriptions.Count</span></li>
+                    <li class="list-group-item list-group-item-dark" style="font-size: 20px;">Empty descriptions: <span style="font-size: 30px;">@Analyzer.EmptyDescriptions.Count</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4 mb-4">
+        <div class="card w-100" style="margin: 0px;">
+            <div class="card-header" style="background: #343A40; color: white;">ALT TEXT</div>
+            <div class="card-body">
+                <p class="card-text" style="text-align: center;">On your page we have found</p>
+                <p style="font-size: 72px; text-align: center;">@Analyzer.ImgsWithNoAlt.Count</p>
+                <p class="card-text" style="text-align: center;">instances of missing alt text.</p>
+            </div>
         </div>
     </div>
 
-
-    <div class="row col-12" style="padding-bottom: 80px;">
-        <div class="offset-2 col-8">
-            <div class="card">
-                <div class="card-body" style="display: flex;">
-                    <div class="col-3" style="border-right: 1px solid gray;">
-                        <p>Your page is too large. Consider reducing the size of any page above 5MB.</p>
-                    </div>
-                    <div class="col-3" style="border-right: 5px solid gray;">
-                        <p>Your page is</p>
-                        <p style="font-size: 42px; text-align: center;">5.4MB</p>
-                        <p>large in size.</p>
-                    </div>
-                    <div class="col-3" style="border-right: 1px solid gray;">
-                        <p>Your page took</p>
-                        <p style="font-size: 42px; text-align: center;">0.989s</p>
-                        <p>to fully load.</p>
-                    </div>
-                    <div class="col-3">
-                        <p>Your page is lightning fast. Anything under 2s load time is considered good.</p>
+    <div class="col-sm-12 mb-4">
+        <h1 class="text-center">Link Health</h1>
+        <div class="card arrow_box_left">
+            <div class="card-body">
+                <div id="table-wrapper">
+                    <div id="table-scroll">
+                        <table class="mt-2">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <span class="text">Url</span>
+                                    </th>
+                                    <th>
+                                        <span class="text">Status</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Analyzer.AllLinks.Count; i++)
+                                {
+                                    <tr>
+                                        <td>@Analyzer.AllLinks[i].Url</td>
+                                        <td>@Analyzer.AllLinks[i].Status</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-}
-@if (CriticalErrors)
-{
-    <button @onclick="@LoadCriticalErrors" class="btn btn-dark" style="margin-bottom: 10px;">Back to report</button>
-    <table class="table">
-        <thead class="thead-dark">
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">SEO ISSUES ANALYZED</th>
-            <th scope="col">DIFFICULTY</th>
-            <th scope="col">SEO IMPACT</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>6 pages with duplicate title tags</td>
-            <td>MODERATE</td>
-            <td>HIGH</td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>10 pages have a low word count</td>
-            <td>MODERATE</td>
-            <td>HIGH</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>7 pages with no title tags</td>
-            <td>MODERATE</td>
-            <td>HIGH</td>
-        </tr>
-        </tbody>
-    </table>
+
+    <div class="col-sm-12 mb-4">
+        <h1 class="text-center">Title Health</h1>
+        <div class="card arrow_box_left">
+            <div class="card-body">
+                <div id="table-wrapper">
+                    <div id="table-scroll">
+                        <table class="mt-2">
+                            <colgroup>
+                                <col span="1" style="width: 25%;">
+                                <col span="1" style="width: 60%;">
+                                <col span="1" style="width: 15%;">
+                            </colgroup>
+
+                            <thead>
+                            <tr>
+                                <th>
+                                    <span class="text">Type</span>
+                                </th>
+                                <th>
+                                    <span class="text">Title</span>
+                                </th>
+                                <th>
+                                    <span class="text">Url</span>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @for (int i = 0; i < Analyzer.AllTitles.Count; i++)
+                            {
+                                <tr>
+                                    <td>@Analyzer.AllTitles[i].Type</td>
+                                    <td>@Analyzer.AllTitles[i].TitleDesc</td>
+                                    <td>@Analyzer.AllTitles[i].Url</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12 mb-4">
+        <h1 class="text-center">Description Health</h1>
+        <div class="card arrow_box_left">
+            <div class="card-body">
+                <div id="table-wrapper">
+                    <div id="table-scroll">
+                        <table class="mt-2">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <span class="text">Type</span>
+                                    </th>
+                                    <th>
+                                        <span class="text">Title</span>
+                                    </th>
+                                    <th>
+                                        <span class="text">Url</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Analyzer.AllDescriptions.Count; i++)
+                                {
+                                    <tr>
+                                        <td>@Analyzer.AllDescriptions[i].Type</td>
+                                        <td>@Analyzer.AllDescriptions[i].TitleDesc</td>
+                                        <td>@Analyzer.AllDescriptions[i].Url</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12 mb-4">
+        <h1 class="text-center">Images with missing alt</h1>
+        <div class="card arrow_box_right">
+            <div class="card-body">
+                <div id="table-wrapper">
+                    <div id="table-scroll">
+                        <table class="mt-2">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <span class="text">Img</span>
+                                    </th>
+                                    <th>
+                                        <span class="text">Url</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            @if (status == "done")
+                            {
+                                <tbody>
+                                    @foreach (KeyValuePair<string, string> pair in Analyzer.ImgsWithNoAlt)
+                                    {
+                                        <tr>
+                                            <td>@pair.Key</td>
+                                            <td>@pair.Value</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
 }
 
-@if (Warnings)
-{
-    <button @onclick="@LoadWarnings" class="btn btn-dark" style="margin-bottom: 10px;">Back to report</button>
-    <table class="table">
-        <thead class="thead-dark">
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">SEO ISSUES ANALYZED</th>
-            <th scope="col">DIFFICULTY</th>
-            <th scope="col">SEO IMPACT</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>5 pages without an H1 heading</td>
-            <td>EASY</td>
-            <td>MEDIUM</td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>15 pages with no meta description</td>
-            <td>MODERATE</td>
-            <td>MEDIUM</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>3 pages with URLs that are too long</td>
-            <td>EASY</td>
-            <td>MEDIUM</td>
-        </tr>
-        <tr>
-            <th scope="row">4</th>
-            <td>9 pages with a title tag that is too long</td>
-            <td>EASY</td>
-            <td>MEDIUM</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>20 pages with a title tag that is too short</td>
-            <td>EASY</td>
-            <td>MEDIUM</td>
-        </tr>
-        </tbody>
-    </table>
-}
 
-@if (ChildRoutes)
-{
-    <button @onclick="@LoadChildRoutes" class="btn btn-dark" style="margin-bottom: 10px;">Back to report</button>
-    <table class="table">
-        <thead class="thead-dark">
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">CHILD ROUTES</th>
-        </tr>
-        </thead>
-        <tbody>
-        @for (int i = 0; i < Traverse.AllUrls.Count; i++)
+
+    @code{
+        private string Feedback { get; set; }
+        private string PageUrl { get; set; }
+        private string ResultTags { get; set; } = "";
+        private bool LoadingButton { get; set; } = false;
+        private string _feedback { get; set; } = "";
+        private bool _loaded { get; set; } = false;
+        private bool ChildRoutes { get; set; } = false;
+        private bool CriticalErrors { get; set; } = false;
+        private bool Warnings { get; set; } = false;
+        private bool LinkHealth { get; set; } = false;
+        private bool MissingAlt { get; set; } = false;
+        private bool TitleHealth { get; set; } = false;
+        private JObject _response { get; set; }
+
+        private string status { get; set; } = "";
+        private bool seeMore { get; set; } = false;
+        private bool DescriptionHealth { get; set; } = false;
+
+        public void LoadDescriptionHealth()
         {
-            int n = Traverse.AllUrls.Count;
-            <tr>
-                <th scope="row">@IncrementCount(i)</th>
-                <td>
-                    <a href="@Traverse.AllUrls[n - i - 1]" style="overflow: hidden;">@Traverse.AllUrls[n - i - 1]</a>
-                </td>
-            </tr>
+            DescriptionHealth = !DescriptionHealth;
         }
-        </tbody>
-    </table>
-}
 
 
-@code{
-    private string Feedback { get; set; }
-    private string PageUrl { get; set; }
-    private string ResultTags { get; set; } = "";
-    private bool LoadingButton { get; set; } = false;
-    private bool FollowThrough { get; set; } = true;
-    private int MaxWidth { get; set; } = 50;
-    private string _feedback { get; set; } = "";
-    private bool _loaded { get; set; } = false;
-    private bool ChildRoutes { get; set; } = false;
-    private bool CriticalErrors { get; set; } = false;
-    private bool Warnings { get; set; } = false;
-    private bool LinkHealth { get; set; } = false;
-    private bool MissingAlt { get; set; } = false;
-    private bool TitleHealth { get; set; } = false;
-    private string Kljucnarijec { get; set; } = "index"; //treba frontend unos
-    private string Lokacija { get; set; } = "hr"; //treba frontend unos
-    private string Enteredurl { get; set; } = "index.hr"; // treba frontend unos
-    private JObject _response { get; set; }
-
-    public int IncrementCount(int Count)
-    {
-        return Count + 1;
-    }
-
-    public void LoadWarnings()
-    {
-        Warnings = !Warnings;
-    }
-
-    public void LoadCriticalErrors()
-    {
-        CriticalErrors = !CriticalErrors;
-    }
-
-    private HtmlWeb _web = new HtmlWeb();
-    private HtmlDocument _doc = new HtmlDocument();
-    private string _outerHtml = "";
-    private List<string> _tags = new List<string>();
-
-    public void LoadChildRoutes()
-    {
-        ChildRoutes = !ChildRoutes;
-    }
-
-    public void LoadLinkHealth()
-    {
-        LinkHealth = !LinkHealth;
-    }
-
-    public void LoadMissingAlt()
-    {
-        MissingAlt = !MissingAlt;
-    }
-
-    public void LoadTitleHealth()
-    {
-        TitleHealth = !TitleHealth;
-    }
-
-    protected async Task LoadHtml()
-    {
-    //Goggle Keyword
-        var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");
-        var username = await sessionStorage.GetItemAsync<string>("username");
-
-        GoogleKeywordTracker bs = new GoogleKeywordTracker();
-        await bs.TrackSomething(Kljucnarijec, remoteUserAgent, Lokacija, Enteredurl, username);
-        StateHasChanged();
-
-        LoadingButton = true;
-        await Task.Delay(TimeSpan.FromSeconds(0.1));
-
-        if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
-        Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
-            RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-        if (checkIfValid.IsMatch(PageUrl))
+        public int IncrementCount(int Count)
         {
-            Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            if (!checkIfHttps.IsMatch(PageUrl))
+            return Count + 1;
+        }
+
+        public void LoadWarnings()
+        {
+            Warnings = !Warnings;
+        }
+
+        public void LoadCriticalErrors()
+        {
+            CriticalErrors = !CriticalErrors;
+        }
+
+        private HtmlWeb _web = new HtmlWeb();
+        private HtmlDocument _doc = new HtmlDocument();
+        private string _outerHtml = "";
+        private List<string> _tags = new List<string>();
+
+        public void LoadChildRoutes()
+        {
+            ChildRoutes = !ChildRoutes;
+        }
+
+        public void LoadLinkHealth()
+        {
+            LinkHealth = !LinkHealth;
+        }
+
+        public void LoadMissingAlt()
+        {
+            MissingAlt = !MissingAlt;
+        }
+
+        public void LoadTitleHealth()
+        {
+            TitleHealth = !TitleHealth;
+        }
+
+        public void SeeMore()
+        {
+            seeMore = !seeMore;
+        }
+
+        protected async Task LoadHtml()
+        {
+
+            if (String.IsNullOrEmpty(PageUrl)) PageUrl = "";
+            Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            if (checkIfValid.IsMatch(PageUrl))
             {
-                PageUrl = PageUrl.Insert(0, "https://");
-            }
-            try
-            {
-                _doc = _web.Load(PageUrl);
-                _loaded = true;
-                ToastService.ShowSuccess("URL is nicely formatted!");
-                await Analyzer.Analyze(PageUrl);
-                await PostHealth();
-                if (FollowThrough && MaxWidth > 0)
+                Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                if (!checkIfHttps.IsMatch(PageUrl)) PageUrl = PageUrl.Insert(0, "https://");
+
+                try
                 {
-                    Feedback = "Wait..";
-                    Traverse.StateHasChangedDelegate = () => InvokeAsync(StateHasChanged);
-                    Traverse.SetUrl(PageUrl);
-                    var watch = System.Diagnostics.Stopwatch.StartNew();
-                    await Traverse.BfsAsync(MaxWidth);
-                    watch.Stop();
-                    System.Diagnostics.Debug.Print("BFS Async, width " + MaxWidth + " pages = " + (float) watch.ElapsedMilliseconds / 1000 + " seconds\n");
+                    _doc = _web.Load(PageUrl);
+                    _loaded = true;
+                    ToastService.ShowSuccess("URL is nicely formatted!");
+                    StateHasChanged();
+
+                    Analyzer.StateHasChangedDelegate = () => InvokeAsync(StateHasChanged);
+                    status = await Analyzer.Analyze(PageUrl);
+
+                    Feedback = "Done.";
+
                 }
-                Feedback = "Done.";
-                _outerHtml = _doc.DocumentNode.Descendants("html").ToArray()[0].OuterHtml;
-                LoadingButton = false;
+                catch (Exception e)
+                {
+                    LoadingButton = false;
+                    ToastService.ShowError("Error!");
+                }
             }
-            catch (Exception e)
+            else
             {
                 LoadingButton = false;
-                ToastService.ShowError("Error!");
-                Console.WriteLine(e.Message);
-                _outerHtml = e.Message;
+                ToastService.ShowError("URL is not valid!");
             }
         }
-        else
-        {
-            LoadingButton = false;
-            ToastService.ShowError("URL is not valid!");
-        }
-    }
 
-    private async Task PostHealth()
-    {
-        var username = await sessionStorage.GetItemAsync<string>("username");
-        if (username != null)
+        private async Task PostHealth()
         {
+            var username = await sessionStorage.GetItemAsync<string>("username");
+            if (String.IsNullOrEmpty(username))
+            {
+                _feedback = "You're not logged in.";
+                return;
+            }
             _feedback = "Loading..";
             HealthPost newHealth = new HealthPost();
             newHealth.Date = DateTime.Now.ToString("yyyy-MM-dd");
@@ -406,42 +397,50 @@
             string dataStr = data.ToString(Newtonsoft.Json.Formatting.None);
             _response = requester.Post("https://webscraperapi.herokuapp.com/api/health", dataStr, "application/json");
 
-            _feedback = (string) _response["message"];
+            _feedback = (string)_response["message"];
+        
         }
-    }
 
-    public async void DownloadFile(string fileName)
-    {
-        await JSRuntime.InvokeAsync<object>(
-            "FileSaveAs",
-            fileName, ResultTags
-            );
-    }
-
-    public async void DownloadHtmlFile(string fileName)
-    {
-        await JSRuntime.InvokeAsync<object>(
-            "FileSaveAs",
-            fileName, _outerHtml
-            );
-    }
-
-    async Task KeyPressLoadHtmlInput(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter")
+        public async void DownloadFile(string fileName)
         {
-            LoadingButton = true;
-            await LoadHtml();
+            await JSRuntime.InvokeAsync<object>(
+                "FileSaveAs",
+                fileName, ResultTags
+                );
         }
-    }
 
-}
+        public async void DownloadHtmlFile(string fileName)
+        {
+            await JSRuntime.InvokeAsync<object>(
+                "FileSaveAs",
+                fileName, _outerHtml
+                );
+        }
+
+        async Task KeyPressLoadHtmlInput(KeyboardEventArgs e)
+        {
+            if (e.Key == "Enter")
+            {
+                LoadingButton = true;
+                await LoadHtml();
+            }
+        }
+
+    }
 
 <style>
+    td {
+        overflow: hidden;
+        max-width: 30ch;
+    }
+    .card-body ul li span {
+        float: right;
+    }
     .arrow_box_left {
         position: relative;
         background: #ffffff;
     }
+
     .arrow_box_left:after {
         right: 100%;
         top: 50%;
@@ -456,46 +455,54 @@
         border-width: 30px;
         margin-top: -30px;
     }
+
     .arrow_box_right {
-    	position: relative;
-    	background: #ffffff;
+        position: relative;
+        background: #ffffff;
     }
+
     .arrow_box_right:after {
-    	left: 100%;
-    	top: 50%;
-    	border: solid transparent;
-    	content: " ";
-    	height: 0;
-    	width: 0;
-    	position: absolute;
-    	pointer-events: none;
-    	border-color: rgba(255, 255, 255, 0);
-    	border-left-color: #ffffff;
-    	border-width: 30px;
-    	margin-top: -30px;
+        left: 100%;
+        top: 50%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-color: rgba(255, 255, 255, 0);
+        border-left-color: #ffffff;
+        border-width: 30px;
+        margin-top: -30px;
     }
-    .card{
+
+    .card {
         margin: 40px;
     }
+
     #table-wrapper {
-      position:relative;
+        position: relative;
     }
+
     #table-scroll {
-      height:260px;
-      overflow:auto;  
-      margin-top:20px;
+        height: 260px;
+        overflow: auto;
+        margin-top: 20px;
     }
+
     #table-wrapper table {
-      width:90%;
+        width: 90%;
     }
+
     #table-wrapper table * {
-      background:white;
-      color:black;
+        background: white;
+        color: black;
     }
+
     #table-wrapper table thead th .text {
-      position:absolute;   
-      top:-20px;
-      z-index:2;
-      height:20px;
+        position: absolute;
+        top: -20px;
+        z-index: 2;
+        height: 20px;
     }
 </style>

@@ -1,0 +1,178 @@
+﻿@page "/keywordtracker"
+@using System.Text.RegularExpressions;
+@using HtmlAgilityPack
+@using WebScraper.Data
+@using WebScraper.Data.Plugins
+@using System.Net
+@using Microsoft.CodeAnalysis.CSharp.Syntax
+@using Newtonsoft.Json.Linq
+@using OpenQA.Selenium.Remote
+@using WebScraper.Data.ApiData
+
+@inject IJSRuntime JSRuntime
+@inject GoogleKeywordTracker Tracker
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+
+@if (!Valid)
+{
+    <div class="jumbotron" style="background-color: #f1f1f1">
+        <h1 class="text-center" style="margin-top: 20px; font-size: 70px; font-weight: 700;">Google Keyword Tracker</h1>
+        <h4 class="text-center" style="margin-top: 20px; margin-bottom: 50px; ">Find out how does your website rank on Google for a specific keyword!</h4>
+
+        <form onsubmit="return false;" class="mt-4 mx-auto" style="width: 80%;">
+            <div class="form-group text-center">
+                <input @bind="Website" @onkeyup="KeyPressLoadHtmlInput" class="form-control text-center mx-auto mb-3" type="text" placeholder="Enter Website URL" style="font-size: 30px; padding: 10px; height: auto; width: 80%;"/>
+                <input @bind="Keyword" @onkeyup="KeyPressLoadHtmlInput" class="form-control text-center mx-auto mb-3" type="text" placeholder="Enter Keyword" style="font-size: 30px; padding: 10px; height: auto; width: 80%;"/>
+                <select @bind="Location" class="form-control text-center mx-auto" style="font-size: 20px; padding: 10px; height: auto; width: 80%;">
+                    <option value="us">United States</option>
+                    <option value="uk">United Kingdom</option>
+                    <option value="de">Germany</option>
+                    <option value="fr">France</option>
+                    <option value="es">Spain</option>
+                </select>
+                <br/>
+                <button @onclick="LoadPosition" class="btn btn-dark btn-lg" type="button" style="font-size: 32px; padding: 18px; height: auto; margin-top: 40px; border-radius: 5%;">Find position</button>
+            </div>
+            <p style="color: red; text-align: center;">@Feedback</p>
+        </form>
+    </div>
+}
+
+@if (Valid)
+{
+<div class="container" style="margin-bottom: 70px;">
+    <h1 class="text-center mt-4">@Progression</h1>
+
+    @if (Progression == "Done.")
+    {
+        @if (Tracker.OrganicFound[0].Position == 101)
+        {
+            <h2 class="text-center mt-4">Didn't find <b>@Website</b> on Google with keyword <b>@Keyword</b></h2>
+        }
+        else
+        {
+            <h2 class="text-center mt-4">The following results were found with keyword <b>@Keyword</b></h2>
+            <ul class="list-group mt-4">
+                @for (int i = 0; i < Tracker.OrganicFound.Count; i++)
+                {
+                    <li class="list-group-item">@Tracker.OrganicFound[i].Position | @Tracker.OrganicFound[i].Url | @Tracker.OrganicFound[i].Date</li>
+                }
+            </ul>
+            <button @onclick="SaveSerp" class="btn btn-primary btn-lg" style="margin-bottom: 10px; margin-top: 20px;">Save to account</button>
+            <p>@Feedback</p>
+        }
+    }
+    
+    @if (Progression == "Done.")
+    {
+        <h2 class="mt-4">Ads: </h2>
+        <button @onclick="@ShowAds" type="button" class="btn btn-primary btn-lg">Show ads</button>
+    }
+    @if (showAds)
+    {
+        <ul class="list-group mt-4">
+        @for (int i = 0; i < Tracker.Reklame.Count; i++)
+        {
+            <li class="list-group-item">@Tracker.Reklame[i].Url | @Tracker.Reklame[i].Subject</li>
+        }
+        </ul>
+    }
+
+    <h2 class="mt-4">Organic</h2>
+    <ul class="list-group">
+        @for (int i = 0; i < Tracker.Organic.Count; i++)
+        {
+            @if (!Tracker.Organic[i].Found)
+            {
+                <li class="list-group-item">@Tracker.Organic[i].Position | Url: @Tracker.Organic[i].Url</li>
+            }
+            else
+            {
+                <li class="list-group-item active">@Tracker.Organic[i].Position | Url: @Tracker.Organic[i].Url</li>
+            }
+        }
+    </ul>
+</div>
+}
+
+@code{
+    private string Website { get; set; } = "";
+    private string Keyword { get; set; } = "";
+    private string Location { get; set; } = "us";
+    private string Feedback { get; set; } = "";
+
+    private bool Valid { get; set; } = false;
+    private string Progression { get; set; } = "";
+    public bool showAds { get; set; } = false;
+    private List<SerpPost> finalResults = new List<SerpPost>();
+
+    public async Task LoadPosition()
+    {
+        if (String.IsNullOrEmpty(Website))
+        {
+            Feedback = "Website cannot be empty.";
+            return;
+        }
+        if (String.IsNullOrEmpty(Keyword))
+        {
+            Feedback = "Keyword cannot be empty.";
+            return;
+        }
+
+        var remoteUserAgent = await JSRuntime.InvokeAsync<string>("getUserAgent");
+        var username = await sessionStorage.GetItemAsync<string>("username");
+
+        Regex checkIfValid = new Regex(@"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        if (checkIfValid.IsMatch(Website))
+        {
+            Regex checkIfHttps = new Regex(@"^(http|https):\/\/", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            if (!checkIfHttps.IsMatch(Website)) Website = Website.Insert(0, "https://");
+
+            Valid = true;
+            Progression = "Please wait...";
+            Tracker.StateHasChangedDelegate = () => InvokeAsync(StateHasChanged);
+            finalResults = await Tracker.TrackSomething(Keyword, remoteUserAgent, Location, Website, username);
+            Progression = "Done.";
+        }
+        else Feedback = "Invalid website.";
+    }
+
+    public void ShowAds()
+    {
+        showAds = !showAds;
+        StateHasChanged();
+    }
+
+    private async Task SaveSerp()
+    {
+        foreach (SerpPost serp in finalResults) await PostSerp(serp);
+
+    }
+
+    //POSTS
+    private async Task PostSerp(SerpPost newSerp)
+    {
+
+        var username = await sessionStorage.GetItemAsync<string>("username");
+        if (username == null)
+        {
+            Feedback = "You are not logged in.";
+            return;
+        }
+
+        var data = newSerp.ConvertToJObject();
+        RequestService requester = new RequestService();
+        string dataStr = data.ToString(Newtonsoft.Json.Formatting.None);
+        var response = requester.Post("https://webscraperapi.herokuapp.com/api/serp", dataStr, "application/json");
+        Feedback = (string)response["message"];
+    }
+
+    async Task KeyPressLoadHtmlInput(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await LoadPosition();
+        }
+    }
+}

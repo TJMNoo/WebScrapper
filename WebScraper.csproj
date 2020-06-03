@@ -17,10 +17,4 @@
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="81.0.4044.6900" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="Pages\Descriptions.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-  </ItemGroup>
-
 </Project>
